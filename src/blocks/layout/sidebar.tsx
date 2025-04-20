@@ -16,6 +16,7 @@ import { fetch_platform_interactions } from "@/utils/api/fetch";
 import { format_interactions } from "@/utils/format-interactions";
 import FormatAddress from "@/components/format-address";
 import { supabase } from "@/utils/secrets";
+import WalletModal from "./modals/wallet";
 
 const DefaultLayoutSidebar: FC = () => {
   interface menu_item {title: string; icon: ReactNode; link?: string; on_click?: () => void;}
@@ -24,6 +25,7 @@ const DefaultLayoutSidebar: FC = () => {
   const router = useRouter();
 
   const [connect_wallet_modal_open, set_connect_wallet_modal_open] = useState(false);
+  const [wallet_modal_open, set_wallet_modal_open] = useState(false);
   const [connected_address, set_connected_address] = useState<string>();
 
   const navigation_items: menu_item[] = [
@@ -58,7 +60,7 @@ const DefaultLayoutSidebar: FC = () => {
     {
       title: (use_wallet.connected && connected_address) ? format_long_string(use_wallet.address) : 'Connect',
       icon: (use_wallet.connected && connected_address) ? <UserAvatar address={use_wallet.address} className="size-6 lg:size-5"/> : <PlugZap className="size-6 lg:size-5"/>,
-      on_click: (use_wallet.connected && connected_address) ? () => {} : () => set_connect_wallet_modal_open(true)
+      on_click: (use_wallet.connected && connected_address) ? () => set_wallet_modal_open(true) : () => set_connect_wallet_modal_open(true)
     }
   ];
 
@@ -141,6 +143,7 @@ const DefaultLayoutSidebar: FC = () => {
       </div>
 
       <ConnectWalletModal is_modal_open={connect_wallet_modal_open} close_modal={() => set_connect_wallet_modal_open(false)} attempt_connect={attempt_wallet_connect}/>
+      <WalletModal is_modal_open={wallet_modal_open} close_modal={() => set_wallet_modal_open(false)} />
     </>
   )
 }
