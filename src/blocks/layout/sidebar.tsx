@@ -143,7 +143,9 @@ const DefaultLayoutSidebar: FC = () => {
       </div>
 
       <ConnectWalletModal is_modal_open={connect_wallet_modal_open} close_modal={() => set_connect_wallet_modal_open(false)} attempt_connect={attempt_wallet_connect}/>
-      <WalletModal is_modal_open={wallet_modal_open} close_modal={() => set_wallet_modal_open(false)} />
+      {use_wallet.connected && use_wallet.address && (        
+        <WalletModal is_modal_open={wallet_modal_open} close_modal={() => set_wallet_modal_open(false)} />
+      )}
     </>
   )
 }
