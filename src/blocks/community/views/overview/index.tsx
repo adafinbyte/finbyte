@@ -14,7 +14,7 @@ interface custom_props {
   asset_transactions: asset_tx[] | undefined;
 }
 
-const CommuntiyOverview: FC <custom_props> = ({
+const CommunityOverview: FC <custom_props> = ({
   token, poolpm_fp_data, asset_transactions
 }) => {
   const themed = useThemedProps();
@@ -50,4 +50,4 @@ const CommuntiyOverview: FC <custom_props> = ({
   )
 }
 
-export default CommuntiyOverview;
+export default CommunityOverview;
