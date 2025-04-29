@@ -22,7 +22,7 @@ interface custom_props {
   refresh: boolean;
 }
 
-const CommuntiyPosts: FC <custom_props> = ({
+const CommunityPosts: FC <custom_props> = ({
   token, community_posts, get_posts, refresh
 }) => {
   const themed = useThemedProps();
@@ -232,4 +232,4 @@ const CommuntiyPosts: FC <custom_props> = ({
   )
 }
 
-export default CommuntiyPosts;
+export default CommunityPosts;
