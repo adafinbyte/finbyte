@@ -46,7 +46,7 @@ const CommunityView: FC <custom_props> = ({
           )}
   
           {active_tab === 1 && (
-            <CommuntiyPosts
+            <CommunityPosts
               token={token}
               community_posts={community_posts}
               get_posts={get_posts}
