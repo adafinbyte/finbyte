@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import CommuntiyPosts from "./community";
+import CommunityPosts from "./community";
 import CommunityOverview from "./overview";
 import CommuntiyTrade from "./trade";
 
