@@ -9,7 +9,7 @@ interface custom_props {
   token: verified_token;
 }
 
-const CommuntiyOverview: FC <custom_props> = ({
+const CommunityOverview: FC <custom_props> = ({
   token
 }) => {
   const token_stats = [
@@ -89,4 +89,4 @@ const CommuntiyOverview: FC <custom_props> = ({
   )
 }
 
-export default CommuntiyOverview;
+export default CommunityOverview;
