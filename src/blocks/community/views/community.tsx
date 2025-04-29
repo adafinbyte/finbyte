@@ -1,7 +1,8 @@
 import { FC, useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { verified_token } from "@/verified/interfaces";
-import { RefreshCw } from "lucide-react";
+import { FilePlus, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import { create_community_post_data, edit_post_data, fetched_community_post_data } from "@/utils/api/interfaces";
 import { fetch_community_posts } from "@/utils/api/fetch";
@@ -12,43 +13,23 @@ import { create_post, edit_post, like_unlike_post } from "@/utils/api/push";
 import ForumPost from "@/components/forums-core/post";
 import { format_long_string } from "@/utils/string-tools";
 import { delete_post } from "@/utils/api/mod";
+import useThemedProps from "@/contexts/themed-props";
 
 interface custom_props {
   token: verified_token;
+  community_posts: fetched_community_post_data[] | undefined;
+  get_posts: () => Promise<void>;
+  refresh: boolean;
 }
 
 const CommuntiyPosts: FC <custom_props> = ({
-  token
+  token, community_posts, get_posts, refresh
 }) => {
+  const themed = useThemedProps();
   const use_wallet = useWallet();
   const wallet = use_wallet.wallet;
 
-  const [refresh, set_refresh] = useState(false);
-
-  const [community_posts, set_community_posts] = useState<fetched_community_post_data[] | undefined>();
-
-  const get_posts = async () => {
-    set_refresh(true);
-
-    try {
-      const community_posts = await fetch_community_posts(token.slug_id);
-      if (community_posts) {
-        set_community_posts(community_posts);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message)
-      } else {
-        throw error;
-      }
-    }
-
-    set_refresh(false);
-  }
-
-  useEffect(() => {
-    get_posts();
-  }, []);
+  const [show_create, set_show_create] = useState(false);
 
   const toggle_create_post = async (details: create_community_post_data) => {
     if (!use_wallet.connected) { return; } else {
@@ -174,24 +155,17 @@ const CommuntiyPosts: FC <custom_props> = ({
   }
 
   return (
-    <div>
-      <PostCreation
-        post_type='community_post'
-        is_connected={use_wallet.connected}
-        connected_address={use_wallet.address}
-        on_community_post_create={{
-          post_data: toggle_create_post,
-          token_slug: token.slug_id
-        }}
-      />
-      <hr className="border-neutral-800 my-2"/>
+    <div className={`w-full flex flex-col gap-2 h-screen ${themed.webkit_scrollbar}`}>
+      <div className={`flex items-center flex-wrap gap-1 ${themed['300'].text}`}>
+        <button onClick={() => set_show_create(!show_create)} title="Create Post" className={`p-2 rounded-lg ${themed.effects.transparent_button.hover}`}>
+          <FilePlus size={14}/>
+        </button>
 
-      <div className="my-2 flex flex-wrap gap-1">
-        <button onClick={get_posts} title="Refresh Feed" className="p-2 rounded-lg hover:bg-neutral-800">
+        <button onClick={get_posts} title="Refresh Feed" className={`p-2 rounded-lg ${themed.effects.transparent_button.hover}`}>
           <RefreshCw size={14} className={refresh ? "animate-spin" : ""}/>
         </button>
 
-        <span className="ml-auto text-[10px] text-neutral-400">
+        <span className={`ml-auto text-[10px] ${themed['400'].text}`}>
           Total Posts:
           <span className="ml-1 text-blue-400">
             {community_posts?.length.toLocaleString() ?? 0}
@@ -199,10 +173,44 @@ const CommuntiyPosts: FC <custom_props> = ({
         </span>
       </div>
 
-      <div className="mt-2">
-        {community_posts ?
+      <hr className={`${themed['700'].border}`}/>
+
+      <AnimatePresence>
+        {show_create && (
+          <motion.div
+            key="create-post-form"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ height: 0, opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            layout
+          >
+            <PostCreation
+              post_type='community_post'
+              is_connected={use_wallet.connected}
+              connected_address={use_wallet.address}
+              on_community_post_create={{
+                post_data: toggle_create_post,
+                token_slug: token.slug_id
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div layout className="mt-2">
+        {community_posts ? (
           <div className="flex flex-col gap-4">
             {community_posts.map((post, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    type: "spring",
+                    delay: index * 0.2,
+                  }}
+                >
               <ForumPost
                 key={index}
                 post_type='community_post'
@@ -213,15 +221,13 @@ const CommuntiyPosts: FC <custom_props> = ({
                   on_edit: toggle_edit_content,
                   on_like_unlike: () => toggle_like_unlike_post(post.id as number, post.post_likers ?? [])
                 }}
-              />
+              /></motion.div>
             ))}
           </div>
-          :
-          <div className="flex flex-col gap-4">
-            pending posts
-          </div>
-        }
-      </div>
+        ) : (
+          <div className="flex flex-col gap-4">pending posts</div>
+        )}
+      </motion.div>
     </div>
   )
 }

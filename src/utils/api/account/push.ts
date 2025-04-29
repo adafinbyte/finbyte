@@ -43,3 +43,25 @@ export const update_username = async (
   }
 }
 
+export const update_representing_community = async (
+  address:      string,
+  timestamp:    number,
+  token_ticker: string
+) => {
+  const { error } = await supabase
+    .from(databases.accounts)
+    .update({
+        ra_timestamp:    timestamp,
+        community_badge: token_ticker
+      }
+    )
+    .eq('address', address);
+
+  if (error) {
+    toast.error(error.message);
+  } else {
+    await create_notification('updated-community-badge', timestamp, address);
+    toast.success("Kudos! You're now representing this community!");
+  }
+}
+

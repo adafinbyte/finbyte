@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 
-import { platform_interaction, post_with_comments } from "./interfaces";
+import { fetched_chat_post_data, platform_interaction, post_with_comments } from "./interfaces";
 
 import { databases } from "../consts";
 import { supabase } from "../secrets";
@@ -76,6 +76,19 @@ export const fetch_community_posts = async (token_slug: string) => {
   }
 
   return cp;
+}
+
+export const fetch_chats = async (): Promise<fetched_chat_post_data[] | null> => {
+  const { data: c, error: ce } = await supabase
+    .from(databases.chat)
+    .select('*');
+
+  if (ce) {
+    toast.error(ce.message);
+    return null;
+  }
+
+  return c;
 }
 
 export const fetch_platform_interactions = async (limit?: number | undefined): Promise<platform_interaction[] | null> => {

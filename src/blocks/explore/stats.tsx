@@ -5,6 +5,7 @@ import { Binoculars, Calculator, Coins, HandCoins, HeartHandshake, Newspaper, Us
 import { fetch_everything_count } from "@/utils/api/fetch";
 import curators_list from "@/verified/curators";
 import verified_tokens from "@/verified/tokens";
+import useThemedProps from "@/contexts/themed-props";
 
 interface numbers {
   forum_posts: number;
@@ -18,6 +19,7 @@ interface numbers {
 }
 
 const ExploreStats: FC = () => {
+  const themed = useThemedProps();
   const [numbers, set_numbers] = useState<numbers | null>();
 
   const icon_size = 20;
@@ -79,20 +81,24 @@ const ExploreStats: FC = () => {
   }, []);
 
   return (
-    <div className="border border-transparent flex flex-col w-full gap-4 text-neutral-300">
-
-      <div className="flex flex-wrap gap-4 justify-center">
+    <div className="flex flex-col gap-1 w-full">
+      <h1 className={`${themed['400'].text} text-xs font-semibold`}>
+        Finbyte Statistics
+      </h1>
+      <div className="flex flex-wrap gap-4 justify-center lg:px-4">
         {finbyte_stats.map((stat, index) => (
-          <div key={index} title={stat.tt_title} onClick={() => copy_to_clipboard(stat.data.toString())} className="flex items-center gap-4 border border-neutral-700 hover:border-blue-400 duration-300 cursor-copy bg-neutral-900 rounded-lg px-4 py-2">
+          <div key={index} title={stat.tt_title} onClick={() => copy_to_clipboard(stat.data.toString())} className={`p-2 flex gap-2 items-center border ${themed['700'].border} px-4 rounded-lg ${themed.effects.transparent_button.hover_darker} duration-300 hover:-translate-y-0.5 cursor-copy`}>
             {stat.icon}
-            <div className="flex flex-col gap-y-0.5 text-right px-2">
-              <h1 className="text-xs font-semibold text-neutral-500">
+
+            <div className="flex flex-col gap-y-0.5 text-right px-2 w-full">
+              <h1 className={`text-xs font-semibold ${themed['400'].text}`}>
                 {stat.title}
               </h1>
+
               {loading ?
-                <span className="h-6 bg-neutral-800 w-full rounded-full animate-pulse"/>
+                <span className={`h-4 ${themed['800'].bg} rounded-lg animate-pulse`}/>
                 :
-                <h1 className="text-lg tracking-wider">
+                <h1 className={`text-sm ${themed['200'].text}`}>
                   {stat.data.toLocaleString()}
                 </h1>
               }

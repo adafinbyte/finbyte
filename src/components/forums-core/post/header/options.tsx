@@ -3,7 +3,7 @@ import { post_type } from "@/utils/api/types";
 import { admin_addresses, moderation_addresses } from "@/utils/consts";
 import { copy_to_clipboard } from "@/utils/string-tools";
 import { useWallet } from "@meshsdk/react";
-import { Copy, Edit, FileDigit, HeartHandshake, MessageCircle, Pencil, ReceiptText, Share, Trash } from "lucide-react";
+import { Clock, Copy, Edit, FileDigit, MessageCircle, Pencil, ReceiptText, Share, Trash } from "lucide-react";
 import { Dispatch, FC, ReactNode, SetStateAction } from "react";
 
 interface custom_props {
@@ -18,7 +18,7 @@ interface custom_props {
       state: boolean;
       set_state: Dispatch<SetStateAction<boolean>>;
     };
-    view_repliers: {
+    view_repliers?: {
       state: boolean;
       set_state: Dispatch<SetStateAction<boolean>>;
     };
@@ -30,7 +30,7 @@ interface custom_props {
       state: boolean;
       set_state: Dispatch<SetStateAction<boolean>>;
     };
-    share: {
+    share?: {
       state: boolean;
       set_state: Dispatch<SetStateAction<boolean>>;
     };
@@ -45,10 +45,15 @@ interface custom_props {
     state: boolean;
     set_state: Dispatch<SetStateAction<boolean>>;
   };
+
+  toggle_timestamp: {
+    state: boolean;
+    set_state: Dispatch<SetStateAction<boolean>>;
+  };
 }
 
 const ForumPostHeaderOptions: FC <custom_props> = ({
-  post_type, preview, post_author, is_edited, post_id, modals, viewing, show_original
+  post_type, preview, post_author, is_edited, post_id, modals, viewing, show_original, toggle_timestamp
 }) => {
   interface post_option { icon: ReactNode; name: string; action: () => void; }
   const icon_size = 14;
@@ -57,14 +62,14 @@ const ForumPostHeaderOptions: FC <custom_props> = ({
   /** @note no matter what, these options should always be allowed */
   const basic: post_option[] = [
     {
-      icon: <HeartHandshake size={icon_size}/>,
-      name: 'View Likers',
-      action: () => modals.view_likers.set_state(true)
-    },
-    {
       icon: <FileDigit size={icon_size}/>,
       name: 'View Tip Hashes',
       action: () => modals.view_tip_hashes.set_state(true)
+    },
+    {
+      icon: <Clock size={icon_size}/>,
+      name: 'Toggle Timestamp',
+      action: () => toggle_timestamp.set_state(!toggle_timestamp.state)
     },
   ];
 
@@ -91,7 +96,7 @@ const ForumPostHeaderOptions: FC <custom_props> = ({
     {
       icon: <Share size={icon_size}/>,
       name: 'Share Post',
-      action: () => modals.share.set_state(true)
+      action: () => modals.share?.set_state(true) ?? undefined
     },
     {
       icon: <Copy size={icon_size}/>,
@@ -101,7 +106,7 @@ const ForumPostHeaderOptions: FC <custom_props> = ({
     {
       icon: <MessageCircle size={icon_size}/>,
       name: 'View Repliers',
-      action: () => modals.view_repliers.set_state(true)
+      action: () => modals.view_repliers?.set_state(true) ?? undefined
     },
   ];
 
@@ -139,6 +144,8 @@ const ForumPostHeaderOptions: FC <custom_props> = ({
         return is_edited ? [...basic, ...universal, ...edited] : [...basic, ...universal];
       case "community_post":
         return is_edited ? [...basic, ...universal, ...edited] : [...basic, ...universal];
+      case "chat":
+        return is_edited ? [...basic, ...universal, ...edited] : [...basic, ...universal];
       default:
         return is_edited ? [...basic, ...universal, ...edited] : [...basic, ...universal];
     }
@@ -152,7 +159,7 @@ const ForumPostHeaderOptions: FC <custom_props> = ({
   ];
   const all_options = (is_author || is_moderator) ? [...standard_layout_options, ...extended_layout_options] : [...standard_layout_options];
 
-  return <EllipsisMenu alt_menu={all_options}/>
+  return <EllipsisMenu className="size-4" menu={all_options}/>
 }
 
 export default ForumPostHeaderOptions;

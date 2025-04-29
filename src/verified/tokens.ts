@@ -71,7 +71,7 @@ const verified_tokens: verified_token[] = [
     },
     images: {
       logo: "https://pbs.twimg.com/profile_images/1753525632791703552/bCT4BKbd_400x400.jpg",
-      header: "/images/headers/snek.jpg"
+      header: "/headers/snek.jpg"
     },
     links: {
       discord:  "https://discord.com/invite/KB4GdmCNjh",

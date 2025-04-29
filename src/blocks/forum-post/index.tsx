@@ -1,4 +1,5 @@
 import { fetch_forum_post_with_comments } from "@/utils/api/fetch";
+import { motion, AnimatePresence } from "framer-motion";
 import { create_comment_post_data, edit_post_data, post_with_comments } from "@/utils/api/interfaces";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
@@ -16,9 +17,11 @@ import PostCreation from "@/components/forums-core/input/create";
 import ShareModal from "@/components/modals/share";
 import DeleteModal from "@/components/modals/delete";
 import LikeModal from "@/components/modals/like";
+import useThemedProps from "@/contexts/themed-props";
 
 const ForumPostBlock: FC = () => {
   const router = useRouter();
+  const themed = useThemedProps();
   const use_wallet = useWallet();
   const wallet = use_wallet.wallet;
 
@@ -26,6 +29,7 @@ const ForumPostBlock: FC = () => {
   const [author_data, set_author_data] = useState<author_data | null>(null);
   const [refresh, set_refresh] = useState(false);
   const [hidden_comments, set_hidden_comments] = useState<Set<number>>(new Set());
+  const [show_create_post, set_show_create_post] = useState<boolean>(false);
 
   const fetch_post = async (post_id: number) => {
     set_refresh(true);
@@ -215,20 +219,24 @@ const ForumPostBlock: FC = () => {
     });
   };
 
+  const commentVariants = {
+    hidden: { opacity: 0, height: 0, overflow: 'hidden' },
+    visible: { opacity: 1, height: 'auto', overflow: 'visible' },
+    exit: { opacity: 0, height: 0, overflow: 'hidden' },
+  };
+
   return post ? (
     <>
-      <div className="grid lg:grid-cols-5 p-4 mt-4 lg:mt-10 gap-2" style={{ placeItems: "start"}}>
-        <div className="border border-transparent w-full text-left p-2 text-neutral-400">
-          <ForumPostSidebar
-            post={post.post}
-            refresh_post={() => fetch_post(post.post.id)}
-            refresh_status={refresh}
-            author_data={author_data}
-            modals={modals}
-          />
-        </div>
+      <div className="lg:px-20 p-4 grid lg:grid-cols-5 gap-2 lg:mt-10" style={{ placeItems: "start"}}>
+        <ForumPostSidebar
+          post={post.post}
+          refresh_post={() => fetch_post(post.post.id)}
+          refresh_status={refresh}
+          author_data={author_data}
+          modals={modals}
+        />
 
-        <div className="lg:col-span-4 border border-transparent w-full p-2 flex flex-col gap-2">
+        <div className="lg:col-span-4 border border-transparent w-full flex flex-col gap-2">
           <ForumPost
             preview={false}
             post_type='forum_post'
@@ -238,59 +246,99 @@ const ForumPostBlock: FC = () => {
               on_delete: () => delete_content(post.post.id, 'forum_post'),
               on_like_unlike: () => toggle_like_unlike_post('forum_post', post.post.id, post.post.post_likers)
             }}
-          />
-
-          <hr className="border-neutral-800 my-4"/>
-
-          <PostCreation
-            post_type='forum_comment'
-            is_connected={use_wallet.connected}
-            connected_address={use_wallet.address}
-            on_forum_comment={{
-              post_id: post.post.id,
-              comment_data: create_comment
+            show_create={{
+              state: show_create_post,
+              set_state: set_show_create_post
             }}
           />
 
-          <hr className="border-neutral-800 my-4"/>
+          <AnimatePresence>
+            {show_create_post && (
+              <motion.div
+                key="create-post-form"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ height: 0, opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                layout
+              >
+                <PostCreation
+                  post_type='forum_comment'
+                  is_connected={use_wallet.connected}
+                  connected_address={use_wallet.address}
+                  on_forum_comment={{
+                    post_id: post.post.id,
+                    comment_data: create_comment
+                  }}
+                />
+            </motion.div>
+            )}
+          </AnimatePresence>
 
-          <span className="text-[10px] text-neutral-500 text-left flex mb-2">
+          <motion.div layout className="flex flex-col w-full gap-2">
+          <span className={`text-[10px] ${themed['500'].text} text-left flex gap-2 ml-auto`}>
             Post Comments:
-            <span className="ml-1 text-blue-400">
+            <span className="text-blue-400">
               {post.comments ? post.comments.length : 0}
             </span>
           </span>
 
           {post.comments && post.comments.map((comment, index) => (
-            <div key={index} className={`flex gap-x-3 pb-2 ${hidden_comments.has(index) ? 'items-center' : ''}`}>
-              <div title="Hide Comment." onClick={() => toggle_hide(index)} className="cursor-pointer hover:bg-neutral-900 rounded-lg relative last:after:hidden after:absolute after:top-8 after:bottom-2 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-neutral-700">
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                type: "spring",
+                delay: index * 0.2,
+              }}
+            >
+            <div className={`flex gap-x-2 pb-2 ${hidden_comments.has(index) ? 'items-center' : ''}`}>
+              <button title="Hide Comment." onClick={() => toggle_hide(index)} className={`hover:${themed['900'].bg} rounded-lg relative last:after:hidden after:absolute after:top-2 after:bottom-2 after:start-3.5 after:w-px after:-translate-x-[0.5px] after:bg-blue-400/60`}>
                 <div className="relative z-10 size-7 flex justify-center items-center">
                   <div className="size-2 rounded-full bg-blue-400/60"></div>
                 </div>
-              </div>
+              </button>
 
-              {hidden_comments.has(index) ?
-                <div className="flex w-full">
-                  <h1 className="font-bold italic text-neutral-500 text-sm">
-                    This comment has been hidden.
-                  </h1>
-                </div>
-                :
-                <span className="grow">
-                  <ForumPost
-                    preview={false}
-                    post_type='forum_comment'
-                    forum_comment={{
-                      post: comment,
-                      on_edit: edit_content,
-                      on_delete: () => delete_content(comment.id, 'forum_comment'),
-                      on_like_unlike: () => toggle_like_unlike_post('forum_comment', comment.id, comment.post_likers)
-                    }}
-                  />
-                </span>
-              }
-            </div>
-          ))}
+              <AnimatePresence mode="wait">
+                {hidden_comments.has(index) ? (
+                  <motion.div
+                    key="hidden"
+                    variants={commentVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="flex w-full"
+                  >
+                    <h1 className={`font-bold italic ${themed['500'].text} text-sm`}>
+                      This comment has been hidden.
+                    </h1>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="visible"
+                    variants={commentVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="grow"
+                  >
+                    <ForumPost
+                      preview={false}
+                      post_type='forum_comment'
+                      forum_comment={{
+                        post: comment,
+                        on_edit: edit_content,
+                        on_delete: () => delete_content(comment.id, 'forum_comment'),
+                        on_like_unlike: () => toggle_like_unlike_post('forum_comment', comment.id, comment.post_likers)
+                      }}
+                    />
+                  </motion.div>
+                )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          ))}</motion.div>
         </div>
       </div>
 

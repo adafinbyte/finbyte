@@ -20,7 +20,7 @@ export interface author_data {
   earliestTimestamp: string;
   totalPosts: number;
   totalKudos: number;
-  accountData: account_data | null;
+  accountData: account_data;
 }
 
 export const fetch_author_data = async (author: string): Promise<author_data | null> => {

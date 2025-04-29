@@ -6,4 +6,5 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-/** */
+/** @blockfrost */
+export const blockfrost_key = process.env.NEXT_PUBLIC_BLOCKFROST_KEY || '';

@@ -7,6 +7,7 @@ import UserAvatar from "@/components/user-avatar";
 import { fetched_forum_post_data } from "@/utils/api/interfaces";
 import { format_unix } from "@/utils/string-tools";
 import { author_data } from "@/utils/api/account/fetch";
+import useThemedProps from "@/contexts/themed-props";
 
 interface custom_props {
   author_details: author_data | null;
@@ -16,6 +17,8 @@ interface custom_props {
 const ForumPostAboutAuthor: FC <custom_props> = ({
   author_details, post
 }) => {
+  const themed = useThemedProps();
+
   const about_stats = [
     { title: 'Registered', data: author_details?.accountData ? true : false },
     { title: 'Username', data: author_details?.accountData?.ada_handle || 'Not Set' },
@@ -25,24 +28,24 @@ const ForumPostAboutAuthor: FC <custom_props> = ({
   ];
 
   return (
-    <div className="border border-neutral-700 hover:border-blue-400/60 duration-300 bg-neutral-900 p-2 w-full rounded-lg">
-      <h1 className="text-xs text-neutral-500 font-semibold underline">
+    <div className={`border ${themed['700'].border} ${themed['900'].bg} p-2 w-full rounded-lg`}>
+      <h1 className={`text-xs ${themed['500'].text} font-semibold underline`}>
         About Author
       </h1>
 
-      <div className="mt-2">
+      <div className="my-2">
         <div className="flex justify-between items-center cursor-default" title={post.author}>
           <UserAvatar address={post.author} className="size-8"/>
           <FormatAddress address={post.author}/>
         </div>
       </div>
 
-      <hr className="my-2 border-neutral-700"/>
+      <hr className={`my-2 ${themed['700'].border}`}/>
 
       <div className="flex flex-col gap-1">
         {about_stats.map((item, index) => (
           <div key={index}>
-            <div title={item.title} className="cursor-default flex gap-2 justify-between items-center p-0.5 px-1 rounded-lg hover:bg-neutral-800 flex-wrap text-neutral-300 text-xs">
+            <div title={item.title + ': ' + item.data.toString()} className={`cursor-default flex gap-2 justify-between items-center p-0.5 px-1 rounded-lg hover:${themed['800'].bg} flex-wrap ${themed['300'].text} text-xs`}>
               <p>
                 {item.title}
               </p>
@@ -69,7 +72,7 @@ const ForumPostAboutAuthor: FC <custom_props> = ({
             </div>
           
             {index === 1 && (
-              <hr className="border-neutral-700 my-1"/>
+              <hr className={`${themed['700'].border} mt-1`}/>
             )}
           </div>
         ))}

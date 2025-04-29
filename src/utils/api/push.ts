@@ -4,7 +4,7 @@ import { notification_type, post_type } from "./types";
 
 import { supabase } from "../secrets";
 import { databases } from "../consts";
-import { account_data, create_comment_post_data, create_community_post_data, create_forum_post_data } from "./interfaces";
+import { account_data, create_chat_data, create_comment_post_data, create_community_post_data, create_forum_post_data } from "./interfaces";
 
 /**
  * @contents
@@ -44,7 +44,8 @@ export const create_post = async (
   if (
     (post_type === 'forum_post' && !(create_data as create_forum_post_data)) ||
     (post_type === 'forum_comment' && !(create_data as create_comment_post_data)) ||
-    (post_type === 'community_post' && !(create_data as create_community_post_data))
+    (post_type === 'community_post' && !(create_data as create_community_post_data)) ||
+    (post_type === 'chat' && !(create_data as create_chat_data))
   ) {
     toast.error('Invalid post data type for the given post_type.');
     return;
@@ -54,13 +55,18 @@ export const create_post = async (
     post_type === 'forum_post' ?
     databases.forum_posts :
     post_type === 'forum_comment' ?
-    databases.forum_comments : databases.community_posts;
+    databases.forum_comments :
+    post_type === 'community_post' ?
+    databases.community_posts :
+    databases.chat;
 
   const noti_type: notification_type =
     post_type === 'forum_post' ?
     'new-forum-post' :
     post_type === 'forum_comment' ?
-    'new-forum-comment' : 'new-community-post';
+    'new-forum-comment' :
+    post_type === 'community_post' ?
+    'new-community-post' : 'new-chat-post';
 
   const { error } = await supabase
     .from(db).insert([create_data]).single();
@@ -69,7 +75,7 @@ export const create_post = async (
     toast.error(error.message);
   } else {
     await create_notification(noti_type, timestamp, address);
-    toast.success('A new forum post has been created. Kudos!');
+    toast.success('A new post has been created. Kudos!');
   }
 }
 
@@ -82,11 +88,12 @@ export const like_unlike_post = async (
   action: 'like' | 'unlike'
 ) => {
   const db =
-    post_type === 'forum_post'
-      ? databases.forum_posts
-      : post_type === 'forum_comment'
-      ? databases.forum_comments
-      : databases.community_posts;
+    post_type === 'forum_post' ?
+    databases.forum_posts :
+    post_type === 'forum_comment' ?
+    databases.forum_comments :
+    post_type === 'community_post' ?
+    databases.community_posts : databases.chat;
 
   let noti_type: notification_type | null = null;
 
@@ -96,14 +103,16 @@ export const like_unlike_post = async (
         ? 'forum-post-liked'
         : post_type === 'forum_comment'
         ? 'forum-comment-liked'
-        : 'community-post-liked';
+        : post_type === 'community_post'
+        ? 'community-post-liked' : 'chat-liked';
   } else if (action === 'unlike') {
     noti_type =
       post_type === 'forum_post'
         ? 'forum-post-unliked'
         : post_type === 'forum_comment'
         ? 'forum-comment-unliked'
-        : 'community-post-unliked';
+        : post_type === 'community_post'
+        ? 'community-post-unliked' : 'chat-unliked';
   }
 
   const { error } = await supabase
@@ -138,13 +147,17 @@ export const edit_post = async (
     post_type === 'forum_post' ?
     databases.forum_posts :
     post_type === 'forum_comment' ?
-    databases.forum_comments : databases.community_posts;
+    databases.forum_comments :
+    post_type === 'community_post' ?
+    databases.community_posts : databases.chat;
 
   const noti_type: notification_type =
     post_type === 'forum_post' ?
     'forum-post-edited' :
     post_type === 'forum_comment' ?
-    'forum-comment-edited' : 'community-post-edited';
+    'forum-comment-edited' :
+    post_type === 'community_post' ?
+    'community-post-edited' : 'chat-edited';
 
   const { error } = await supabase
     .from(db)

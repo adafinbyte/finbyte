@@ -147,9 +147,29 @@ export interface platform_interaction {
   address:   string;
 }
 
-export interface nonce_data {
+
+export interface create_chat_data {
+  post:       string;
+  ada_handle: string | undefined | null;
+  author:     string;
+  timestamp:  number;
+}
+
+export interface fetched_chat_post_data {
   id: number;
-  user_address: string;
-  nonce: string;
-  created_at: string;
+
+  ada_handle: string | null;
+  author:     string;
+
+  post:      string;
+  timestamp: number;
+
+  updated_post:      string | null;
+  updated_timestamp: number | null;
+
+  post_likers:  string[] | null;
+  tip_tx_hashes: string[] | null;
+
+  /** @todo */
+  marked_spam:     boolean;
 }

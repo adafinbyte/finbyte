@@ -4,13 +4,13 @@ import toast from "react-hot-toast";
 import CreatePostInputTypes from "./input-types";
 import PostActions from "./post-actions";
 
-import { create_comment_post_data, create_community_post_data, create_forum_post_data } from "@/utils/api/interfaces";
+import { create_chat_data, create_comment_post_data, create_community_post_data, create_forum_post_data } from "@/utils/api/interfaces";
 import { fetch_username_from_account } from "@/utils/api/account/fetch";
 import { post_type } from "@/utils/api/types";
+import useThemedProps from "@/contexts/themed-props";
 
 interface custom_props {
   post_type: post_type;
-
   is_connected: boolean;
   connected_address: string | undefined;
 
@@ -27,6 +27,10 @@ interface custom_props {
   on_forum_comment?: {
     comment_data: (details: create_comment_post_data) => Promise<void>;
     post_id: number | null | undefined;
+  }
+
+  on_chat?: {
+    chat_data: (details: create_chat_data) => Promise<void>;
   }
 }
 
@@ -56,8 +60,10 @@ interface custom_props {
  *   - send comment   = unknown
  */
 const PostCreation: FC <custom_props> = ({
-  post_type, is_connected, connected_address, on_forum_post_create, on_community_post_create, on_forum_comment
+  post_type, is_connected, connected_address, on_forum_post_create, on_community_post_create, on_forum_comment, on_chat
 }) => {
+  const themed = useThemedProps();
+
   /** @modals */
   const [finbytemd_modal_open, set_finbytemd_modal_open] = useState(false);
   const [emoji_modal_open, set_emoji_modal_open] = useState(false);
@@ -75,25 +81,6 @@ const PostCreation: FC <custom_props> = ({
 
   type create_post_states = "check-passed" | "check-fail" | "check-pending";
   const [query_status, set_query_status] = useState<create_post_states>('check-pending');
-
-  const request_template =
-  `# <Project Name>
-
-  ***
-
-  - *Name:* <name of the project>
-  - *Description:* <describe the project>
-  - *Category:* <chose one main category i.e: 'Communications' or 'Meme'>
-  - *Ticker:* $<ticker>
-  - *Policy ID:* <policy id>
-  - *Fingerprint:* <asset fingerprint>
-  - *Discord:* <url>
-  - *Github:* <url>
-  - *Reddit:* <url>
-  - *Telegram:* <url>
-  - *Website:* <url>
-  - *X/Twitter:* <url>
-  `;
 
   const [post_query_tag, set_post_query_tag] = useState('');
   const [post_query_title, set_post_query_title] = useState('');
@@ -175,12 +162,19 @@ const PostCreation: FC <custom_props> = ({
         toast.error('Comment is too long');
         return false;
       }
+    } else if (post_type === 'chat') {
+      if (comment_too_small) {
+        toast.error('Comment is too small');
+        return false;
+      } else if (comment_too_long) {
+        toast.error('Comment is too long');
+        return false;
+      }
     }
   
     toast.success("Post seems good!");
-    return true;  // Return true when the post is valid
+    return true;
   }
-  
 
   const attempt_send = async () => {
     const timestamp = Math.floor(Date.now() / 1000);
@@ -228,9 +222,19 @@ const PostCreation: FC <custom_props> = ({
 
       await on_forum_comment.comment_data(sending_data);
       clear_post();
+    } else if (on_chat && post_type === 'chat') {
+      const sending_data: create_chat_data = {
+        post: post_query_post,
+        author: connected_address,
+        ada_handle: ada_handle,
+        timestamp: timestamp,
+      }
+
+      await on_chat.chat_data(sending_data);
+      clear_post();
     }
   }
-  
+
   const toggle_preview_post = () => {
     set_preview_post(!preview_post);
   }
@@ -238,7 +242,7 @@ const PostCreation: FC <custom_props> = ({
   return (
     <>
       <div className="relative">
-        <div className={`${!is_connected ? 'blur-sm' : ''} px-2`}>
+        <div className={`${!is_connected ? 'blur-sm' : ''} px-2 flex flex-col w-full gap-2`}>
           <CreatePostInputTypes
             post_type={post_type}
             post_query={post_query}
@@ -259,8 +263,8 @@ const PostCreation: FC <custom_props> = ({
 
         {!is_connected && (
           <div className="absolute inset-0 flex items-center justify-center bg-opacity-50 z-2">
-            <div className="cursor-default bg-neutral-900 border border-neutral-700 p-2 px-4 rounded-lg shadow-lg shadow-neutral-950/80 text-center">
-              <p className="text-neutral-300">Please connect your wallet</p>
+            <div className={`cursor-default ${themed['900'].bg} border ${themed['700'].border} p-2 px-4 rounded-lg shadow-lg ${themed['950'].shadow} text-center`}>
+              <p className={`${themed['300'].text}`}>Please connect your wallet.</p>
             </div>
           </div>
         )}

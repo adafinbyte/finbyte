@@ -1,20 +1,25 @@
-import ComboBox from "@/components/combobox";
-import { update_username } from "@/utils/api/account/push";
-import { ADAHANDLE_POLICY } from "@/utils/consts";
+import { FC, useEffect, useState } from "react";
 import { AssetExtended, checkSignature, generateNonce } from "@meshsdk/core";
 import { useWallet } from "@meshsdk/react";
 import { Save } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+import ComboBox from "@/components/combobox";
+
+import useThemedProps from "@/contexts/themed-props";
+
+import { update_username } from "@/utils/api/account/push";
+import { ADAHANDLE_POLICY } from "@/utils/consts";
+
 interface custom_props {
-  connected_address: string;
   refresh_data: () => Promise<void>;
 }
 
 const WalletModalAccountSettings: FC <custom_props> = ({
-  connected_address, refresh_data
+  refresh_data
 }) => {
+  const themed = useThemedProps();
+
   const [found_handles, set_found_handles] = useState<AssetExtended[] | null>(null);
   const [chosen_handle, set_chosen_handle] = useState<string | null>(null);
 
@@ -69,27 +74,28 @@ const WalletModalAccountSettings: FC <custom_props> = ({
   return (
     <div className='flex flex-col text-center gap-2'>
       <div className="flex flex-col gap-1 w-full text-left mt-2">
+        <h1 className={`${themed['400'].text} font-semibold text-left text-xs`}>
+          Change Username
+        </h1>
+
         {found_handles && found_handles.length > 0 ?
           <div className="mb-2 flex flex-col w-full gap-1">
-            <h1 className="text-sm text-neutral-400 font-semibold">
-              Would you like to change your username to a different AdaHandle?
-            </h1>
-
             <div className="flex justify-between mt-2">
               <ComboBox items={found_handles.map(a => decodeHex(a.assetName))} placeholder="Select a AdaHandle..." selected={chosen_handle_state}/> 
 
               <div className="text-xs mx-auto">
-                <button className="p-2 hover:bg-neutral-800 rounded-lg inline-flex items-center gap-2" onClick={save_username}>
+                <button className={`p-2 ${themed.effects.transparent_button.hover} rounded-lg inline-flex items-center gap-2`} onClick={save_username}>
                   Save Username
                   <Save size={16}/>
                 </button>
               </div>
             </div>
-
-            
           </div>
           :
-          <></>
+          <div className={`${themed['300'].text} text-sm`}>
+            You cannot change your username as you don't own any AdaHandles.<br/>
+            Want one? <a href="https://handle.me/" target="_blank" className="font-semibold px-1">Mint one here</a>.
+          </div>
         }
 
       </div>

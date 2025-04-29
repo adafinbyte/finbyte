@@ -1,3 +1,4 @@
+import useThemedProps from "@/contexts/themed-props";
 import { admin_addresses, moderation_addresses } from "@/utils/consts";
 import { useWallet } from "@meshsdk/react";
 import { Ban, FilePlus, RefreshCw } from "lucide-react";
@@ -21,6 +22,7 @@ interface custom_props {
 const ForumsActions: FC <custom_props> = ({
   refresh_action, tab_state, create_state
 }) => {
+  const themed = useThemedProps();
   const use_wallet = useWallet();
   const is_admin = admin_addresses.includes(use_wallet.address);
   const is_moderator = moderation_addresses.includes(use_wallet.address);
@@ -54,9 +56,9 @@ const ForumsActions: FC <custom_props> = ({
       {default_actions.map((action, index) => {
         const is_disabled = index === 1 ? (is_admin || is_moderator) ? false : disabled : false;
         const action_style = `
-          p-1 px-2 duration-300 rounded-lg text-neutral-400 inline-flex gap-2 items-center
-          text-sm border border-neutral-700 bg-neutral-900
-          ${is_disabled ? 'opacity-50' : 'hover:bg-neutral-800 active:bg-neutral-800/60'}
+          p-1 px-2 duration-300 rounded-lg ${themed['400'].text} inline-flex gap-2 items-center
+          text-sm border ${themed['700'].border} ${themed['900'].bg}
+          ${is_disabled ? 'opacity-50' : 'hover:' + themed['800'].bg + ' active:' + themed['800'].bg + '/60'}
         `;
 
         return (

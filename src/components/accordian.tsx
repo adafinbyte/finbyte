@@ -93,7 +93,7 @@ export function AccordionItem({
   return (
     <div
       data-active={isActive || undefined}
-      className={`overflow-hidden my-1 rounded-xl ${
+      className={`overflow-hidden ${
         isActive
           ? 'active border border-neutral-700 bg-neutral-800'
           : 'bg-transparent border border-neutral-700'

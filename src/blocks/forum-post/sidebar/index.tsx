@@ -1,13 +1,13 @@
 import { fetched_forum_post_data } from "@/utils/api/interfaces";
 import { HandCoins, Heart, RefreshCw, Share } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import { useWallet } from "@meshsdk/react";
 import ForumPostAboutAuthor from "./about-author";
 import { author_data } from "@/utils/api/account/fetch";
-import ShareModal from "@/components/modals/share";
 import { Transaction } from "@meshsdk/core";
 import { update_tip_tx_hashes } from "@/utils/api/push";
 import toast from "react-hot-toast";
+import useThemedProps from "@/contexts/themed-props";
 
 interface custom_props {
   post: fetched_forum_post_data;
@@ -30,6 +30,7 @@ interface custom_props {
 const ForumPostSidebar: FC <custom_props> = ({
   post, refresh_post, refresh_status, author_data, modals
 }) => {
+  const themed = useThemedProps();
   const use_wallet = useWallet();
   const wallet = use_wallet.wallet;
 
@@ -66,39 +67,42 @@ const ForumPostSidebar: FC <custom_props> = ({
     }
   }
 
+  const action_button_class_wallet = `${use_wallet.connected ? `hover:${themed['800'].bg} active:${themed['800'].bg}/60` : 'opacity-50'} border ${themed['700'].border} ${themed['900'].bg} p-1 px-2 text-xs rounded-lg flex justify-between items-center`
+  const action_button_class = `border ${themed['700'].border} ${themed['900'].bg} hover:${themed['800'].bg} active:${themed['800'].bg}/60 p-1 px-2 text-xs rounded-lg flex justify-between items-center`
+
   return (
     <>
-      <div className="flex flex-col gap-2 w-full">
+      <div className={`flex flex-col gap-2 w-full ${themed['300'].text}`}>
         <ForumPostAboutAuthor
           author_details={author_data}
           post={post}
         />
 
-        <hr className="border-neutral-700 my-2"/>
+        <hr className={`${themed['700'].border}`}/>
 
-        <div className="grid grid-cols-4 gap-2">
-          <button title="Tip Post 1 ADA" onClick={handle_tip_post} disabled={!use_wallet.connected} className={`${use_wallet.connected ? '' : 'opacity-50'} col-span-2 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800/60 p-1 px-2 text-xs rounded-lg flex justify-between items-center`}>
+        <div className="grid grid-cols-2 gap-2">
+          <button title={`${!use_wallet.connected ? 'Connect your wallet to tip' : 'Tip 1 ADA'}`} onClick={handle_tip_post} disabled={!use_wallet.connected} className={action_button_class_wallet}>
             Tip Post
             <HandCoins size={12} />
           </button>
 
-          <button title={`${!use_wallet.connected ? 'Connect your wallet to interact' : 'Like/Unlike Post'}`} onClick={() => modals.like.set_state(true)} disabled={!use_wallet.connected} className={`${use_wallet.connected ? '' : 'opacity-50'} col-span-2 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800/60 p-1 px-2 text-xs rounded-lg flex justify-between items-center`}>
+          <button title={`${!use_wallet.connected ? 'Connect your wallet to interact' : 'Like/Unlike Post'}`} onClick={() => modals.like.set_state(true)} disabled={!use_wallet.connected} className={action_button_class_wallet}>
             {post.post_likers?.includes(use_wallet.address) ? 'Unlike Post' : 'Like Post'}
             <Heart size={12} className={post.post_likers?.includes(use_wallet.address) ? 'fill-rose-400 text-rose-400' : ''}/>
           </button>
 
-          <button title="Refresh Post" onClick={refresh_post} className="col-span-2 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800/60 p-1 px-2 text-xs rounded-lg flex justify-between items-center">
+          <button title="Refresh Post" onClick={refresh_post} className={action_button_class}>
             Refresh Post
             <RefreshCw size={12} className={refresh_status ? "animate-spin" : ""}/>
           </button>
 
-          <button title="Share Post" onClick={() => modals.share.set_state(true)} className="col-span-2 border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-800/60 p-1 px-2 text-xs rounded-lg flex justify-between items-center">
+          <button title="Share Post" onClick={() => modals.share.set_state(true)} className={action_button_class}>
             Share Post
             <Share size={12}/>
           </button>
         </div>
 
-        <hr className="border-neutral-700 my-2"/>
+        <hr className={`${themed['700'].border}`}/>
       </div>
 
     </>

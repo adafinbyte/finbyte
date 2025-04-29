@@ -7,6 +7,7 @@ export const databases = {
   forum_posts:     "Forum Posts",
   notifications:   "Finbyte Interactions",
   forum_comments:  "Forum Comments",
+  chat:            "Finbyte Chat",
   //community_likes:
 };
 

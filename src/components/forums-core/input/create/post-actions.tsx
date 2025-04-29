@@ -1,3 +1,4 @@
+import useThemedProps from "@/contexts/themed-props";
 import { Check, Eraser, Glasses, SearchCode, Send, Smile, X } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react"
 import toast from "react-hot-toast";
@@ -22,18 +23,19 @@ interface custom_props {
 const PostActions: FC <custom_props> = ({
   query_status, finbytemd_modal, emoji_modal, clear_post, check_post, preview_post, send_post, on_cancel
 }) => {
+  const themed = useThemedProps();
   const icon_size = 16;
   const post_actions = [
-    {
-      title: 'FinbyteMD Guide',
-      icon: <svg role="img" className="fill-current size-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.27 19.385H1.73A1.73 1.73 0 010 17.655V6.345a1.73 1.73 0 011.73-1.73h20.54A1.73 1.73 0 0124 6.345v11.308a1.73 1.73 0 01-1.73 1.731zM5.769 15.923v-4.5l2.308 2.885 2.307-2.885v4.5h2.308V8.078h-2.308l-2.307 2.885-2.308-2.885H3.46v7.847zM21.232 12h-2.309V8.077h-2.307V12h-2.308l3.461 4.039z" /></svg>,
-      action: () => finbytemd_modal.set_state(true)
-    },
-    {
-      title: 'Emoji Guide',
-      icon: <Smile size={icon_size}/>,
-      action: () => emoji_modal.set_state(true)
-    },
+//    {
+//      title: 'FinbyteMD Guide',
+//      icon: <svg role="img" className="fill-current size-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.27 19.385H1.73A1.73 1.73 0 010 17.655V6.345a1.73 1.73 0 011.73-1.73h20.54A1.73 1.73 0 0124 6.345v11.308a1.73 1.73 0 01-1.73 1.731zM5.769 15.923v-4.5l2.308 2.885 2.307-2.885v4.5h2.308V8.078h-2.308l-2.307 2.885-2.308-2.885H3.46v7.847zM21.232 12h-2.309V8.077h-2.307V12h-2.308l3.461 4.039z" /></svg>,
+//      action: () => finbytemd_modal.set_state(true)
+//    },
+//    {
+//      title: 'Emoji Guide',
+//      icon: <Smile size={icon_size}/>,
+//      action: () => emoji_modal.set_state(true)
+//    },
     {
       title: 'Clear Post',
       icon: <Eraser size={icon_size}/>,
@@ -60,7 +62,7 @@ const PostActions: FC <custom_props> = ({
     },
     {
       title: 'Sign & Send Post',
-      icon: <Send size={icon_size} className="text-neutral-200"/>,
+      icon: <Send size={icon_size} className={`${themed['200'].text}`}/>,
       action: send_post
     },
   ];
@@ -78,14 +80,14 @@ const PostActions: FC <custom_props> = ({
   return (
     <div className="flex gap-1 items-center">
       {post_actions.map((action, index) => (
-        <button key={index} onClick={action.action} title={action.title} className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-300 hover:text-blue-400 duration-200">
+        <button key={index} onClick={action.action} title={action.title} className={`p-2 ${themed.effects.transparent_button.hover} rounded-lg ${themed['300'].text} duration-200`}>
           {action.icon}
         </button>
       ))}
 
       <div className="inline-flex gap-1 items-center ml-auto">
         {dynamic_end_actions.map((action, index) => (
-          <button key={index} onClick={action.action} title={action.title} className={`${action.title === 'Sign & Send Post' ? "bg-blue-500 hover:bg-blue-400 active:bg-blue-500/80" : "text-neutral-300 hover:text-blue-400 hover:bg-neutral-800"} p-2 rounded-lg duration-200`}>
+          <button key={index} onClick={action.action} title={action.title} className={`${action.title === 'Sign & Send Post' ? "bg-blue-500 hover:bg-blue-400 active:bg-blue-500/80" : `${themed['300'].text} ${themed.effects.transparent_button.hover}`} p-2 rounded-lg duration-200`}>
             {action.icon}
           </button>
         ))}

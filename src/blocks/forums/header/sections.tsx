@@ -1,6 +1,7 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, ReactNode, SetStateAction } from "react";
 import { ALargeSmall, Box, GitMerge, GitPullRequest, Megaphone, MessagesSquare } from "lucide-react";
 import { post_with_comments } from "@/utils/api/interfaces";
+import useThemedProps from "@/contexts/themed-props";
 
 interface custom_props {
   post_data: post_with_comments[] | null;
@@ -10,62 +11,40 @@ interface custom_props {
     set_state: Dispatch<SetStateAction<number>>;
   }
 
+  tab_details: {
+    id: number;
+    title: string;
+    icon: ReactNode;
+    data: number;
+  }[];
 }
 
 const ForumsSidebarSections: FC <custom_props> = ({
-  post_data, tab_action
+  post_data, tab_action, tab_details
 }) => {
-  const icon_size = 16;
-  const sidebar_sections = [
-    {
-      id: 1,
-      title: "All Posts",
-      icon: <ALargeSmall size={icon_size} />,
-      data: post_data ? post_data.length : 0
-    },
-    {
-      id: 2,
-      title: "#General",
-      icon: <MessagesSquare size={icon_size} />,
-      data: post_data ? post_data.flat().filter(pwc => pwc.post.section === "general").length : 0
-    },
-    {
-      id: 3,
-      title: "#Requests",
-      icon: <Megaphone size={icon_size} />,
-      data: post_data ? post_data.filter(pwc => pwc.post.section === "requests").length : 0,
-    },
-    {
-      id: 4,
-      title: "#Chatterbox",
-      icon: <Megaphone size={icon_size} />,
-      data: post_data ? post_data.filter(pwc => pwc.post.section === "chatterbox").length : 0,
-    },
-    {
-      id: 5,
-      title: "#Finbyte",
-      icon: <img src='/finbyte.png' className='size-4' />,
-      data: post_data ? post_data.flat().filter(pwc => pwc.post.section === "finbyte").length : 0
-    },
-  ];
+  const themed = useThemedProps();
+
+  const finbyte_section = `border ${themed['900'].border}`;
+  const active = `${themed['200'].text} ${themed['900'].bg} hover:${themed['800'].bg}`
+  const inactive = `hover:${themed['900'].bg}`
 
   const create_button_style = (tab_id: number) => (
     `
-      ${tab_id === tab_action.state ? "bg-neutral-900 text-neutral-200" : ""}
-      ${tab_id === 5 ? 'bg-blue-950/60 hover:bg-blue-950' : 'hover:bg-neutral-800'}
+      ${tab_id === tab_action.state ? active : inactive}
+      ${tab_id === 5 ? finbyte_section : ''}
       p-2
       inline-flex
       gap-2
       items-center
       duration-300
-      hover:text-neutral-300
+      hover:${themed['300'].text}
       rounded-lg
     `
   )
 
   return (
-    <div className="grid lg:grid-cols-5 lg:w-[80%] lg:mx-auto gap-2 text-sm text-neutral-400">
-      {sidebar_sections.map((section, index) => (
+    <div className={`flex flex-wrap items-center justify-center lg:justify-start gap-1 text-sm ${themed['400'].text}`}>
+      {tab_details.map((section, index) => (
         <button
           key={index}
           title={section.title}

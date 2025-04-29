@@ -14,7 +14,6 @@ const UserAvatar: FC <custom_props> = ({
 }) => {
 
   const default_hexes = ["#5b1d99", "#0074b4", "#00b34c", "#ffd41f", "#fc6e3d"];
-  const blue_hexes = []
 
   return (
     <div className={`inline-flex relative ${skeleton && "animate-pulse"}`} {...props}>

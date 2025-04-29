@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction } from "react";
 
 import FinbyteMarkdown from "@/components/finbytemd";
 
-import { fetched_comment_post_data, fetched_community_post_data, fetched_forum_post_data, post_with_comments } from "@/utils/api/interfaces";
+import { fetched_chat_post_data, fetched_comment_post_data, fetched_community_post_data, fetched_forum_post_data, post_with_comments } from "@/utils/api/interfaces";
 import { capitalize_first_letter } from "@/utils/string-tools";
 
 interface custom_props {
@@ -19,6 +19,10 @@ interface custom_props {
   community_post?: {
     post: fetched_community_post_data;
   };
+  
+  chat_post?: {
+    post: fetched_chat_post_data;
+  }
 
   show_original: {
     state: boolean;
@@ -27,22 +31,21 @@ interface custom_props {
 }
 
 const ForumPostComponentViewPost: FC <custom_props> = ({
-  preview, forum_post, forum_comment, community_post, show_original
+  preview, forum_post, forum_comment, community_post, chat_post, show_original
 }) => {
   const fp_post = forum_post?.post.post.updated_post ? forum_post.post.post.updated_post : forum_post?.post.post.post;
   const fc_post = forum_comment?.post.updated_post ? forum_comment.post.updated_post : forum_comment?.post.post;
   const cp_post = community_post?.post.updated_post ? community_post.post.updated_post : community_post?.post.post;
+  const c_post = chat_post?.post.updated_post ? chat_post.post.updated_post : chat_post?.post.post;
 
-  const post_to_show = (fp_post || fc_post || cp_post) as string;
-
-  const original_post = forum_post?.post.post.post || forum_comment?.post.post || community_post?.post.post;
-  const edited_post = forum_post?.post.post.updated_post || forum_comment?.post.updated_post || community_post?.post.updated_post;
+  const post_to_show = (fp_post || fc_post || cp_post || c_post) as string;
+  const original_post = forum_post?.post.post.post || forum_comment?.post.post || community_post?.post.post || chat_post?.post.post;
 
   return (
-    <div className="flex flex-col w-full gap-1 lg:gap-2">
-      <span className="flex w-full items-center font-semibold text-blue-400">
-        {fp_post && (
-          preview ?
+    <div className="flex flex-col w-full gap-1 lg:gap-2 p-2 lg:px-4">
+      {fp_post &&
+        <span className="flex w-full items-center font-semibold text-blue-400">
+          {preview ?
             <span className="text-lg">
               {forum_post?.post.post.title}
             </span>
@@ -50,9 +53,9 @@ const ForumPostComponentViewPost: FC <custom_props> = ({
             <span className="mx-auto text-xl">
               {forum_post?.post.post.title}
             </span>
-          )
-        }
-      </span>
+          }
+        </span>
+      }
 
       <div className={`text-left flex flex-col w-full gap-1 break-normal ${preview ? 'text-sm p-2 max-h-20 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:bg-neutral-500' : ''}`}>
         {preview ?

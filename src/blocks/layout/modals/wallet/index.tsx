@@ -11,6 +11,7 @@ import { checkSignature, generateNonce } from '@meshsdk/core';
 import toast from 'react-hot-toast';
 import { create_user_account } from '@/utils/api/account/push';
 import { author_data, fetch_author_data } from '@/utils/api/account/fetch';
+import useThemedProps from '@/contexts/themed-props';
 
 interface custom_props {
   is_modal_open: boolean;
@@ -33,6 +34,7 @@ const WalletModal: FC <custom_props> = ({
     };
   }, [is_modal_open]);
 
+  const themed = useThemedProps();
   const use_wallet = useWallet();
   const wallet = use_wallet.wallet;
 
@@ -41,7 +43,8 @@ const WalletModal: FC <custom_props> = ({
   const [account_stats, set_account_stats] = useState<stat[]>();
 
   const [active_tab, set_active_tab] = useState<number>(0);
-  const finbyte_user = account_data && account_data.accountData !== null ? true : false;
+  const is_finbyte_user = account_data && account_data.accountData !== null ? true : false;
+  const finbyte_username = account_data?.accountData?.ada_handle ?? null;
 
   const get_user_details = async () => {
     const account = await fetch_author_data(use_wallet.address);
@@ -73,7 +76,7 @@ const WalletModal: FC <custom_props> = ({
   }
 
   const create_finbyte_account = async (details: create_account_data) => {
-    if (!use_wallet.address || finbyte_user) { return; } else {
+    if (!use_wallet.address || is_finbyte_user) { return; } else {
       try {
         const signing_string = `${use_wallet.address} is signing this message to confirm Finbyte account creation.`;
         const nonce = generateNonce(signing_string);
@@ -114,19 +117,22 @@ const WalletModal: FC <custom_props> = ({
   }
 
   useEffect(() => {
-    get_user_details();
-  }, []);
+    if (use_wallet.connected) {
+      get_user_details();
+    }
+  }, [use_wallet.connected]);
 
   const overview =
     <WalletModalOverview
       connected_address={use_wallet.address}
       stats={account_stats}
-      finbyte_user={finbyte_user}
+      is_finbyte_user={is_finbyte_user}
+      finbyte_username={finbyte_username}
       account_data={account_data}
+      close_modal={close_modal}
     />;
   const settings =
     <WalletModalAccountSettings
-      connected_address={use_wallet.address}
       refresh_data={get_user_details}
     />;
   const create_user =
@@ -140,60 +146,59 @@ const WalletModal: FC <custom_props> = ({
   const create_user_desc = "Create your Finbyte Account with AdaHandle support.";
 
   return (
-    <div className="inline-flex">
-      {/* Modal */}
-      <div
-        className={`fixed inset-0 bg-neutral-900 bg-opacity-80 flex justify-center items-center z-[999] transition-opacity duration-300 ease-out ${
-          is_modal_open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        <div className="flex flex-col min-h-80 max-h-96 text-left bg-neutral-900 border border-neutral-800 shadow-sm shadow-neutral-700/20 rounded-lg w-9/12 sm:w-7/12 md:w-5/12 lg:w-3/12 scale-95 transition-transform duration-300 ease-out">
-          {/* Modal Header */}
-          <div className="border-b border-neutral-800 p-4 flex justify-between items-start">
-            <div className="flex flex-col">
-              <div className='inline-flex items-center gap-1'>
-                <PlugZap size={20} className='text-blue-400'/>
-                <h1 className="text-lg text-neutral-300 font-semibold">Wallet</h1>
-              </div>
-
-              <p className="text-sm text-neutral-500">
-                {active_tab === 0 && overview_desc}
-                {active_tab === 1 && settings_desc}
-                {active_tab === 2 && create_user_desc}
-              </p>
+    <div
+      className={`
+        fixed inset-0 z-[999] ${themed['900'].bg} bg-opacity-80 flex justify-center items-center
+        transition-opacity duration-300 ease-out
+        ${is_modal_open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+      `}
+    >
+      <div className={`${themed['900'].bg} border ${themed['700'].border} shadow-lg ${themed['950'].shadow} rounded-lg w-5/6 lg:w-1/3 scale-95 transition-transform duration-300 ease-out`}>
+        {/* Modal Header */}
+        <div className={`border-b ${themed['700'].border} p-4 flex justify-between items-center items-start`}>
+          <div className="flex flex-col">
+            <div className='inline-flex items-center gap-2'>
+              <PlugZap size={20} className='text-blue-400'/>
+              <h1 className={`text-lg ${themed['300'].text} font-semibold`}>Wallet</h1>
             </div>
 
-            <button onClick={close_modal} title='Close Modal' className='p-2 hover:bg-neutral-800 rounded-lg'>
-              <X size={16} className='text-rose-400'/>
-            </button>
+            <p className={`text-sm ${themed['500'].text}`}>
+              {active_tab === 0 && overview_desc}
+              {active_tab === 1 && settings_desc}
+              {active_tab === 2 && create_user_desc}
+            </p>
           </div>
 
+          <button onClick={close_modal} title='Close Modal' className={`p-2 ${themed.effects.transparent_button.hover} rounded-lg`}>
+            <X size={18} className='text-rose-400'/>
+          </button>
+        </div>
+
           {/* Modal Body */}
-          <div className="p-4 text-neutral-300 flex-grow h-80 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:bg-neutral-500">
+          <div className={`p-4 pr-4 ${themed['300'].text} flex-grow h-64 ${themed.webkit_scrollbar}`}>
             {active_tab === 0 && overview}
             {active_tab === 1 && settings}
             {active_tab === 2 && create_user}
           </div>
 
           {/* Modal Footer */}
-          <div className="text-xs border-t border-neutral-800 p-4 flex items-center gap-1">
-            <button className='p-2 hover:bg-neutral-800 rounded-lg' disabled={active_tab === 0} title='Overview' onClick={active_tab === 0 ? undefined : () => set_active_tab(0)}>
-              <Home size={16}/>
+          <div className={`text-xs border-t ${themed['700'].border} p-4 flex items-center gap-1 ${themed['400'].text}`}>
+            <button className={`p-2 rounded-lg ${active_tab === 0 ? 'opacity-50' : themed.effects.transparent_button.hover}`} disabled={active_tab === 0} title='Overview' onClick={active_tab === 0 ? undefined : () => set_active_tab(0)}>
+              <Home size={18}/>
             </button>
 
-            {finbyte_user ?
-              <button className='p-2 hover:bg-neutral-800 rounded-lg' disabled={active_tab === 1} title='Settings' onClick={active_tab === 1 ? undefined : () => set_active_tab(1)}>
-                <Settings size={16}/>
+            {is_finbyte_user ?
+              <button className={`p-2 rounded-lg ${active_tab === 1 ? 'opacity-50' : themed.effects.transparent_button.hover}`} disabled={active_tab === 1} title='Settings' onClick={active_tab === 1 ? undefined : () => set_active_tab(1)}>
+                <Settings size={18}/>
               </button>
               :
-              <button className='p-2 hover:bg-neutral-800 rounded-lg' disabled={active_tab === 2} title='Create Account' onClick={active_tab === 2 ? undefined : () => set_active_tab(2)}>
-                <UserPlus size={16}/>
+              <button className={`p-2 rounded-lg ${active_tab === 2 ? 'opacity-50' : themed.effects.transparent_button.hover}`} disabled={active_tab === 2} title='Create Account' onClick={active_tab === 2 ? undefined : () => set_active_tab(2)}>
+                <UserPlus size={18}/>
               </button>
             }
 
           </div>
         </div>
-      </div>
     </div>
   );
 };

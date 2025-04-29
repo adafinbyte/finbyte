@@ -2,6 +2,7 @@ import { FC, useEffect } from 'react';
 import { Check, Copy, HeartHandshake, Share, Trash, X } from 'lucide-react';
 import FormatAddress from '../format-address';
 import { copy_to_clipboard } from '@/utils/string-tools';
+import useThemedProps from '@/contexts/themed-props';
 
 interface custom_props {
   is_modal_open: boolean;
@@ -25,6 +26,8 @@ const DeleteModal: FC <custom_props> = ({
     };
   }, [is_modal_open]);
 
+  const themed = useThemedProps();
+
   const handle_action = async () => {
     await on_delete();
     close_modal();
@@ -33,12 +36,12 @@ const DeleteModal: FC <custom_props> = ({
   return (
     <div
       className={`
-        fixed inset-0 z-[999] bg-neutral-900 bg-opacity-80 flex justify-center items-center
+        fixed inset-0 z-[999] ${themed['900'].bg} bg-opacity-80 flex justify-center items-center
         transition-opacity duration-300 ease-out
         ${is_modal_open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
       `}
     >
-      <div className="bg-neutral-900 border border-neutral-800 shadow-md shadow-neutral-950/40 rounded-lg w-9/12 sm:w-7/12 md:w-5/12 lg:w-3/12 scale-95 transition-transform duration-300 ease-out">
+      <div className={`${themed['900'].bg} border ${themed['700'].border} shadow-lg ${themed['950'].shadow} rounded-lg w-5/6 lg:w-1/3 scale-95 transition-transform duration-300 ease-out`}>
         {/* Modal Header */}
         <div className="border-b border-neutral-800 p-4 flex justify-between items-center items-start">
           <div className="flex flex-col">

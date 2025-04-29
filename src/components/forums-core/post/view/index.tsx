@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction } from "react";
 
 import ForumPostComponentViewPost from "./post";
 
-import { edit_post_data, fetched_comment_post_data, fetched_community_post_data, fetched_forum_post_data, post_with_comments } from "@/utils/api/interfaces";
+import { edit_post_data, fetched_chat_post_data, fetched_comment_post_data, fetched_community_post_data, fetched_forum_post_data, post_with_comments } from "@/utils/api/interfaces";
 import ForumPostComponentViewEdit from "./edit";
 import ForumPostComponentViewDetails from "./details";
 
@@ -25,6 +25,10 @@ interface custom_props {
     post: fetched_community_post_data;
   };
 
+  chat_post?: {
+    post: fetched_chat_post_data;
+  }
+
   show_original: {
     state: boolean;
     set_state: Dispatch<SetStateAction<boolean>>;
@@ -34,9 +38,8 @@ interface custom_props {
 }
 
 const ForumPostComponentView: FC <custom_props> = ({
-  current_view, preview, forum_post, forum_comment, community_post, show_original, on_edit
+  current_view, preview, forum_post, forum_comment, community_post, chat_post, show_original, on_edit
 }) => {
-  const post = forum_post?.post.post || forum_comment?.post || community_post?.post;
 
   return (
     <div className="">
@@ -46,6 +49,7 @@ const ForumPostComponentView: FC <custom_props> = ({
           forum_post={forum_post}
           forum_comment={forum_comment}
           community_post={community_post}
+          chat_post={chat_post}
           show_original={show_original}
         />
       )}
@@ -55,6 +59,7 @@ const ForumPostComponentView: FC <custom_props> = ({
           forum_post={forum_post}
           forum_comment={forum_comment}
           community_post={community_post}
+          chat_post={chat_post}
           on_edit={on_edit}
           reset_view={() => current_view.set_state('post')}
         />
@@ -65,6 +70,7 @@ const ForumPostComponentView: FC <custom_props> = ({
           forum_post={forum_post}
           forum_comment={forum_comment}
           community_post={community_post}
+          chat_post={chat_post}
         />
       )}
     </div>

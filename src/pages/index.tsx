@@ -4,7 +4,7 @@ import Homepage from "@/blocks/homepage";
 
 export default function Home() {
   return (
-    <div className="bg-neutral-950 w-full text-white text-center">
+    <div className="w-full text-white text-center">
       <Head>
         <title>Mesh App on Cardano</title>
         <meta name="description" content="A Cardano dApp powered my Mesh" />
