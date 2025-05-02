@@ -8,3 +8,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /** @blockfrost */
 export const blockfrost_key = process.env.NEXT_PUBLIC_BLOCKFROST_KEY || '';
+
+/** @discord */
+export const discord_webhook_ping = process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_PING || '';
