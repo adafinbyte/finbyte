@@ -1,21 +1,22 @@
 import { FC } from "react"
+import FinbyteDocs from "./docs";
+import FinbyteDevelopment from "./development";
+import useThemedProps from "@/contexts/themed-props";
+import FinbytePlatformUsers from "./platform-users";
 
 const FinbyteBlock: FC = () => {
+  const themed = useThemedProps();
 
   return (
-    <div className="p-2 lg:p-14 flex flex-col w-full gap-4 mt-4 text-neutral-400">
-      <div className="grid lg:grid-cols-2 gap-4">
-        <div>
-          here, we should include our recent progress on the platform.
-          This could include newly curated tokens by the community,
-          general updates, team news etc.
-
-          We should also create some for of kanban in order to keep track
-          of certain tasks.
+    <div className="p-4 lg:p-14 flex flex-col w-full gap-4">
+      <div className="grid lg:grid-cols-2 gap-4" style={{ placeItems: 'start'}}>
+        <div className="flex flex-col w-full gap-4">
+          <FinbyteDocs/>
+          <FinbytePlatformUsers/>
         </div>
 
-        <div>
-          new to finbyte?
+        <div className="flex flex-col w-full gap-4">
+          <FinbyteDevelopment/>
         </div>
       </div>
     </div>

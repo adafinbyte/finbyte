@@ -88,17 +88,19 @@ const Communities: FC = () => {
   }, [found_token]);
 
   return found_token ? (
-    <div className="mt-4 lg:mt-10">
-      <div className="flex flex-col lg:flex-row gap-2 lg:px-20 p-2 justify-center">
-        <CommunitySidebar
-          token={found_token}
-          tab_list={tab_list}
-          active_tab={active_tab}
-          set_tab={set_active_tab}
-          post_length={community_posts ? community_posts.length : 0}
-        />
+    <div className="p-2 mt-2 lg:mt-10">
+      <div className="lg:px-24 p-2 grid lg:grid-cols-5 gap-4">
+        <span>
+          <CommunitySidebar
+            token={found_token}
+            tab_list={tab_list}
+            active_tab={active_tab}
+            set_tab={set_active_tab}
+            post_length={community_posts ? community_posts.length : 0}
+          />
+        </span>
 
-        <div className="lg:w-[70%]">
+        <div className="lg:col-span-4">
           <CommunityView
             active_tab={active_tab}
             token={found_token}

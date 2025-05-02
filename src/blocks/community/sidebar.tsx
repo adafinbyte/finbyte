@@ -1,4 +1,3 @@
-import CuratorsModal from "@/components/modals/curators";
 import RepCommunityModal from "@/components/modals/rep-community";
 import SocialIcon from "@/components/social-icons";
 import { FinbyteContext } from "@/contexts";
@@ -32,7 +31,6 @@ const CommunitySidebar: FC <custom_props> = ({
   const wallet = use_wallet.wallet;
 
   const [finbyte_user, set_finbyte_user] = useState(false);
-  const [show_curators, set_show_curators] = useState(false);
   const [community_badge, set_community_badge] = useState<string | undefined>(undefined);
 
   const get_user_details = async () => {
@@ -91,7 +89,7 @@ const CommunitySidebar: FC <custom_props> = ({
 
   return (
     <>
-      <div style={{ placeSelf: 'start'}} className={`w-full lg:w-64 flex flex-col text-right rounded-lg border ${themed['700'].border}`}>
+      <div style={{ placeSelf: 'start'}} className={`w-full flex flex-col text-right rounded-lg border ${themed['700'].border}`}>
         <div className={`flex gap-2 items-center justify-between p-2 border-b ${themed['700'].border}`}>
           <img src={token.images.logo} className="size-12 rounded-lg"/>
 
@@ -141,10 +139,6 @@ const CommunitySidebar: FC <custom_props> = ({
               className={`${(!finbyte_user || community_badge === '$' + token.token_details.ticker || !use_wallet.connected) ? 'opacity-50' : themed.effects.transparent_button.hover} duration-150 ${themed['300'].text} text-xs inline-flex ${themed['900'].bg} px-2 py-1 rounded-lg border ${themed['700'].border}`}>
               Represent ${token.token_details.ticker}
             </button>
-
-            <button onClick={() => set_show_curators(true)} className={`${themed.effects.transparent_button.hover} duration-150 ${themed['300'].text} text-xs inline-flex ${themed['900'].bg} px-2 py-1 rounded-lg border ${themed['700'].border}`}>
-              Curators
-            </button>
           </div>
         </div>
 
@@ -158,18 +152,18 @@ const CommunitySidebar: FC <custom_props> = ({
         )}
       </div>
 
+      {token.images.header && (
+        <>
+          <img src={token.images.header} className={`my-2 w-full object-cover rounded-lg brightness-50`}/>
+        </>
+      )}
+
       <RepCommunityModal
         is_modal_open={show_rep_community_modal}
         close_modal={() => set_show_rep_community_modal(false)}
         token_ticker={token.token_details.ticker}
         token_image={token.images.logo}
         on_confirm={represent_community}
-      />
-
-      <CuratorsModal
-        is_modal_open={show_curators}
-        close_modal={() => set_show_curators(false)}
-        curators={token.finbyte.curators}
       />
     </>
   )

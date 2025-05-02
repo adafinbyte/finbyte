@@ -104,14 +104,14 @@ const CommunityOverviewRecentTxs: FC <custom_props> = ({
   };
 
   return asset_transactions ? (
-    <div className={`${themed['800'].bg} border ${themed['700'].border} max-w-md mx-auto mt-2 rounded-lg p-1 flex flex-col gap-1`}>
+    <div className={`${themed['900'].bg} border ${themed['700'].border} max-w-md mx-auto mt-2 rounded-lg p-1 flex flex-col gap-1`}>
       <div className={`p-1 ${themed['500'].text} font-semibold text-xs`}>
         Recent 25 Transactions
       </div>
 
       <div className={`max-h-72 ${themed.webkit_scrollbar} text-sm`}>
         {asset_transactions.map((tx, index) => (
-          <div key={index}  className={`p-1 px-2 w-full ${themed['300'].text} ${index === opened_transaction ? themed['900'].bg : themed.effects.transparent_button.hover_darker} rounded-lg flex flex-col gap-2 duration-150`}>
+          <div key={index} className={`p-1 px-2 w-full ${themed['300'].text} ${index === opened_transaction ? themed['900'].bg : themed.effects.transparent_button.hover} rounded-lg flex flex-col gap-2 duration-150`}>
             <button className="flex gap-2 items-center" disabled={loading} onClick={() => toggle_open(index, tx.tx_hash)} >
               <h1 className={`${themed['200'].text}`} title="TX Time">
                 {format_unix(tx.block_time).time_ago}

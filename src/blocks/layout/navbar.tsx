@@ -48,11 +48,11 @@ const DefaultLayoutNavbar: FC = () => {
       icon: <Search className="size-5"/>,
       link: '/explore'
     },
-//    {
-//      title: 'Documents',
-//      icon: <Book className="size-6 lg:size-5"/>,
-//      link: '/documents'
-//    },
+    {
+      title: undefined,
+      icon: <img src='/finbyte.png' className="size-6 lg:size-5"/>,
+      link: '/finbyte'
+    },
   ];
 
   const extra_items: menu_item[] = [
@@ -131,9 +131,11 @@ const DefaultLayoutNavbar: FC = () => {
               <Link key={index} title={item.title} href={item.link?.toString() ?? ''} className={`${is_url_active(item.link as string) ? themed['800'].bg + ' ' + themed['300'].text : ''} p-2 ${themed.effects.transparent_button.hover} rounded-lg inline-flex items-center gap-2`}>
                 {item.icon}
 
-                <h1 className="font-semibold">
-                  {item.title}
-                </h1>
+                {item.title && (
+                  <h1 className="font-semibold">
+                    {item.title}
+                  </h1>
+                )}
               </Link>
             ))}
           </div>

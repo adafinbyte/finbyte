@@ -106,7 +106,7 @@ const themeStyles: Record<Themes, ThemedProps> = {
         hover_darker: 'hover:bg-neutral-900 active:bg-neutral-900/80',
       },
     },
-    webkit_scrollbar: 'overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:bg-neutral-500'
+    webkit_scrollbar: 'overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:bg-neutral-500'
   },
   Slate: {
     '100': {
@@ -185,7 +185,7 @@ const themeStyles: Record<Themes, ThemedProps> = {
         hover_darker: 'hover:bg-slate-900 active:bg-slate-900/80',
       },
     },
-    webkit_scrollbar: 'pr-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-700 [&::-webkit-scrollbar-thumb]:bg-slate-500'
+    webkit_scrollbar: 'pr-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-700 [&::-webkit-scrollbar-thumb]:bg-slate-500'
   },
 };
 

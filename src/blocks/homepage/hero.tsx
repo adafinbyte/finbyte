@@ -5,6 +5,7 @@ import { motion, useAnimation, useInView } from "framer-motion";
 
 import useThemedProps from "@/contexts/themed-props";
 import ForumPostExample from "@/components/forums-core/post/example";
+import Marquee from "@/components/marquee";
 
 const containerVariants = {
   hidden: {},
@@ -88,23 +89,20 @@ const Hero: FC = () => {
           </Link>
         </motion.div>
 
-        <motion.div
-  variants={containerVariants}
-  className="grid lg:grid-cols-3 gap-4 mt-10 lg:scale-90"
-  style={{ placeItems: 'start' }}
->
-  <motion.div variants={itemVariants} className="w-full">
-    <ForumPostExample type="forum_post" />
-  </motion.div>
-
-  <motion.div variants={itemVariants} className="w-full">
-    <ForumPostExample type="forum_comment" show_gif_post={true} />
-  </motion.div>
-
-  <motion.div variants={itemVariants} className="w-full">
-    <ForumPostExample type="forum_comment" />
-  </motion.div>
-</motion.div>
+        <div>
+          <motion.div
+            variants={itemVariants}
+            className={`mt-4 relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background`}
+          >
+            <span className="w-screen">
+              <Marquee>
+                <ForumPostExample type="forum_post" />
+                <ForumPostExample type="forum_comment" />
+                <ForumPostExample type="forum_comment" show_gif_post={true} />
+              </Marquee>
+            </span>
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   );

@@ -49,3 +49,42 @@ export const get_blockfrost_transaction = async (tx_hash: string) => {
     return;
   }
 }
+
+interface amount {unit: string; quantity: string; decimals: number; has_nft_onchain_metadata: boolean;}
+export interface address_information {address: string; amount: amount[]; stake_address: string; type: string; script: boolean;}
+export const get_blockfrost_address_information = async (address: string) => {
+  const url = `https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}/extended`;
+  try {
+    const response = await fetch(url, {headers: {'Project_id': blockfrost_key}});
+    if (!response.ok) {
+      console.error(`${response.status} - ${response.statusText}`);
+      return;
+    }
+    const data: address_information = await response.json();
+
+    if (data !== null) {
+      return data;
+    }
+  } catch (error) {
+    return;
+  }
+}
+
+export interface address_details {address: string; quantity: string; received_sum: output_type[]; sent_sum: output_type[]; tx_count: number;}
+export const get_blockfrost_address_details = async (address: string) => {
+  const url = `https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}/total`;
+  try {
+    const response = await fetch(url, {headers: {'Project_id': blockfrost_key}});
+    if (!response.ok) {
+      console.error(`${response.status} - ${response.statusText}`);
+      return;
+    }
+    const data: address_details = await response.json();
+
+    if (data !== null) {
+      return data;
+    }
+  } catch (error) {
+    return;
+  }
+}

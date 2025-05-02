@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 
-import { fetched_chat_post_data, platform_interaction, post_with_comments } from "./interfaces";
+import { fetched_chat_post_data, platform_interaction, platform_user, post_with_comments } from "./interfaces";
 
 import { databases } from "../consts";
 import { supabase } from "../secrets";
@@ -108,6 +108,7 @@ export const fetch_platform_interactions = async (limit?: number | undefined): P
 
 export const fetch_everything_count = async () => {
   const unique_users = new Set<string>();
+  const users = new Map<string, platform_user>();
   let platform_tips = 0;
   let likes_given = 0;
 
@@ -183,7 +184,17 @@ export const fetch_everything_count = async () => {
     }
   })
 
-  i.forEach(interaction => unique_users.add(interaction.address))
+  i.forEach(interaction => {
+    const address = interaction.address;
+    unique_users.add(address);
+    
+    if (!users.has(address)) {
+      users.set(address, {
+        type: interaction.action === 'new-account' ? 'finbyte' : 'anon',
+        address
+      });
+    }
+  });
 
   const data = {
     forum_posts: p.length,
@@ -194,6 +205,7 @@ export const fetch_everything_count = async () => {
     likes_given: likes_given,
 
     unique_users: unique_users.size,
+    users: Array.from(users.values()),
     interactions: i.length
   }
 

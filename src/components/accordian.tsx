@@ -2,6 +2,7 @@
 import React, { ReactNode, isValidElement } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from "framer-motion";
+import useThemedProps from '@/contexts/themed-props';
 
 type AccordionContextType = {
   isActive: boolean;
@@ -89,14 +90,15 @@ export function AccordionItem({
   value: string 
 }) {
   const { isActive } = useAccordion();
+  const themed = useThemedProps();
 
   return (
     <div
       data-active={isActive || undefined}
       className={`overflow-hidden ${
         isActive
-          ? 'active border border-neutral-700 bg-neutral-800'
-          : 'bg-transparent border border-neutral-700'
+          ? `active border ${themed['700'].border} ${themed['800'].bg} rounded-lg`
+          : `bg-transparent border ${themed['700'].border} rounded-lg`
       }
     `}
       data-value={value}
@@ -116,14 +118,15 @@ export function AccordionHeader({
   className?: string;
 }) {
   const { isActive, value, onChangeIndex } = useAccordion();
+  const themed = useThemedProps();
 
   return (
     <motion.div
       data-active={isActive || undefined}
-      className={`group p-2 px-4 cursor-pointer transition-all font-semibold text-neutral-400 hover:bg-neutral-800 hover:text-neutral-200 flex justify-between items-center ${
+      className={`group p-2 px-4 cursor-pointer transition-all font-semibold ${themed['400'].text} hover:${themed['800'].bg} hover:opacity-80 duration-150 flex justify-between items-center ${
         isActive
-          ? 'active bg-neutral-800'
-          : 'bg-neutral-900'
+          ? `active ${themed['800'].bg}`
+          : `${themed['900'].bg}`
       }
       `}
       onClick={() => onChangeIndex(value)}
@@ -146,6 +149,7 @@ export function AccordionPanel({
   className?: string;
 }) {
   const { isActive } = useAccordion();
+  const themed = useThemedProps();
 
   return (
     <AnimatePresence initial={true}>
@@ -169,7 +173,7 @@ export function AccordionPanel({
               duration: 0.4,
               bounce: 0,
             }}
-            className={`px-2 py-4 bg-neutral-900 text-neutral-300 max-h-40 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-neutral-700 [&::-webkit-scrollbar-thumb]:bg-neutral-500`}
+            className={`px-2 py-4 ${themed['900'].bg} ${themed['300'].text} max-h-464 ${themed.webkit_scrollbar} pr-2`}
           >
             {children}
           </motion.article>

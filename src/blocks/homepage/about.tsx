@@ -105,7 +105,7 @@ const About: FC = () => {
       animate={controls}
       className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto"
     >
-      <div className="p-2 grid grid-cols-3 mx-auto pb-4 lg:pb-24">
+      <div className="p-2 grid lg:grid-cols-3 gap-4 lg:gap-0 mx-auto pb-4 lg:pb-24">
         {stat_items.map((item, index) => (
           <motion.div
             key={index}

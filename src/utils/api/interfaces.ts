@@ -147,6 +147,10 @@ export interface platform_interaction {
   address:   string;
 }
 
+export interface platform_user {
+  type: string;
+  address: string;
+}
 
 export interface create_chat_data {
   post:       string;

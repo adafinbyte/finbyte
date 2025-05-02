@@ -7,6 +7,7 @@ import useThemedProps from "@/contexts/themed-props";
 import { asset_tx } from "@/utils/api/external/blockfrost";
 import CommunityOverviewAbout from "./about";
 import CommunityOverviewRecentTxs from "./recent-txs";
+import CommunityTokenInformation from "./token-information";
 
 interface custom_props {
   token: verified_token;
@@ -34,16 +35,21 @@ const CommunityOverview: FC <custom_props> = ({
   return (
     <div>
       <div className="flex flex-col w-full gap-2">
-        <CommunityOverviewAbout token={token} token_stats={token_stats}/>
+        <CommunityOverviewAbout token={token} />
 
-        <hr className={`${themed['700'].border}`}/>
+        <div className={`grid lg:grid-cols-2 gap-2`}>
+          <span>
+            <CommunityTokenInformation token_stats={token_stats}/>
+          </span>
 
-        <div className="grid lg:grid-cols-4 gap-4" style={{placeItems: 'start'}}>
-          <div className={`w-full lg:col-span-2 lg:col-start-2`}>
-            <CommunityOverviewRecentTxs asset_transactions={asset_transactions}/>
-          </div>
+          <span className="flex flex-col w-full gap-2">
+            <h1 className={`${themed['500'].text} text-left font-semibold text-sm`}>
+              Recent Transactions
+            </h1>
+
+           <CommunityOverviewRecentTxs asset_transactions={asset_transactions}/>
+          </span>
         </div>
-
       </div>
 
     </div>

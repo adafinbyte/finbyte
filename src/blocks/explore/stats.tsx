@@ -1,9 +1,8 @@
 import { FC, useEffect, useState } from "react";
 
 import { copy_to_clipboard } from "@/utils/string-tools";
-import { Binoculars, Calculator, Coins, HandCoins, HeartHandshake, Newspaper, Users } from "lucide-react";
+import { Calculator, Coins, HandCoins, HeartHandshake, Newspaper, Users } from "lucide-react";
 import { fetch_everything_count } from "@/utils/api/fetch";
-import curators_list from "@/verified/curators";
 import verified_tokens from "@/verified/tokens";
 import useThemedProps from "@/contexts/themed-props";
 
@@ -41,12 +40,6 @@ const ExploreStats: FC = () => {
       title: 'Curated Tokens',
       data: verified_tokens.length,
       tt_title: 'Curated by our community.'
-    },
-    {
-      icon: <Binoculars size={icon_size} className="text-blue-400"/>,
-      title: 'Curators',
-      data: curators_list.length,
-      tt_title: 'Curators help verify token information.'
     },
     {
       icon: <Calculator size={icon_size} className="text-blue-400"/>,
@@ -87,7 +80,7 @@ const ExploreStats: FC = () => {
       </h1>
       <div className="flex flex-wrap gap-4 justify-center lg:px-4">
         {finbyte_stats.map((stat, index) => (
-          <div key={index} title={stat.tt_title} onClick={() => copy_to_clipboard(stat.data.toString())} className={`p-2 flex gap-2 items-center border ${themed['700'].border} px-4 rounded-lg ${themed.effects.transparent_button.hover_darker} duration-300 hover:-translate-y-0.5 cursor-copy`}>
+          <div key={index} title={stat.tt_title} onClick={() => copy_to_clipboard(stat.data.toString())} className={`${themed['900'].bg} p-2 flex gap-2 items-center border ${themed['700'].border} px-4 rounded-lg ${themed.effects.transparent_button.hover} duration-300 hover:-translate-y-0.5 cursor-copy`}>
             {stat.icon}
 
             <div className="flex flex-col gap-y-0.5 text-right px-2 w-full">

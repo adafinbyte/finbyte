@@ -26,8 +26,7 @@ export interface verified_token {
     website?:     string;
     x?:           string;
   };
-  finbyte: {
-    curators:                 string[];
+  finbyte?: {
     forum_post_announcement?: string;
   }
 }
