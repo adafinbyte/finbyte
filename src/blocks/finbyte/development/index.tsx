@@ -17,7 +17,7 @@ const FinbyteDevelopment: FC = () => {
         Finbyte Development
       </h1>
 
-      <div className={`grid lg:grid-cols-2 gap-2 py-2 max-h-[200px] ${themed.webkit_scrollbar}`}>
+      <div className={`grid lg:grid-cols-2 gap-2 py-2 max-h-[200px] ${themed.webkit_scrollbar}`} style={{ placeItems: 'start'}}>
         {kanban_items.map((item, index) => (
           <div key={index} className={`border ${themed['700'].border} rounded-lg`}>
             <div className={`flex gap-2 items-center w-full py-1 px-2 border-b ${themed['700'].border}`}>
@@ -66,7 +66,7 @@ const FinbyteDevelopment: FC = () => {
       </h1>
 
       <div className={`max-h-64 ${themed.webkit_scrollbar}`}>
-        <ol className={`grid lg:grid-cols-3 gap-2 rounded-lg`}>
+        <ol className={`grid grid-cols-2 lg:grid-cols-3 gap-2 rounded-lg`}>
           {newly_listed_map.map((item, index) => item.token_details.fingerprint ? (
             <Link href={'/token/' + item.slug_id} key={index}>
               <button className={`w-full rounded-lg border ${themed['700'].border} py-1 px-2 ${themed['300'].text} ${themed.effects.transparent_button.hover} duration-300`}>

@@ -10,6 +10,7 @@ import useThemedProps from "@/contexts/themed-props";
 
 import { update_username } from "@/utils/api/account/push";
 import { ADAHANDLE_POLICY } from "@/utils/consts";
+import { get_pool_pm_adahandle } from "@/utils/api/external/pool-pm";
 
 interface custom_props {
   refresh_data: () => Promise<void>;
@@ -20,7 +21,7 @@ const WalletModalAccountSettings: FC <custom_props> = ({
 }) => {
   const themed = useThemedProps();
 
-  const [found_handles, set_found_handles] = useState<AssetExtended[] | null>(null);
+  const [found_handles, set_found_handles] = useState<string[] | null>(null);
   const [chosen_handle, set_chosen_handle] = useState<string | null>(null);
 
   const chosen_handle_state = { state: chosen_handle, set_state: set_chosen_handle }
@@ -28,16 +29,25 @@ const WalletModalAccountSettings: FC <custom_props> = ({
   const use_wallet = useWallet();
   const wallet = use_wallet.wallet;
 
-  const decodeHex = (hex: string) => Buffer.from(hex, "hex").toString("utf-8");
-
   const find_users_adahandles = async () => {
     const adahandles = await wallet.getPolicyIdAssets(ADAHANDLE_POLICY);
-    set_found_handles(adahandles);
+
+    const names = await Promise.all(
+      adahandles.map(async a => {
+        const metadata = await get_pool_pm_adahandle(a.fingerprint);
+        return metadata?.metadata.name ?? '';
+      })
+    );
+
+    if (names) {
+      set_found_handles(names as string[]);
+    }
   }
 
   useEffect(() => {
     find_users_adahandles();
   }, []);
+
 
   const save_username = async () => {
     if (!chosen_handle) {
@@ -79,12 +89,12 @@ const WalletModalAccountSettings: FC <custom_props> = ({
         </h1>
 
         {found_handles && found_handles.length > 0 ?
-          <div className="mb-2 flex flex-col w-full gap-1">
-            <div className="flex justify-between mt-2">
-              <ComboBox items={found_handles.map(a => decodeHex(a.assetName))} placeholder="Select a AdaHandle..." selected={chosen_handle_state}/> 
+          <div className="mb-2 flex flex-col w-full gap-2">
+            <div className="flex items-center gap-2">
+              <ComboBox items={found_handles} placeholder="Select a AdaHandle..." selected={chosen_handle_state}/> 
 
-              <div className="text-xs mx-auto">
-                <button className={`p-2 ${themed.effects.transparent_button.hover} rounded-lg inline-flex items-center gap-2`} onClick={save_username}>
+              <div className="text-xs">
+                <button className={`p-2 ${themed.effects.transparent_button.hover} w-full rounded-lg flex items-center gap-2`} onClick={save_username}>
                   Save Username
                   <Save size={16}/>
                 </button>

@@ -2,17 +2,10 @@ import toast from "react-hot-toast";
 
 import { notification_type, post_type } from "./types";
 
-import { supabase } from "../secrets";
+import { discord_webhook_ping, supabase } from "../secrets";
 import { databases } from "../consts";
-import { account_data, create_chat_data, create_comment_post_data, create_community_post_data, create_forum_post_data } from "./interfaces";
 
-/**
- * @contents
- * - create_notification
- * - create_post  } - can define the difference between
- * - like_post    }   forum/community post and forum comment
- * - edit_post    }
- */
+import { create_chat_data, create_comment_post_data, create_community_post_data, create_forum_post_data } from "./interfaces";
 
 export const create_notification = async (
   action:    notification_type,
@@ -32,6 +25,88 @@ export const create_notification = async (
 
   if (error) {
     toast.error(error.message);
+  }
+  
+  try {
+    if (!discord_webhook_ping) {
+      console.warn("Discord webhook URL is not set");
+      return;
+    }
+
+    const format_action = (action: notification_type): string => {
+      switch (action) {
+        case "new-forum-post":
+          return 'New Forum Post';
+        case "new-forum-comment":
+          return 'New Comment on Forum Post';
+        case "new-community-post":
+          return 'New Community Post';
+        case "new-chat-post":
+          return 'New Chat Post';
+        case "forum-post-liked":
+          return 'Forum Post Liked';
+        case "forum-comment-liked":
+          return 'Forum Comment Liked';
+        case "community-post-liked":
+          return 'Community Post Liked';
+        case "chat-liked":
+          return 'Chat Post Liked';
+        case "forum-post-unliked":
+          return 'Forum Post Unliked';
+        case "forum-comment-unliked":
+          return 'Forum Comment Unliked';
+        case "community-post-unliked":
+          return 'Community Post Unliked';
+        case "chat-unliked":
+          return 'Chat Post Unliked';
+        case "forum-post-edited":
+          return 'Forum Post Edited';
+        case "forum-comment-edited":
+          return 'Forum Comment Edited';
+        case "community-post-edited":
+          return 'Community Post Edited';
+        case "chat-edited":
+          return 'Chat Post Edited';
+        case "forum-post-deleted":
+          return 'Forum Post Deleted';
+        case "forum-comment-deleted":
+          return 'Forum Comment Deleted';
+        case "community-post-deleted":
+          return 'Community Post Deleted';
+        case "forum-post-tipped":
+          return 'Forum Post Tipped';
+        case "forum-comment-tipped":
+          return 'Forum Comment Tipped';
+        case "community-post-tipped":
+          return 'Community Post Tipped';
+        case "new-account":
+          return 'New Account Created';
+        case "updated-adahandle":
+          return 'A user has updated their adahandle!';
+        case "updated-community-badge":
+          return 'A user has updated their community badge!';
+        default:
+          return '';
+      }
+    }
+
+    const discord_post_text = `
+:mega: **${format_action(action)}**
+:bust_in_silhouette: *${address}*
+:clock:  *${timestamp}*
+    `;
+
+    await fetch(discord_webhook_ping, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        content: discord_post_text
+      }),
+    });
+  } catch (err) {
+    console.error("Failed to send Discord webhook:", err);
   }
 }
 

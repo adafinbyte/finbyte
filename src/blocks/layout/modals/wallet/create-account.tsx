@@ -1,5 +1,6 @@
 import ComboBox from "@/components/combobox";
 import useThemedProps from "@/contexts/themed-props";
+import { get_pool_pm_adahandle, pool_pm_adahandle } from "@/utils/api/external/pool-pm";
 import { create_account_data } from "@/utils/api/interfaces";
 import { ADAHANDLE_POLICY } from "@/utils/consts";
 import { AssetExtended } from "@meshsdk/core";
@@ -17,14 +18,13 @@ const WalletModalCreateAccount: FC <custom_props> = ({
 }) => {
   const themed = useThemedProps();
 
-  const [found_handles, set_found_handles] = useState<AssetExtended[] | null>(null);
+  const [found_handles, set_found_handles] = useState<string[] | null>(null);
+
   const [chosen_handle, set_chosen_handle] = useState<string | null>(null);
   const chosen_handle_state = { state: chosen_handle, set_state: set_chosen_handle }
 
   const use_wallet = useWallet();
   const wallet = use_wallet.wallet;
-
-  const decodeHex = (hex: string) => Buffer.from(hex, "hex").toString("utf-8");
 
   const attempt_creation = () => {
     const timestamp = Math.floor(Date.now() / 1000);
@@ -38,7 +38,17 @@ const WalletModalCreateAccount: FC <custom_props> = ({
 
   const find_users_adahandles = async () => {
     const adahandles = await wallet.getPolicyIdAssets(ADAHANDLE_POLICY);
-    set_found_handles(adahandles);
+
+    const names = await Promise.all(
+      adahandles.map(async a => {
+        const metadata = await get_pool_pm_adahandle(a.fingerprint);
+        return metadata ? metadata.metadata.name : null;
+      })
+    );
+
+    if (names) {
+      set_found_handles(names as string[]);
+    }
   }
 
   useEffect(() => {
@@ -76,7 +86,7 @@ const WalletModalCreateAccount: FC <custom_props> = ({
               </h1>
 
               <div className="flex justify-center mt-2">
-                <ComboBox items={found_handles.map(a => decodeHex(a.assetName))} placeholder="Select a AdaHandle..." selected={chosen_handle_state}/> 
+                <ComboBox items={found_handles} placeholder="Select a AdaHandle..." selected={chosen_handle_state}/> 
               </div>
             </div>
             :
