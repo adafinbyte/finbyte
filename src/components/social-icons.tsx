@@ -2,7 +2,7 @@ import { FC, HTMLAttributes } from "react";
 import Link from "next/link";
 
 import { Globe } from "lucide-react";
-import useThemedProps from "@/contexts/themed-props";
+import { Button } from "./ui/button";
 
 interface custom_props extends HTMLAttributes<SVGElement> {
   name: string;
@@ -13,12 +13,11 @@ interface custom_props extends HTMLAttributes<SVGElement> {
 const SocialIcon: FC <custom_props> = ({
   name, link, disabled = false, ...props
 }) => {
-  const themed = useThemedProps();
 
   const svg_class = `
     ${props.className}
     size-4
-    ${name === "website" ? themed['500'].text : themed['500'].fill}
+    ${name === 'website' ? 'text-white' : 'dark:fill-white'}
   `;
   
   const render_icon = () => {
@@ -39,26 +38,16 @@ const SocialIcon: FC <custom_props> = ({
     }
   }
 
-  const button_class = `
-    ${disabled ? 'opacity-50' : themed.effects.transparent_button.hover}
-    rounded-lg
-    duration-300
-    p-2
-    inline-flex
-    justify-center
-    items-center
-  `;
-
   return !disabled ?
     <Link href={link} target="_blank">
-      <button className={button_class}>
+      <Button variant='outline'>
         {render_icon()}
-      </button>
+      </Button>
     </Link>
   : (
-    <button className={button_class} disabled>
+    <Button disabled>
       {render_icon()}
-    </button>
+    </Button>
   )
 }
 

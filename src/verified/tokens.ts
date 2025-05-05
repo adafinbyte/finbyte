@@ -1,6 +1,7 @@
-import { verified_token } from "./interfaces";
+import { thirdparty_logos } from "@/utils/consts";
+import { curated_token } from "./interfaces";
 
-const verified_tokens: verified_token[] = [
+const curated_tokens: curated_token[] = [
   {
     slug_id: 'finbyte',
     name: 'Finbyte',
@@ -47,6 +48,16 @@ const verified_tokens: verified_token[] = [
       x: "https://x.com/IagonOfficial",
       website: "https://iagon.com/",
     },
+    finbyte: {
+      collection: [
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.7b12f25ce8d6f424e1edbc8b61f0742fb13252605f31dc40373d6a245e8ec1d1',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
   },
   {
     slug_id: 'snek',
@@ -72,6 +83,22 @@ const verified_tokens: verified_token[] = [
       telegram: "https://t.me/snekcoinada",
       x: "https://x.com/snek",
       website:  "https://www.snek.com/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'Snek Energy',
+          image: 'https://snek.energy/cdn/shop/files/Product5.jpg?v=1694508666&width=360',
+          url: 'https://snek.energy/',
+          description: 'Unleash the SNEK within.'
+        },
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/snek',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
     },
   },
   {
@@ -99,6 +126,22 @@ const verified_tokens: verified_token[] = [
       discord:  "discord.gg/JDBSwuzdvj",
       x: "https://x.com/am__panic", //token backs collections, x points to founder
     },
+    finbyte: {
+      collection: [
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.98cd1a0de51bf17c8ae857f72f215c75a447e4d04fa35cb58364e85e476012c3',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+        {
+          title: 'The Turtle Syndicate',
+          image: 'https://pfp.jpgstoreapis.com/4c1e0a4bcdd31f9e0dcdb62c8e7ce2dc69265078f41663ed8ab66816-hero',
+          url: 'https://www.jpg.store/collection/turtlesyndicateturtles?tab=items',
+          description: '5k Collection of Turtles that contribute to IRL Turtle Adoptions.'
+        },
+      ],
+    },
   },
   {
     slug_id: 'bodega',
@@ -124,7 +167,17 @@ const verified_tokens: verified_token[] = [
       x: "https://x.com/bodegacardano",
       website: "https://www.bodegacardano.org/",
     },
+    finbyte: {
+      collection: [
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/41bb9c6a2f4ab79d918c822fa6ff20cef1cfef9e45a2fb02886e2ec5.424f444547415f4144415f4e4654',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
   },
 ];
 
-export default verified_tokens;
+export default curated_tokens;

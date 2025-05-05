@@ -47,7 +47,7 @@ const FinbyteMarkdown: FC <custom_props> = ({ children, example, ...props }) => 
             return <img className={example ? 'max-h-10' : pmd_class.img_class} {...props} />;
           }
         },
-        hr: ({ node, ...props })   => <hr className="my-2 border-neutral-700"/>,
+        hr: ({ node, ...props })   => <hr className="my-4 border-neutral-700"/>,
         p: ({ node, ...props })    => <p className={pmd_class.p_class} {...props} />,
         a: ({ node, ...props }) => {
           const href = props.href || '';

@@ -1,118 +1,123 @@
 import { FC, useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import toast from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
 
-import ForumsPostView from "./post-view";
+import ForumsActions from "./actions";
+import ForumsPostsList from "./posts-list";
 
-import ForumsActions from "./header/actions";
-import ForumsSidebarSections from "./header/sections";
-
-import { fetch_all_forum_posts_with_comments } from "@/utils/api/fetch";
-import { post_with_comments } from "@/utils/api/interfaces";
-import { ALargeSmall, Megaphone, MessageCircle, MessagesSquare } from "lucide-react";
+import SiteHeader from "@/components/site-header";
+import { useToast } from "@/hooks/use-toast";
+import { create_forum_post_data, post_with_comments } from "@/utils/api/interfaces";
+import { fetch_all_forum_posts_with_comments } from "@/utils/api/main/fetch";
+import { useWallet } from "@meshsdk/react";
+import { format_long_string } from "@/utils/string-tools";
+import { checkSignature, generateNonce } from "@meshsdk/core";
+import { create_post } from "@/utils/api/main/push";
 
 const ForumsBlock: FC = () => {
+  const { toast } = useToast();
+  const { address, connected, wallet } = useWallet();
+
   const [forum_posts, set_forum_posts] = useState<post_with_comments[] | null>(null);
-  const [refreshing_posts, set_refreshing_posts] = useState(false);
-  const [active_tab, set_active_tab] = useState(1);
-  const [show_create_post, set_show_create_post] = useState(false);
+  const [all_forum_posts, set_all_forum_posts] = useState<post_with_comments[] | null>(null);
+  const [refreshing_state, set_refreshing_state] = useState(false);
 
-  const router = useRouter();
-  const { tab_id } = router.query;
-
-  useEffect(() => {
-    if (tab_id) {
-      if (tab_id === '1') { set_active_tab(1); }
-      else if (tab_id === '2') { set_active_tab(2); } 
-      else if (tab_id === '3') { set_active_tab(3); set_show_create_post(true); }
-      else if (tab_id === '4') { set_active_tab(3); }
-      else if (tab_id === '5') { set_active_tab(5); }
-      else { router.pathname = '/forums'}
-    }
-  }, [tab_id]);
+  const known_sections = [
+    'general', 'requests', 'finbyte'
+  ]
 
   const get_posts = async () => {
-    set_refreshing_posts(true);
-    try {
-      const post_data = await fetch_all_forum_posts_with_comments();
-      if (post_data) set_forum_posts(post_data);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Unknown error');
+    set_refreshing_state(true);
+    const posts = await fetch_all_forum_posts_with_comments();
+    if (posts?.error) {
+      toast({
+        description: posts.error.toString(),
+        variant: 'destructive'
+      });
+      return;
     }
-    set_refreshing_posts(false);
+    if (posts?.data) {
+      set_all_forum_posts(posts.data);
+      set_forum_posts(posts.data);
+    }
+    set_refreshing_state(false);
   }
 
-  const refresh_action = {
-    status: refreshing_posts,
-    action: get_posts
+  const filter_posts = async (by_section?: string) => {
+    if (!all_forum_posts) return;
+  
+    if (!by_section || by_section === 'all') {
+      return set_forum_posts(all_forum_posts);
+    }
+  
+    set_forum_posts(all_forum_posts.filter(a => a.post.section === by_section));
   }
 
-  const tab_action = {
-    state: active_tab,
-    set_state: set_active_tab
-  }
+  const attempt_create_post = async (details: create_forum_post_data) => {
+    if (!connected) { return; }
 
-  const create_action = {
-    state: show_create_post,
-    set_state: set_show_create_post,
+    const data_to_sign = `${format_long_string(details.author)} created a forum post at ${details.timestamp}`;
+    try {
+      const nonce = generateNonce(data_to_sign);
+      const signature = await wallet.signData(nonce, address);
+
+      if (signature) {
+        const is_valid_sig = await checkSignature(nonce, signature, address);
+        if (is_valid_sig) {
+          if (address !== details.author) {
+            toast({
+              description: `Your address doesn't seem to match the author!`,
+              variant: 'destructive'
+            });
+            return;
+          }
+          const creation = await create_post(details, 'forum_post', details.timestamp, address);
+          if (creation?.error) {
+            toast({
+              description: creation.error.toString(),
+              variant: 'destructive'
+            });
+            return;
+          }
+          await get_posts();
+        } else {
+          toast({
+            description: 'Signature verification failed! Whoops, is it your wallet?',
+            variant: 'destructive'
+          });
+          return;
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          description: error.message,
+          variant: 'destructive'
+        });
+      } else {
+        throw error;
+      }
+    }
   }
 
   useEffect(() => {
     get_posts();
   }, []);
 
-  useEffect(() => {
-    const clear_states = () => {
-      set_show_create_post(false);
-    }
-    clear_states()
-  }, [active_tab]);
-
-  const icon_size = 16;
-  const tab_details = [
-    { id: 1, title: "All Posts", icon: <ALargeSmall size={icon_size} />, data: forum_posts ? forum_posts.length : 0 },
-    { id: 2, title: "#General", icon: <MessageCircle size={icon_size} />, data: forum_posts ? forum_posts.flat().filter(pwc => pwc.post.section === "general").length : 0 },
-    { id: 3, title: "#Requests", icon: <Megaphone size={icon_size} />, data: forum_posts ? forum_posts.filter(pwc => pwc.post.section === "requests").length : 0, },
-    { id: 4, title: "#Chatterbox", icon: <MessagesSquare size={icon_size} />, data: forum_posts ? forum_posts.filter(pwc => pwc.post.section === "chatterbox").length : 0, },
-    { id: 5, title: "", icon: <img src='/finbyte.png' className='size-4' />, data: forum_posts ? forum_posts.flat().filter(pwc => pwc.post.section === "finbyte").length : 0 },
-  ];
-
-  const filtered_posts = forum_posts?.filter(post => {
-    if (tab_action.state === 2) return post.post.section === 'general';
-    if (tab_action.state === 3) return post.post.section === 'requests';
-    if (tab_action.state === 4) return post.post.section === 'chatterbox';
-    if (tab_action.state === 5) return post.post.section === 'finbyte';
-    return true;
-  }) ?? [];
-
-  return filtered_posts && (
-    <div className="lg:px-20 p-4 flex flex-col gap-2 w-full">
-      <ForumsSidebarSections post_data={filtered_posts} tab_action={tab_action} tab_details={tab_details}/>
-      <ForumsActions
-        refresh_action={refresh_action}
-        tab_state={tab_action.state}
-        create_state={create_action}
-      />
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={active_tab}
-          initial={{ opacity: 0.5 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="h-full"
-        >
-          <ForumsPostView
-            post_data={filtered_posts}
-            tab_action={tab_action}
-            create_action={create_action}
-            get_posts={get_posts}
+  return (
+    <>
+      <SiteHeader title="Finbyte Forums"/>
+      <div className="flex flex-1 flex-col">
+        <div className="@container/main flex flex-1 flex-col gap-2 p-2 lg:p-4">
+          <ForumsActions
+            on_filter={filter_posts}
+            on_create_post={attempt_create_post}
+            on_refresh={get_posts}
+            refreshing={refreshing_state}
           />
-        </motion.div>
-      </AnimatePresence>
-    </div>
+
+          <ForumsPostsList forum_posts={forum_posts} refreshing={refreshing_state}/>
+        </div>
+      </div>
+    </>
   )
 }
 

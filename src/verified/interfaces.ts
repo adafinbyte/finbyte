@@ -1,5 +1,16 @@
+/**
+ * @NOTE
+ * - Undefined values could state token getting ready for listed.
+ */
 
-export interface verified_token {
+interface collection_item {
+  title: string;
+  image: string;
+  url:   string;
+  description: string;
+}
+
+export interface curated_token {
   slug_id:     string;
   name:        string;
   hex:         string | undefined;
@@ -15,10 +26,8 @@ export interface verified_token {
   images: {
     logo:        string;
     header?:     string;
-    collection?: string[];
   };
   links: {
-    cardanoscan?: string;
     discord?:     string;
     github?:      string;
     reddit?:      string;
@@ -27,6 +36,6 @@ export interface verified_token {
     x?:           string;
   };
   finbyte?: {
-    forum_post_announcement?: string;
+    collection?: collection_item[];
   }
 }
