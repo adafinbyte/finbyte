@@ -13,10 +13,11 @@ import { Home, Newspaper, PiggyBank } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TokenOverview from "./token-overview";
 import TokenCommunity from "./token-community";
-import { fetch_community_posts } from "@/utils/api/main/fetch";
-import { community_post_data } from "@/utils/api/interfaces";
+import { community_post_data, platform_user_details } from "@/utils/api/interfaces";
 import { toast } from "@/hooks/use-toast";
 import { get_pool_pm_asset, pool_pm_fingerprint } from "@/utils/api/external/pool-pm";
+import { fetch_author_data } from "@/utils/api/account/fetch";
+import { fetch_community_posts } from "@/utils/api/community/fetch";
 
 interface custom_props {
   token: curated_token;
@@ -49,7 +50,17 @@ const TokenBlock: FC <custom_props> = ({
         return;
       }
       if (community_posts?.data) {
-        set_community_posts(community_posts.data);
+        /** @todo paginate this properly from the db */
+        const only_lastest_posts: community_post_data[] = community_posts.data.slice(0, 25);
+        const enriched_posts = await Promise.all(only_lastest_posts.map(async (post) => {
+          const user_response = await fetch_author_data(post.author);
+          const data: platform_user_details = user_response.data;
+          return {
+            ...post,
+            user: data || null,
+          };
+        }));
+        set_community_posts(enriched_posts);
       }
 
       if (token.token_details.fingerprint) {
@@ -126,6 +137,9 @@ const TokenBlock: FC <custom_props> = ({
               {current_view === 2 && (
                 <TokenCommunity
                   token={token}
+                  community_posts={community_posts ?? []}
+                  refresh_data={get_token_data}
+                  refreshing={refreshing_state}
                 />
               )}
 

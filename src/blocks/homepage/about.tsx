@@ -1,15 +1,18 @@
 import { Marquee } from "@/components/marquee";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { useCountUp } from "@/hooks/use-count-up";
 import { motion, useAnimation, useInView } from "framer-motion";
-import { ArrowRight, HandCoins, Hash, MessageCircle, Newspaper, Users } from "lucide-react";
+import { ArrowRight, Banknote, GitPullRequestCreate, HandCoins, Hash, Link2, MessageCircle, Newspaper, Users, Wallet } from "lucide-react";
 import { FC, ReactNode, useEffect, useRef, useState } from "react";
 import { HomepageFeatures } from "./features";
 import Link from "next/link";
 import { BorderBeam } from "@/components/ui/border-beam";
-import { fetch_finbyte_general_stats } from "@/utils/api/main/misc";
+import { fetch_finbyte_general_stats } from "@/utils/api/misc";
 import { useToast } from "@/hooks/use-toast";
-import { thirdparty_logos } from "@/utils/consts";
+import { cardano_logo, thirdparty_logos } from "@/utils/consts";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 
 const containerVariants = {
   hidden: {},
@@ -98,6 +101,55 @@ const About: FC = () => {
     {title: 'Markdown', url: 'https://en.wikipedia.org/wiki/Markdown', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9gEMEFNdXhYqUAExexlL_gxQAvQ8PQ6p2pQ&s', description: 'Markdown is a lightweight markup language for creating formatted text using a plain-text editor.'},
   ];
   
+  const platform_features = [
+    {title: '100% Free', description: `At Finbyte, we believe that not everything in the cryptocurrency space should come with a cost to the end user. Thanks to Cardano's built-in capabilities, we can verify a user's identity through wallet-based data signing using CIP-8—without requiring any fees. We fully leverage this feature to ensure users can access our platform without needing to pay.`, url: '', icon: <Banknote className="size-5 text-blue-500 dark:text-blue-400"/>},
+    {title: 'Fully Open Source', description: `The Finbyte platform is hosted on GitHub to provide a fully open source project with no hidden code (except the secrets, shh...). With this, you are able to contribute directly to the platform for free.`, url: 'https://github.com/adafinbyte/finbyte', icon: <GitPullRequestCreate className="size-5 text-blue-500 dark:text-blue-400"/>},
+    {title: 'Cardano Integration', description: 'Unique to Cardano, the Finbyte platform is a Web3-first social platform that uses your browser wallet to verify your actions at no cost, ensuring a seamless and secure experience.', url: '', icon: <img src={cardano_logo} className="size-5"/>},
+    {title: 'Web 3.0 Chat', description: `Anybody can create content on Finbyte's Chat and within the Forums with a connected wallet, 100% free. Using Cardano's CIP-8, this is how we are able to verify your actions.`, url: '', icon: <Wallet className="size-5 text-blue-500 dark:text-blue-400"/>},
+  ];
+
+  const platform_features_card = (item: {title: string; description: string; icon: ReactNode, url: string | undefined}) => (
+    <Card className={`${item.url ? 'cursor-pointer' : 'cursor-default'} w-full relative group opacity-50 hover:opacity-100 duration-300 dark:border-neutral-800`}>
+      <div
+        className={cn(
+          "absolute inset-0",
+          "opacity-80",
+          "transition-opacity duration-300",
+          "pointer-events-none"
+        )}
+      >
+        <div className="rounded-xl absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.06)_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[length:4px_4px]" />
+      </div>
+
+      <CardHeader>
+        <div className="flex w-full gap-2 items-center justify-between">
+          <h1 className="font-semibold">{item.title}</h1>
+          {item.icon}
+        </div>
+      </CardHeader>
+
+      <hr className="dark:border-neutral-800"/>
+
+      <div className="relative p-2 inline-flex gap-x-4">
+        <div className="flex flex-col w-full text-left">
+          <ScrollArea className="max-h-44 pr-4 pl-2 py-2">
+            <p className="break-normal text-sm text-neutral-300">{item.description}</p>
+          </ScrollArea>
+        </div>
+      </div>
+
+      {item.url && (
+        <div className="w-full flex justify-end p-2 relative">
+          <Button size='sm' variant='ghost'>
+            Learn More
+            <Link2 className="size-3 duration-300 group-hover:translate-x-0.5"/>
+          </Button>
+        </div>
+      )}
+      <BorderBeam/>
+    </Card>
+  )
+
   return (
     <motion.div
       ref={ref}
@@ -106,7 +158,6 @@ const About: FC = () => {
       animate={controls}
       className="grid gap-2"
     >
-      {/** @note initial doesnt need motion */}
       <div className="grid lg:grid-cols-2 gap-y-4 lg:gap-x-4 lg:gap-y-8 lg:px-36">
         {stat_items.map((item, index) => (
           <motion.div
@@ -131,6 +182,39 @@ const About: FC = () => {
           </motion.div>
         ))}
       </div>
+
+      <motion.div
+        variants={itemVariants}
+        className="grid"
+      >
+        <motion.span
+          variants={itemVariants}
+          className="mt-10 mb-4 w-full"
+        >
+          <h1 className="font-semibold text-neutral-800 dark:text-neutral-200 text-2xl text-center">Features</h1>
+        </motion.span>
+
+        <div className="px-4">
+          
+        <motion.div
+          variants={itemVariants}
+          className="grid lg:grid-cols-4 gap-4 items-start"
+        >
+          {platform_features.map((item, index) => item.url ?
+            <Link
+              key={index}
+              title={item.url}
+              target="_blank"
+              href={item.url}
+            >
+              {platform_features_card(item)}
+            </Link>
+            :
+            platform_features_card(item)
+          )}
+          </motion.div>
+        </div>
+      </motion.div>
 
       <motion.div
         variants={containerVariants}
@@ -171,18 +255,30 @@ const About: FC = () => {
       >
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <Marquee pauseOnHover className="[--duration:120s]">
-            {thirdparty_items.map((item, index) => (// change this to a card
+            {thirdparty_items.map((item, index) => (
               <Link
                 key={index}
                 title={item.url}
                 target="_blank"
                 href={item.url}
               >
-                <Card className="relative p-2 inline-flex gap-x-4 opacity-50 hover:opacity-100 duration-300 w-64 dark:border-neutral-800">
-                  <img src={item.image} className="size-10 flex-shrink-0 my-auto" />
-                   <div className="flex flex-col w-full text-left">
-                    <h1 className="font-semibold">{item.title}</h1>
-                    <p className="flex-1 break-normal line-clamp-2 text-sm text-neutral-300">{item.description}</p>
+                <Card className="relative opacity-50 hover:opacity-100 duration-300 w-64 dark:border-neutral-800">
+                  <div
+                    className={cn(
+                      "absolute inset-0",
+                      "opacity-80",
+                      "transition-opacity duration-300",
+                      "pointer-events-none"
+                    )}
+                  >
+                    <div className="rounded-xl absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:4px_4px]" />
+                  </div>
+                  <div className="relative p-2 inline-flex gap-x-4">
+                    <img src={item.image} className="size-10 flex-shrink-0 my-auto" />
+                    <div className="flex flex-col w-full text-left">
+                      <h1 className="font-semibold">{item.title}</h1>
+                      <p className="flex-1 break-normal line-clamp-2 text-sm text-neutral-300">{item.description}</p>
+                    </div>
                   </div>
                   <BorderBeam/>
                 </Card>

@@ -23,10 +23,9 @@ import { FC, useEffect, useState } from "react"
 interface custom_props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  close_modal: () => void;
 }
 
-const WalletLoginModal: FC <custom_props> = ({ open, onOpenChange, close_modal }) => {
+const WalletLoginModal: FC <custom_props> = ({ open, onOpenChange }) => {
   const { connect } = useWallet();
   const [import_wallet_view, set_import_wallet_view] = useState(false);
   const [installed_wallets, set_installed_wallets] = useState<Wallet[] | undefined>();
@@ -52,7 +51,7 @@ const WalletLoginModal: FC <custom_props> = ({ open, onOpenChange, close_modal }
         });
       }
 
-      close_modal();
+      onOpenChange(false);
     } catch (error) {
       if (error instanceof Error) {
         toast({

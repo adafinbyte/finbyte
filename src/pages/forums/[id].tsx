@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import curated_tokens from "@/verified/tokens";
 import { platform_user_details, post_with_comments } from "@/utils/api/interfaces";
 import { toast } from "@/hooks/use-toast";
-import { fetch_forum_post_with_comments } from "@/utils/api/main/fetch";
+import { fetch_forum_post_with_comments } from "@/utils/api/chat/fetch";
 import { fetch_author_data } from "@/utils/api/account/fetch";
 import ForumPostBlock from "@/blocks/forums/post-block";
+import { LoadingDots } from "@/components/ui/loading-dots";
 
 export default function Home() {
   const router = useRouter();
@@ -25,12 +26,9 @@ export default function Home() {
     const fetch_post = async (post_id: number) => {
       const post = await fetch_forum_post_with_comments(post_id);
       if (post?.error) {
-        toast({
-          description: post.error.toString(),
-          variant: 'destructive'
-        });
-        return;
+        router.push('/forums/');
       }
+
       if (post?.data) {
         set_forum_post(prev => ({
             ...post.data,
@@ -47,8 +45,12 @@ export default function Home() {
         }
         if (author?.data) {
           set_author_data(author.data);
+          set_forum_post(prev => ({
+            ...post.data,
+            comments: post.data.comments ?? prev?.comments ?? [],
+            user: author.data
+          }));
         }
-        set_forum_post(post.data);
       }
     }
 
@@ -68,8 +70,8 @@ export default function Home() {
       />
     </>
   ) : (
-    <div>
-      No post found...
+    <div className="flex w-full justify-center mt-10">
+      <LoadingDots/>
     </div>
   );
 }

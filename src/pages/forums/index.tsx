@@ -1,5 +1,5 @@
 import Head from "next/head";;
-import ForumsBlock from "@/blocks/forums";
+import ForumsBlock from "@/blocks/forums/all-posts-block";
 
 export default function Home() {
   return (

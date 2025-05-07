@@ -12,11 +12,16 @@ const GetHelpBlock: FC = () => {
   )
 
   const help_items = [
-    {title: 'Connect a Wallet', children: connect_wallet_child, type: 'account'},
+    {title: 'Finbyte Kudos', children: connect_wallet_child, type: 'platform'},
+    {title: 'Finbyte Markdown', children: connect_wallet_child, type: 'style'},
+    {title: 'Platform Emojis', children: connect_wallet_child, type: 'style'},
+    {title: 'Connect a Wallet', children: connect_wallet_child, type: 'platform'},
     {title: 'Create Content', children: connect_wallet_child, type: 'platform'},
     {title: 'Edit Content', children: connect_wallet_child, type: 'platform'},
-    {title: 'Register for Finbyte', children: connect_wallet_child, type: 'account'},
     {title: 'Request New Token', children: connect_wallet_child, type: 'platform'},
+    {title: 'Register to Finbyte', children: connect_wallet_child, type: 'account'},
+    {title: 'Change your Username', children: connect_wallet_child, type: 'account'},
+    {title: 'Delete your account', children: connect_wallet_child, type: 'account'},
   ];
 
   const about_integrations = [

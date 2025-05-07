@@ -9,7 +9,12 @@ import { copy_to_clipboard } from "@/utils/string-tools";
 import { cn } from "@/lib/utils";
 import { useCountUp } from "@/hooks/use-count-up";
 import { toast } from "@/hooks/use-toast";
-import { fetch_finbyte_general_stats } from "@/utils/api/main/misc";
+import { fetch_finbyte_general_stats } from "@/utils/api/misc";
+import { platform_user, platform_user_details } from "@/utils/api/interfaces";
+import { fetch_author_data } from "@/utils/api/account/fetch";
+import PlatformUserCard from "./user-card";
+import { LoadingDots } from "@/components/ui/loading-dots";
+import { Label } from "@/components/ui/label";
 
 interface numbers {
   forum_posts: number;
@@ -37,6 +42,7 @@ const itemVariants = {
 
 const StatBlock: FC = () => {
   const [numbers, set_numbers] = useState<numbers | null>();
+  const [users, set_users] = useState<platform_user_details[] | null>(null);
 
   const stat_values = {
     total_posts: useCountUp(numbers?.total_posts ?? 0, { duration: 2500 }),
@@ -65,20 +71,20 @@ const StatBlock: FC = () => {
     if (numbers?.error) {
       toast({
         description: numbers.error.toString(),
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return;
     }
-  
+
     if (numbers?.data) {
       set_numbers(numbers.data);
+      set_users(numbers.data.users);
     }
-  }
+  };
 
   useEffect(() => {
     fetch_data()
   }, []);
-
 
   return (
     <>
@@ -86,7 +92,18 @@ const StatBlock: FC = () => {
 
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2 p-2 lg:p-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 pt-8" style={{ placeItems: 'start'}}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring" }}
+            className="w-full"
+          >
+            <Label>
+              Core Stats
+            </Label>
+          </motion.div>
+
+          <div className="flex flex-wrap items-center justify-center gap-2" style={{ placeItems: 'start'}}>
             {finbyte_stats.map((stat, index) => (
               <motion.div
                 key={index}
@@ -96,7 +113,6 @@ const StatBlock: FC = () => {
                   type: "spring",
                   delay: 0.25 + (index * 0.1),
                 }}
-                className="w-full"
               >
                 <Card
                   onClick={() => copy_to_clipboard(stat.data.toString(), 'The value of "' + stat.title + '" has been copied.')}
@@ -120,6 +136,38 @@ const StatBlock: FC = () => {
                 </Card>
               </motion.div>
             ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", delay: 1 }}
+            className="w-full mt-4"
+          >
+            <Label>
+              Users
+            </Label>
+          </motion.div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {!users ? (
+              <div className="text-center col-span-full mt-2"><LoadingDots/></div>
+            ) : (
+              users.map((user, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    type: "spring",
+                    delay: 1 + (index * 0.1),
+                  }}
+                  className="w-full"
+                >
+                  <PlatformUserCard key={index} user={user} />
+                </motion.div>
+              ))
+            )}
           </div>
         </div>
       </div>

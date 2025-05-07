@@ -34,7 +34,7 @@ const TokenOverview: FC <custom_props> = ({
   const token_stats = [
     { title: "Hex", data: token.hex },
     { title: "Ticker", data: "$" + token.token_details.ticker },
-    { title: "Supply", data: token.token_details.supply },
+    { title: "Supply", data: token.token_details.supply.toLocaleString() },
     { title: "Decimals", data: token.token_details.decimals },
     { title: "Minted", data: format_unix(poolpm_fp_data?.mint ?? 0).time_ago },
     { title: "on Epoch", data: poolpm_fp_data?.epoch ?? 0 },
@@ -186,7 +186,7 @@ const TokenOverview: FC <custom_props> = ({
               </Label>
               <div className="ml-auto flex gap-1">
                 {Object.entries(token.links).map(([key, value], index) => (
-                  <SocialIcon key={index} name={key} link={value}/>
+                  <SocialIcon key={index} name={key} link={value} only_icon={false}/>
                 ))}
               </div>
             </motion.div>

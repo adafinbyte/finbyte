@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { curated_token } from "@/verified/interfaces";
 import curated_tokens from "@/verified/tokens";
+import { LoadingDots } from "@/components/ui/loading-dots";
 
 export default function Home() {
   const router = useRouter();
@@ -30,8 +31,8 @@ export default function Home() {
       />
     </>
   ) : (
-    <div>
-      No token found...
+    <div className="flex w-full justify-center mt-10">
+      <LoadingDots/>
     </div>
   );
 }

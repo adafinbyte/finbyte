@@ -6,18 +6,19 @@ import { Button } from "./ui/button";
 
 interface custom_props extends HTMLAttributes<SVGElement> {
   name: string;
-  link: string;
+  link?: string;
   disabled?: boolean;
+  only_icon: boolean;
 }
 
 const SocialIcon: FC <custom_props> = ({
-  name, link, disabled = false, ...props
+  name, link, disabled = false, only_icon, ...props
 }) => {
 
   const svg_class = `
     ${props.className}
     size-4
-    ${name === 'website' ? 'text-white' : 'dark:fill-white'}
+    ${name === 'website' ? 'dark:text-white' : 'dark:fill-white'}
   `;
   
   const render_icon = () => {
@@ -38,7 +39,10 @@ const SocialIcon: FC <custom_props> = ({
     }
   }
 
-  return !disabled ?
+  return only_icon ?
+    render_icon()
+  :
+   !disabled && link ?
     <Link href={link} target="_blank">
       <Button variant='outline'>
         {render_icon()}

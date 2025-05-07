@@ -58,15 +58,9 @@ const data = {
       url: "/tokens",
       icon: <HandCoinsIcon/>,
     },
-    null,
     {
       title: "Stats",
       url: "/finbyte-stats",
-      icon: <FinbyteIcon/>,
-    },
-    {
-      title: "Development",
-      url: "/finbyte",
       icon: <FinbyteIcon/>,
     },
   ],

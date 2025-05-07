@@ -42,7 +42,7 @@ const FinbyteMarkdown: FC <custom_props> = ({ children, example, ...props }) => 
       components={{
         img: ({ node, ...props }) => {
           if (props.alt && Object.keys(emoji_map).includes(props.alt)) {
-            return <span style={{ display: 'inline-block' }}><img title={`:${props.alt}:`} className='w-4' {...props} /></span>;
+            return <span style={{ display: 'inline-block' }}><img title={`:${props.alt}:`} className='size-3.5' {...props} /></span>;
           } else {
             return <img className={example ? 'max-h-10' : pmd_class.img_class} {...props} />;
           }

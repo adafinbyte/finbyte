@@ -52,6 +52,9 @@ export function Marquee({
         },
         className,
       )}
+      style={{
+        placeItems: 'start'
+      }}
     >
       {Array(repeat)
         .fill(0)
