@@ -8,25 +8,23 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AnimatePresence, motion } from "framer-motion";
-import { curated_token } from "@/verified/interfaces";
+import { curated_nft, curated_token } from "@/verified/interfaces";
 import { Home, Newspaper, PiggyBank } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import TokenOverview from "./token-overview";
-import TokenCommunity from "./token-community";
 import { community_post_data, platform_user_details } from "@/utils/api/interfaces";
 import { toast } from "@/hooks/use-toast";
 import { get_pool_pm_asset, pool_pm_fingerprint } from "@/utils/api/external/pool-pm";
 import { fetch_author_data } from "@/utils/api/account/fetch";
 import { fetch_community_posts } from "@/utils/api/community/fetch";
 import { useWallet } from "@meshsdk/react";
-import TokenTrade from "./token-trade";
+import NFTOverview from "./nft-overview";
 
 interface custom_props {
-  token: curated_token;
+  nft: curated_nft;
 }
 
-const TokenBlock: FC <custom_props> = ({
-  token
+const NFTBlock: FC <custom_props> = ({
+  nft
 }) => {
   const { address, connected } = useWallet();
 
@@ -38,7 +36,6 @@ const TokenBlock: FC <custom_props> = ({
   const views = [
     {id: 1, title: 'Overview', icon: <Home/>},
     {id: 2, title: 'Community', icon: <Newspaper/>},
-    {id: 3, title: 'Trade', icon: <PiggyBank/>},
   ];
   const [user_details, set_user_details] = useState<platform_user_details | null>(null);
 
@@ -66,7 +63,7 @@ const TokenBlock: FC <custom_props> = ({
     set_refreshing_state(true);
 
     try {
-      const community_posts = await fetch_community_posts(token.slug_id);
+      const community_posts = await fetch_community_posts(nft.slug_id);
       if (community_posts?.error) {
         toast({
           description: community_posts.error.toString(),
@@ -88,9 +85,9 @@ const TokenBlock: FC <custom_props> = ({
         set_community_posts(enriched_posts);
       }
 
-      if (token.token_details.fingerprint) {
-        const poolpm_fingerprint = await get_pool_pm_asset(token.token_details.fingerprint);
-        set_poolpm_fp_data(poolpm_fingerprint);
+      if (nft.policy) {
+      //  const poolpm_fingerprint = await get_pool_pm_asset(nft.policy);
+      //  set_poolpm_fp_data(poolpm_fingerprint);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -112,7 +109,7 @@ const TokenBlock: FC <custom_props> = ({
 
   return (
     <>
-      <SiteHeader title={'Exploring ' + token.name}/>
+      <SiteHeader title={'Exploring ' + nft.collection_name}/>
 
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2 p-2 lg:p-4">
@@ -125,7 +122,7 @@ const TokenBlock: FC <custom_props> = ({
             }}
             className="mb-4"
           >
-            <div className="grid grid-cols-3 gap-2 bg-black/10 dark:bg-neutral-900 rounded-lg p-2">
+            <div className="grid grid-cols-2 gap-2 bg-black/10 dark:bg-neutral-900 rounded-lg p-2">
               {views.map((tab, index) => (
                 <Button key={index} variant='outline' disabled={tab.id === current_view} onClick={() => set_current_view(tab.id)}>
                   <span className="flex w-full justify-center items-center">
@@ -150,35 +147,8 @@ const TokenBlock: FC <custom_props> = ({
               }}
             >
               {current_view === 1 && (
-                <TokenOverview
-                  token={token}
-                  poolpm_fp_data={poolpm_fp_data}
-                  community_posts_length={community_posts?.length ?? 0}
-                  toggle_create={() => set_current_view(2)}
-                  refresh_data={get_token_data}
-                  finbyte_user={user_details}
-                  refresh_user_data={get_user_details}
-                />
-              )}
-
-              {current_view === 2 && (
-                <TokenCommunity
-                  token={token}
-                  community_posts={community_posts ?? []}
-                  refresh_data={get_token_data}
-                  refreshing={refreshing_state}
-                />
-              )}
-
-              {current_view === 3 && (
-                <TokenTrade
-                  token={token}
-                  poolpm_fp_data={poolpm_fp_data}
-                  community_posts_length={community_posts?.length ?? 0}
-                  toggle_create={() => set_current_view(2)}
-                  refresh_data={get_token_data}
-                  finbyte_user={user_details}
-                  refresh_user_data={get_user_details}
+                <NFTOverview
+                  nft={nft}
                 />
               )}
             </motion.div>
@@ -189,4 +159,4 @@ const TokenBlock: FC <custom_props> = ({
   )
 }
 
-export default TokenBlock;
+export default NFTBlock;

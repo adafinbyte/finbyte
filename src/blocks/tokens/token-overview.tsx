@@ -14,7 +14,7 @@ import { Copy, Hash, MessagesSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import SocialIcon from "@/components/social-icons";
-import { community_post_data } from "@/utils/api/interfaces";
+import { community_post_data, platform_user_details } from "@/utils/api/interfaces";
 import { useWallet } from "@meshsdk/react";
 import { toast } from "@/hooks/use-toast";
 import RepresentCommunityButton from "./represent-community";
@@ -23,13 +23,16 @@ interface custom_props {
   token: curated_token;
   poolpm_fp_data: pool_pm_fingerprint | undefined;
   community_posts_length: number;
+  finbyte_user: platform_user_details | null;
 
   toggle_create: () => void;
   refresh_data: () => Promise<void>;
+  refresh_user_data: () => Promise<void>;
 }
 
 const TokenOverview: FC <custom_props> = ({
-  token, poolpm_fp_data, community_posts_length, toggle_create, refresh_data
+  token, poolpm_fp_data, community_posts_length, finbyte_user,
+  toggle_create, refresh_data, refresh_user_data
 }) => {
   const token_stats = [
     { title: "Hex", data: token.hex },
@@ -262,7 +265,8 @@ const TokenOverview: FC <custom_props> = ({
 
                 <RepresentCommunityButton
                   token={token}
-                  refresh_data={refresh_data}
+                  refresh_user_data={refresh_user_data}
+                  finbyte_user={finbyte_user}
                 />
               </span>
 
@@ -283,7 +287,7 @@ const TokenOverview: FC <custom_props> = ({
                     type: "spring",
                     delay: 1,
                   }}
-                  className="flex flex-col w-full gap-2"
+                  className="flex flex-col w-full gap-2 pb-2"
                 >
                   <Label>
                     Also see...

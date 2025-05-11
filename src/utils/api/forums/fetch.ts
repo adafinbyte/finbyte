@@ -58,3 +58,12 @@ export const fetch_forum_post_with_comments = async (post_id: number): Promise<s
 
   return {data: post};
 }
+
+export const fetch_chat_posts = async (): Promise<safe_fetched_return> => {
+  const { data: cp, error: cpe } = await supabase.from(databases.finbyte_chat).select('*');
+  if (cpe) {
+    return {error: cpe.message};
+  }
+
+  return {data: cp};
+}

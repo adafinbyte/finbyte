@@ -6,11 +6,11 @@ import ForumsPostsList from "./posts-list";
 import SiteHeader from "@/components/site-header";
 import { useToast } from "@/hooks/use-toast";
 import { create_forum_post_data, forum_post_data, platform_user_details, post_with_comments } from "@/utils/api/interfaces";
-import { fetch_all_forum_posts_with_comments } from "@/utils/api/chat/fetch";
+import { fetch_all_forum_posts_with_comments } from "@/utils/api/forums/fetch";
 import { useWallet } from "@meshsdk/react";
 import { format_long_string } from "@/utils/string-tools";
 import { checkSignature, generateNonce } from "@meshsdk/core";
-import { create_post } from "@/utils/api/chat/push";
+import { create_post } from "@/utils/api/forums/push";
 import { fetch_author_data } from "@/utils/api/account/fetch";
 import { useRouter } from "next/router";
 

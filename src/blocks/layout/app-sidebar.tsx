@@ -17,7 +17,8 @@ import {
   UsersIcon,
   MessagesSquareIcon,
   MessageCircleIcon,
-  HandCoinsIcon
+  HandCoinsIcon,
+  Image
 } from "lucide-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -48,16 +49,32 @@ const data = {
       url: "/",
       icon: <HomeIcon/>,
     },
+    null,
     {
       title: "Forums",
       url: "/forums",
       icon: <MessagesSquareIcon/>,
     },
+//    {
+//      title: "Chat",
+//      url: "/chat",
+//      icon: <MessageCircleIcon/>,
+//    },
     {
       title: "Tokens",
       url: "/tokens",
       icon: <HandCoinsIcon/>,
     },
+    {
+      title: "Rarity Checker",
+      url: "/rarity-checker",
+      icon: <Image/>,
+    },
+//    {
+//      title: "NFTs",
+//      url: "/nfts",
+//      icon: <Image/>,
+//    },
     {
       title: "Stats",
       url: "/finbyte-stats",

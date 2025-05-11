@@ -23,9 +23,12 @@ export interface platform_user_details {
   community_posts: community_post_data[];
   forum_posts: forum_post_data[];
   forum_comments: comment_post_data[];
-  first_timestamp: number;
+
   total_posts: number;
   total_kudos: number;
+
+  first_timestamp: number;
+
   account_data: account_data | null;
   ada_handle: string | null;
   type: 'finbyte' | 'anon';
@@ -139,6 +142,23 @@ export interface community_post_data {
 
   post_likers: string[] | null;
   tip_hashes:  string[] | null;
+  user: platform_user_details | null;
+
+  /** @todo */
+  marked_spam: boolean | null; //general improvement
+}
+
+export interface chat_post_data {
+  id:         number;
+  author:     string;
+
+  timestamp: number;
+  post:      string;
+
+  updated_timestamp: number | null;
+  updated_post:      string | null;
+
+  post_likers: string[] | null;
   user: platform_user_details | null;
 
   /** @todo */

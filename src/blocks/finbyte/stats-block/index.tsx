@@ -15,6 +15,8 @@ import { fetch_author_data } from "@/utils/api/account/fetch";
 import PlatformUserCard from "./user-card";
 import { LoadingDots } from "@/components/ui/loading-dots";
 import { Label } from "@/components/ui/label";
+import StatsTimeline from "./timeline";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface numbers {
   forum_posts: number;
@@ -64,6 +66,66 @@ const StatBlock: FC = () => {
     { icon: <Newspaper className="text-blue-400"/>, title: 'Forum Posts', data: stat_values.forum_posts },
     { icon: <MessagesSquare className="text-blue-400"/>, title: 'Forum Comments', data: stat_values.forum_comments },
     { icon: <Newspaper className="text-blue-400"/>, title: 'Community Posts', data: stat_values.community_posts },
+  ];
+
+  interface timeline_item {
+    type: 'todo' | 'done' | 'wip' | 'idea',
+    title: string;
+    description: string;
+    url: string | undefined;
+    is_external: boolean;
+  }
+
+  const timeline_items: timeline_item[] = [
+    {
+      type: 'done',
+      title: 'Basic Working Beta',
+      description: 'This is a testing release for the Cardano community to use without limits. Users can connect their wallets and create content.',
+      url: undefined,
+      is_external: false,
+    },
+    {
+      type: 'done',
+      title: 'Ada Handle Support',
+      description: 'We have decided to use Ada Handles to define our Identity system becuase why would we reinvent the wheel. Ada Handles is widley adopted and easier for the end user to recognise an address.',
+      url: undefined,
+      is_external: false,
+    },
+    {
+      type: 'done',
+      title: 'Development Release',
+      description: 'Because we are an open sourced project, we can take advantage of having multiple backends in one place. With this, we share our live developer mode site.',
+      url: undefined,
+      is_external: false,
+    },
+    {
+      type: 'wip',
+      title: 'Shadcn Upgrade',
+      description: 'This allows us to take full advantage of our styling bringing you a better user experience and interface.',
+      url: undefined,
+      is_external: false,
+    },
+    {
+      type: 'todo',
+      title: 'Stable Release',
+      description: 'This would be a point in which everything really works as it is intended to. Nearly 2 years and counting so far...',
+      url: undefined,
+      is_external: false,
+    },
+    {
+      type: 'idea',
+      title: '$FIN Token?',
+      description: 'Finbyte DOES NOT have a token currently but could the platform benefit in creating a token to further engage users?',
+      url: undefined,
+      is_external: false,
+    },
+    {
+      type: 'idea',
+      title: 'Web Game',
+      description: 'To stetch out what we can do at Finbyte, shall we create a game built on Cardano too?',
+      url: undefined,
+      is_external: false,
+    },
   ];
 
   const fetch_data = async () => {
@@ -141,11 +203,11 @@ const StatBlock: FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", delay: 1 }}
-            className="w-full mt-4"
+            transition={{ type: "spring", delay: 0.6 }}
+            className="w-full mt-2 lg:mt-4"
           >
             <Label>
-              Users
+              Recent Users
             </Label>
           </motion.div>
 
@@ -160,7 +222,7 @@ const StatBlock: FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
                     type: "spring",
-                    delay: 1 + (index * 0.1),
+                    delay: 0.25 + (index * 0.1),
                   }}
                   className="w-full"
                 >
@@ -169,6 +231,18 @@ const StatBlock: FC = () => {
               ))
             )}
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", delay: 1.2 }}
+            className="w-full mt-2 lg:mt-12"
+          >
+            <Label>Insider thought, tasks and jobs on the horizon</Label>
+            <StatsTimeline
+              items={timeline_items}
+            />
+          </motion.div>
         </div>
       </div>
     </>

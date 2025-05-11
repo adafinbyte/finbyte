@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import curated_tokens from "@/verified/tokens";
 import { platform_user_details, post_with_comments } from "@/utils/api/interfaces";
 import { toast } from "@/hooks/use-toast";
-import { fetch_forum_post_with_comments } from "@/utils/api/chat/fetch";
+import { fetch_forum_post_with_comments } from "@/utils/api/forums/fetch";
 import { fetch_author_data } from "@/utils/api/account/fetch";
 import ForumPostBlock from "@/blocks/forums/post-block";
 import { LoadingDots } from "@/components/ui/loading-dots";

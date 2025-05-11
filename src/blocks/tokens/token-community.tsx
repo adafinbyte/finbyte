@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { community_post_data, create_comment_post_data, create_community_post_data } from "@/utils/api/interfaces";
-import { create_post, like_unlike_post } from "@/utils/api/chat/push";
+import { create_post, like_unlike_post } from "@/utils/api/forums/push";
 import { curated_token } from "@/verified/interfaces";
 import { checkSignature, generateNonce } from "@meshsdk/core";
 import { useWallet } from "@meshsdk/react";

@@ -102,48 +102,6 @@ const curated_tokens: curated_token[] = [
     },
   },
   {
-    slug_id: 'trtl',
-    name: 'The Turtle Syndicate',
-    hex: '5452544c',
-    description: `
-      A portion of the revenue generated through $TRTL is allocated to sea turtle conservation initiatives, including habitat protection and research.
-      The Turtle Syndicate have also adopted turtles through charity programs, directly contributing to the cause.
-      Furthermore, the project envisions creating a self-sustaining ecosystem where $TRTL is used for purchasing goods and services related to marine life welfare, effectively tying the token's utility to real-world conservation efforts.
-    `,
-    category: 'Adoption',
-    token_details: {
-      ticker: 'TRTL',
-      policy: '52162581184a457fad70470161179c5766f00237d4b67e0f1df1b4e6',
-      fingerprint: 'asset1z8eg3p6gezqqfwqnjpfqsyqrt5uv2z0aejuf0p',
-      supply: 356000000000,
-      decimals: 0,
-    },
-    images: {
-      logo: "https://pbs.twimg.com/profile_images/1793645283131179008/eb6ZDAKC_400x400.jpg", //token backs collections, image points to founder unless something else wants to be used
-      header: "/headers/trtl.jpg"
-    },
-    links: {
-      discord:  "discord.gg/JDBSwuzdvj",
-      x: "https://x.com/am__panic", //token backs collections, x points to founder
-    },
-    finbyte: {
-      collection: [
-        {
-          title: 'View on TapTools',
-          image: thirdparty_logos.taptools,
-          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.98cd1a0de51bf17c8ae857f72f215c75a447e4d04fa35cb58364e85e476012c3',
-          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
-        },
-        {
-          title: 'The Turtle Syndicate',
-          image: 'https://pfp.jpgstoreapis.com/4c1e0a4bcdd31f9e0dcdb62c8e7ce2dc69265078f41663ed8ab66816-hero',
-          url: 'https://www.jpg.store/collection/turtlesyndicateturtles?tab=items',
-          description: '5k Collection of Turtles that contribute to IRL Turtle Adoptions.'
-        },
-      ],
-    },
-  },
-  {
     slug_id: 'bodega',
     name: 'Bodega Market',
     hex: '424f44454741',

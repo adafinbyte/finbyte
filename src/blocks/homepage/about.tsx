@@ -133,7 +133,7 @@ const About: FC = () => {
       <div className="relative p-2 inline-flex gap-x-4">
         <div className="flex flex-col w-full text-left">
           <ScrollArea className="max-h-44 pr-4 pl-2 py-2">
-            <p className="break-normal text-sm text-neutral-300">{item.description}</p>
+            <p className="break-normal text-sm opacity-75">{item.description}</p>
           </ScrollArea>
         </div>
       </div>
@@ -165,7 +165,7 @@ const About: FC = () => {
             variants={itemVariants}
             className={`${item.main ? 'col-span-2' : ''} px-2`}
           >
-            <Card className={`${item.main ? 'bg-gradient-to-r from-blue-500 to-cyan-500 border-transparent' : 'dark:border-neutral-800'} text-white`}>
+            <Card className={`${item.main ? 'bg-gradient-to-r from-blue-500 to-cyan-500 border-transparent' : 'dark:border-neutral-800'} ${item.main ? 'text-white' : ''} dark:text-white`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -277,7 +277,7 @@ const About: FC = () => {
                     <img src={item.image} className="size-10 flex-shrink-0 my-auto" />
                     <div className="flex flex-col w-full text-left">
                       <h1 className="font-semibold">{item.title}</h1>
-                      <p className="flex-1 break-normal line-clamp-2 text-sm text-neutral-300">{item.description}</p>
+                      <p className="flex-1 break-normal line-clamp-2 text-sm opacity-75">{item.description}</p>
                     </div>
                   </div>
                   <BorderBeam/>

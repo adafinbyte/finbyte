@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useWallet } from "@meshsdk/react";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface custom_props {
   forum_post: post_with_comments
@@ -42,7 +43,7 @@ const PostPreview: FC <custom_props> = ({
       >
         <div
           className={cn(
-            "w-full p-5 rounded-xl relative",
+            "w-full p-5 rounded-xl",
             "bg-linear-to-br from-black/[0.05] to-transparent dark:from-white/[0.08] dark:to-transparent",
             "backdrop-blur-md backdrop-saturate-150",
             "border border-black/[0.05] dark:border-white/[0.08]",
@@ -103,9 +104,13 @@ const PostPreview: FC <custom_props> = ({
 
           <div className="mt-2">
             <Label className="text-lg text-blue-500 dark:text-blue-200">{post.title}</Label>
-            <FinbyteMarkdown>
-              {post.post.length > 100 ? post.post.substring(0, 100) + '...' : post.post}
-            </FinbyteMarkdown>
+            <ScrollArea>
+              <div className="max-h-16">
+                <FinbyteMarkdown>
+                  {post.post.length > 100 ? post.post.substring(0, 100) + '...' : post.post}
+                </FinbyteMarkdown>
+              </div>
+            </ScrollArea>
 
             <span className="pt-2 text-black dark:text-white/50 text-sm mt-2 block flex w-full justify-between">
               {format_unix(post.timestamp).time_ago}

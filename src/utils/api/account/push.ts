@@ -49,3 +49,57 @@ export const delete_account = async (
     return;
   }
 }
+
+export const update_username = async (
+  address:         string,
+  timestamp:       number,
+  ada_handle: string
+): Promise<safe_fetched_return | void> => {
+  const { error } = await supabase
+    .from(databases.accounts)
+    .update({
+        l_timestamp: timestamp,
+        ada_handle:   ada_handle
+      }
+    )
+    .eq('address', address);
+  
+  if (error) {
+    return { error: error.message }
+  } else {
+    await create_notification(
+      timestamp,
+      address,
+      'Updated AdaHandle',
+      null,
+      {forum_post_id: null, token_slug: null}
+    );
+  }
+}
+
+export const update_community_badge = async (
+  address:      string,
+  timestamp:    number,
+  token_ticker: string
+): Promise<safe_fetched_return | void> => {
+  const { error } = await supabase
+    .from(databases.accounts)
+    .update({
+        l_timestamp:    timestamp,
+        community_badge: token_ticker
+      }
+    )
+    .eq('address', address);
+
+  if (error) {
+    return { error: error.message }
+  } else {
+    await create_notification(
+      timestamp,
+      address,
+      'Updated Community Badge',
+      null,
+      {forum_post_id: null, token_slug: null}
+    );
+  }
+}

@@ -9,7 +9,6 @@ export const fetch_author_data = async (author: string): Promise<safe_fetched_re
   let first_timestamp: string | number;
   const timestamps: string[] = [];
   let total_kudos = 0;
-  let handle = null;
   let account = null;
 
   const { data, error } = await supabase.rpc('search_author', { author_query: author });
@@ -71,10 +70,6 @@ export const fetch_author_data = async (author: string): Promise<safe_fetched_re
 
   const { data: ad } = await supabase
     .from(databases.accounts).select('*').eq('address', author).single();
-  if (ad) {
-    handle = ad.ada_handle;
-    account = ad;
-  }
 
   const platform_details: platform_user_details = {
     community_posts,
@@ -83,9 +78,9 @@ export const fetch_author_data = async (author: string): Promise<safe_fetched_re
     first_timestamp: Number(first_timestamp),
     total_posts,
     total_kudos,
-    account_data: account ?? null,
-    ada_handle: handle,
-    type: account ? 'finbyte' : 'anon',
+    account_data: ad,
+    ada_handle: ad?.ada_handle,
+    type: ad ? 'finbyte' : 'anon',
     address: author
   };
 

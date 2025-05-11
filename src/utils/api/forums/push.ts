@@ -5,7 +5,6 @@ import { create_comment_post_data, create_community_post_data, create_forum_post
 import { notification_action_type, post_type } from "../types";
 import { create_notification } from "../misc";
 
-/** @todo the rest of the post types for create_data */
 export const create_post = async (
   create_data: create_forum_post_data | create_community_post_data | create_comment_post_data,
   post_type:   post_type,
@@ -60,7 +59,7 @@ export const create_post = async (
   }
 }
 
-export const toggleVote = async ({
+export const toggle_vote = async ({
   postId,
   address,
   voteType,

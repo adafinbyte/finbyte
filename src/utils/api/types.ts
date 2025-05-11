@@ -9,5 +9,5 @@ export type notification_action_type = |
   'New Chat' | 'Edited Chat' | 'Deleted Chat' | 'Tipped Chat' |
   'Post Liked' | 'Chat Liked' | 'Comment Liked' |
   'Post Unliked' | 'Chat Unliked' | 'Comment Unliked' |
-  'New Account' | 'Updated AdaHandle' | 'Account Deleted' |
+  'New Account' | 'Updated AdaHandle' | 'Account Deleted' | 'Updated Community Badge' |
   'Vote Casted';

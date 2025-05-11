@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sidebar"
 import SettingsModal from "@/blocks/layout/modals/settings"
 import Link from "next/link"
+import { useRouter } from "next/router"
 
 export function NavSecondary({
   items,
@@ -23,6 +24,7 @@ export function NavSecondary({
     icon: React.ReactNode
   }[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const router = useRouter();
   const [settings_modal_open, set_settings_modal_open] = React.useState(false)
 
   return (
@@ -31,7 +33,7 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item, index) => (
             <SidebarMenuItem key={index}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild isActive={router.pathname === item.url}>
                 <Link href={item.url}>
                   {item.icon}
                   <span>{item.title}</span>

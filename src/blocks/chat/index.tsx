@@ -1,32 +1,28 @@
 import { FC, useEffect, useState } from "react";
 
-import ForumsActions from "./actions";
-import ForumsPostsList from "./posts-list";
-
 import SiteHeader from "@/components/site-header";
 import { useToast } from "@/hooks/use-toast";
-import { create_forum_post_data, post_with_comments } from "@/utils/api/interfaces";
-import { fetch_all_forum_posts_with_comments } from "@/utils/api/main/fetch";
+import { chat_post_data, create_comment_post_data, create_forum_post_data, platform_user_details } from "@/utils/api/interfaces";
+import { fetch_chat_posts } from "@/utils/api/forums/fetch";
 import { useWallet } from "@meshsdk/react";
 import { format_long_string } from "@/utils/string-tools";
 import { checkSignature, generateNonce } from "@meshsdk/core";
-import { create_post } from "@/utils/api/main/push";
+import { create_post } from "@/utils/api/forums/push";
+import { fetch_author_data } from "@/utils/api/account/fetch";
+import { useRouter } from "next/router";
+import ChatBlock from "./chat-box";
 
-const ForumsBlock: FC = () => {
+const FinbyteChatBlock: FC = () => {
   const { toast } = useToast();
+  const router = useRouter();
   const { address, connected, wallet } = useWallet();
 
-  const [forum_posts, set_forum_posts] = useState<post_with_comments[] | null>(null);
-  const [all_forum_posts, set_all_forum_posts] = useState<post_with_comments[] | null>(null);
+  const [chat_posts, set_chat_posts] = useState<chat_post_data[] | null>(null);
   const [refreshing_state, set_refreshing_state] = useState(false);
-
-  const known_sections = [
-    'general', 'requests', 'finbyte'
-  ]
 
   const get_posts = async () => {
     set_refreshing_state(true);
-    const posts = await fetch_all_forum_posts_with_comments();
+    const posts = await fetch_chat_posts();
     if (posts?.error) {
       toast({
         description: posts.error.toString(),
@@ -34,24 +30,23 @@ const ForumsBlock: FC = () => {
       });
       return;
     }
-    if (posts?.data) {
-      set_all_forum_posts(posts.data);
-      set_forum_posts(posts.data);
-    }
+
+    /** @todo paginate this properly from the db */
+    const only_lastest_posts: chat_post_data[] = posts.data.slice(0, 25);
+    const enriched_posts = await Promise.all(only_lastest_posts.map(async (post) => {
+      const user_response = await fetch_author_data(post.author);
+      const data: platform_user_details = user_response.data;
+      return {
+        ...post,
+        user: data || null,
+      };
+    }));
+
+    set_chat_posts(enriched_posts.sort((a, b) => b.timestamp - a.timestamp));
     set_refreshing_state(false);
   }
 
-  const filter_posts = async (by_section?: string) => {
-    if (!all_forum_posts) return;
-  
-    if (!by_section || by_section === 'all') {
-      return set_forum_posts(all_forum_posts);
-    }
-  
-    set_forum_posts(all_forum_posts.filter(a => a.post.section === by_section));
-  }
-
-  const attempt_create_post = async (details: create_forum_post_data) => {
+  const attempt_create_post = async (details: create_comment_post_data) => {
     if (!connected) { return; }
 
     const data_to_sign = `${format_long_string(details.author)} created a forum post at ${details.timestamp}`;
@@ -77,7 +72,12 @@ const ForumsBlock: FC = () => {
             });
             return;
           }
-          await get_posts();
+          if (creation?.data) {
+            router.push('/forums/' + creation.data);
+          } else {
+            /** @note fallback just refreshes */
+            await get_posts();
+          }
         } else {
           toast({
             description: 'Signature verification failed! Whoops, is it your wallet?',
@@ -98,27 +98,33 @@ const ForumsBlock: FC = () => {
     }
   }
 
+  const attempt_delete_post = async (post_id: number) => {
+
+  }
+
+  const attempt_like_unlike = async (post_id: number, post_likers: string[]) => {
+
+  }
+
   useEffect(() => {
     get_posts();
   }, []);
 
-  return (
+  return chat_posts && (
     <>
-      <SiteHeader title="Finbyte Forums"/>
+      <SiteHeader title="Finbyte Chat"/>
       <div className="flex flex-1 flex-col">
-        <div className="@container/main flex flex-1 flex-col gap-2 p-2 lg:p-4">
-          <ForumsActions
-            on_filter={filter_posts}
-            on_create_post={attempt_create_post}
-            on_refresh={get_posts}
-            refreshing={refreshing_state}
+        <div className="@container/main p-2 lg:p-4 lg:w-[75%] lg:mx-auto">
+          <ChatBlock
+            posts={chat_posts}
+            on_create={attempt_create_post}
+            on_delete={attempt_delete_post}
+            on_like_unlike={attempt_like_unlike}
           />
-
-          <ForumsPostsList forum_posts={forum_posts} refreshing={refreshing_state}/>
         </div>
       </div>
     </>
   )
 }
 
-export default ForumsBlock;
+export default FinbyteChatBlock;

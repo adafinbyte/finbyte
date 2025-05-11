@@ -78,7 +78,7 @@ export const fetch_finbyte_general_stats = async (): Promise<safe_fetched_return
       total_tips: platform_tips,
       likes_given,
       unique_users: unique_users.size,
-      users: Array.from(users.values()) as platform_user[],
+      users: Array.from(users.values()) as platform_user_details[],
       interactions: i.length,
     }
   };
