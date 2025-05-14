@@ -32,8 +32,8 @@ import WalletLoginModal from "@/layout/modals/wallet-login"
 import { useEffect, useState } from "react"
 import UserAvatar from "./user-avatar"
 
-import { useConnectWallet } from "@newm.io/cardano-dapp-wallet-connector"
-import { Address } from "@emurgo/cardano-serialization-lib-browser";
+import { getWalletAddress, useConnectWallet } from "@newm.io/cardano-dapp-wallet-connector"
+//import { Address } from "@emurgo/cardano-serialization-lib-browser";
 import { toast } from "sonner"
 import { fetch_platform_user_details } from "@/utils/api/fetch/account"
 import { platform_user_details } from "@/utils/api/interfaces"
@@ -67,8 +67,9 @@ export function NavUser({
     const fetchAddress = async () => {
       if (isConnected && wallet && mounted) {
         try {
-          const raw = await wallet.getChangeAddress();
-          const address = Address.from_bytes(Buffer.from(raw, "hex")).to_bech32();
+          const address = await getWalletAddress(wallet);
+          //const raw = await wallet.getChangeAddress();
+          //const address = Address.from_bytes(Buffer.from(raw, "hex")).to_bech32();
           setWalletAddress(address);
 
           const platform_details = await fetch_platform_user_details(address);
