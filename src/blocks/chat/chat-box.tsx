@@ -2,142 +2,205 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect, FC } from "react"
+import { useEffect, useState } from "react"
+import { cn } from "@/utils/common"
+import { Eraser, Glasses, SendIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Textarea } from "@/components/ui/textarea"
-import { Eraser, Glasses, Send } from "lucide-react"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { chat_post_data, create_comment_post_data } from "@/utils/api/interfaces"
-import { motion } from "framer-motion";
-import ChatCommentComponent from "./comment"
-import { useWallet } from "@meshsdk/react"
-import { cn } from "@/lib/utils"
+import { LoadingDots } from "@/components/loading-dots"
+import { fetch_chat_posts } from "@/utils/api/fetch/posts"
+import { chat_post_data, create_chat_post_data } from "@/utils/api/interfaces"
+import { getWalletAddress, useConnectWallet } from "@newm.io/cardano-dapp-wallet-connector"
 
-// Define message type
-type Message = {
-  id: string
-  content: string
-  sender: "user" | "other"
-  timestamp: Date
-}
+import { toast } from "sonner"
+import { motion, AnimatePresence } from "framer-motion";
+import FinbyteChatComponent from "./chat-component"
+import { create_post } from "@/utils/api/push/post"
 
-interface custom_props {
-  posts: chat_post_data[] | null;
-  on_create: (details: create_comment_post_data) => Promise<void> 
-  on_delete: (post_id: number) => Promise<void> 
-  on_like_unlike: (post_id: number, post_likers: string[]) => Promise<void>
-}
+export function ChatForm({ className, ...props }: React.ComponentProps<"form">) {
+  const [input, setInput] = useState("");
+  const [loading, set_loading] = useState(false);
 
-const ChatBlock: FC <custom_props> = ({
-  posts, on_create, on_delete, on_like_unlike
-}) => {
-  const { address } = useWallet();
+  const { isConnected, wallet } = useConnectWallet();
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      content: "Hello! How can I help you today?",
-      sender: "other",
-      timestamp: new Date(),
-    },
-  ])
-  const [chat, set_chat] = useState("")
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [current_page, set_current_page] = useState(1);
+  const [all_authors, set_all_authors] = useState<string[] | null>(null);
+  const [posts, set_posts] = useState<chat_post_data[] | null>(null);
+  const [users_address, set_users_address] = useState<string | null>(null);
+  const [mounted, set_mounted] = useState(false);
 
-  // Scroll to bottom when new messages arrive
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+  const get_chat_data = async () => {
+    set_loading(true);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    set_chat(e.target.value)
+    const { data, error } = await fetch_chat_posts(current_page);
+    if (error) {
+      toast('Failed to get chat posts', {
+        description: error
+      });
+      return;
+    } else if (data) {
+      set_posts(data);
+      // here we want to get the data for each address from authors
+    }
+
+    set_loading(false);
   }
 
-  const [view_adahandle, set_view_adahandle] = useState(false);
-  const [refreshing_state, set_refreshing_state] = useState(false);
-  const [show_create_post, set_show_create_post] = useState(false);
-  const [hidden_comments, set_hidden_comments] = useState<Set<number>>(new Set());
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!input.trim()) { return; }
+    if (!users_address || !wallet) {
+      toast('No wallet connected', {
+        description: 'You need to connect your wallet in order to preform this action.'
+      });
+      return;
+    }
 
-  const toggle_hide = (index: number) => {
-    set_hidden_comments(prev => {
-      const updated = new Set(prev);
-      if (updated.has(index)) {
-        updated.delete(index);
-      } else {
-        updated.add(index);
+    const timestamp = Math.floor(Date.now() / 1000);
+    try {
+      const details: create_chat_post_data = {
+        author: users_address,
+        timestamp: timestamp,
+        post: input
       }
-      return updated;
-    });
-  };
+      const creation = await create_post(details, 'finbyte_chat', details.timestamp, users_address);
+      if (creation?.error) {
+        toast.warning('Could not create post', {
+          description: creation.error
+        });
+        return;
+      }
+      if (creation.created) {
+        await get_chat_data();
+        setInput('');
+      }
 
-  const commentVariants = {
-    hidden: { opacity: 0, height: 0, overflow: 'hidden' },
-    visible: { opacity: 1, height: 'auto', overflow: 'visible' },
-    exit: { opacity: 0, height: 0, overflow: 'hidden' },
-  };
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.warning('Error', {
+          description: error.message,
+        });
+      } else {
+        throw error;
+      }
+    }
+  }
 
-  return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="sticky top-0 z-10 p-4">
-        <div className="flex flex-col w-full gap-2">
-          <Textarea
-            value={chat}
-            onChange={handleInputChange}
-            placeholder="Type your message..."
-            className="flex-1 max-h-64 resize-none"
-          />
+  useEffect(() => {
+    get_chat_data();
+    set_mounted(true);
+  }, []);
 
-          <div className="flex gap-1 items-center">
-            <Button variant='ghost' size="sm">
-              <Eraser className="" />
-            </Button>
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (isConnected && wallet) {
+        toast('Connected', {
+          description: 'Your wallet is now connected to Finbyte.'
+        });
+        const address = await getWalletAddress(wallet);
+        if (address) {
+          set_users_address(address);
+        }
+      } else if (!isConnected) {
+        set_users_address(null);
+      }
+    };
 
-            <Button variant='ghost' size="sm">
-              <Glasses className="" />
-            </Button>
+    fetchAddress();
+  }, [isConnected, wallet, mounted]);
 
-            <div className="ml-auto"/>
-            <Button type="submit" variant='primary' size="sm" disabled={!chat.trim()}>
-              Send Chat
-              <Send className="" />
-            </Button>
-          </div>
-        </div>
-      </div>
-  
-      <ScrollArea className="flex-1 overflow-y-auto p-4">
-        <div className="max-h-screen flex flex-col w-full gap-y-4 pb-10">
-          {posts ? posts.map((post, index) => (
+  if (!mounted) { return null; }
+
+  const header = (
+    <header className="m-auto flex max-w-96 flex-col gap-5 text-center">
+      <h1 className="text-2xl font-semibold leading-none tracking-tight">Welcome to the Chat, Cardano.</h1>
+      <LoadingDots className="mt-4"/>
+    </header>
+  )
+
+  const messageList = (
+    <div className="my-4 flex h-fit min-h-full flex-col gap-4">
+      <AnimatePresence mode="sync">
+        {posts && posts.toReversed().map((post, index) => {
+          const role = users_address === post.author ? 'us' : 'them';
+          return (
             <motion.div
-              key="visible"
-              variants={commentVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", delay: index * 0.2 }}
+              data-role={role}
               className={cn(
-                "w-[90%] lg:w-[75%]",
-                post.author === address ? `ml-auto` : ''
+                "w-[80%] lg:w-[60%]",
+                !isConnected && "mx-auto",
+                users_address === post.author ?
+                  "self-end"
+                  :
+                  "self-start",
               )}
             >
-              <ChatCommentComponent
-                key={index}
-                comment_post={post}
-                original_post_author={post.author}
-                toggle_hide={() => toggle_hide(index)}
-                on_delete={() => on_delete(post.id)}
-                on_like={() => on_like_unlike(post.id, post.post_likers ?? [])}
+              <FinbyteChatComponent
+                post={post}
               />
             </motion.div>
-          )) : (
-            <div>
-              No posts to show
-            </div>
-          )}
-        </div>
-      </ScrollArea>
-  
+          );
+        })}
+      </AnimatePresence>
+
+      {loading && <div className="self-start rounded-xl bg-gray-100 px-3 py-2 text-sm">Loading data...</div>}
     </div>
+  );
+
+  return (
+    <TooltipProvider>
+      <main
+        className={cn(
+          "ring-none mx-auto flex w-full flex-col items-stretch border-none mb-12",
+          className,
+        )}
+        {...props}
+      >
+
+        <form
+          onSubmit={handleSubmit}
+          className="border-input bg-background focus-within:ring-ring/10 relative mx-6 mb-4 flex items-center rounded-[16px] border px-3 py-1.5 text-sm focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-0"
+        >
+          <Textarea
+            onChange={(v) => setInput(v)}
+            value={input}
+            placeholder={'Type your message here...'}
+            className="placeholder:text-muted-foreground flex-1 bg-transparent focus:outline-none"
+          />
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={loading}
+              >
+                <SendIcon size={16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent sideOffset={12}>Submit</TooltipContent>
+          </Tooltip>
+        </form>
+
+        <div className="flex items-center w-full px-6 gap-1">
+          <Button variant='secondary' size='sm' onClick={() => setInput('')}>
+            <Eraser/>
+          </Button>
+
+          <Button variant='secondary' size='sm'>
+            <Glasses/>
+          </Button>
+        </div>
+
+        <hr className="w-[90%] mx-auto mt-4 mb-2"/>
+
+        <div className="flex-1 content-center px-6">{posts?.length ? messageList : header}</div>
+      </main>
+    </TooltipProvider>
   )
 }
-
-export default ChatBlock;

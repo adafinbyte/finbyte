@@ -1,4 +1,4 @@
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export const format_long_string = (str: string): string => {
   return str.length > 14 ? str.substring(0, 14) + "..." : str;
@@ -42,16 +42,13 @@ export const capitalize_first_letter = (word: string) => {
 export const copy_to_clipboard = (text: string, toast_message: string) => {
   navigator.clipboard.writeText(text)
     .then(() => {
-      toast({
-        title: 'Copied to clipboard!',
+      toast('Copied to clipboard!', {
         description: toast_message,
       });
     })
     .catch(err => {
-      toast({
-        title: 'Failed to clipboard.',
-        description: err,
-        variant: 'destructive'
+      toast.warning('Failed to clipboard.', {
+        description: err
       });
     });
 };

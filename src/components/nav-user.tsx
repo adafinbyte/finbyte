@@ -28,13 +28,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useWallet } from "@meshsdk/react"
-import WalletLoginModal from "@/blocks/layout/modals/wallet-login"
+import WalletLoginModal from "@/layout/modals/wallet-login"
 import { useEffect, useState } from "react"
 import UserAvatar from "./user-avatar"
-import { fetch_author_data, fetch_username_from_account } from "@/utils/api/account/fetch"
+
+import { useConnectWallet } from "@newm.io/cardano-dapp-wallet-connector"
+import { Address } from "@emurgo/cardano-serialization-lib-browser";
+import { toast } from "sonner"
+import { fetch_platform_user_details } from "@/utils/api/fetch/account"
 import { platform_user_details } from "@/utils/api/interfaces"
-import { toast } from "@/hooks/use-toast"
 import AccountModal from "./modals/account"
 
 export function NavUser({
@@ -47,43 +49,65 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar();
-  const { address, connected, disconnect } = useWallet();
+  const { disconnect, isConnected, wallet } = useConnectWallet();
 
   const [wallet_login_modal_open, set_wallet_login_modal_open] = useState(false);
   const [account_modal_open, set_account_modal_open] = useState(false);
-  const [user_adahandle, set_user_adahandle] = useState<string | undefined>(undefined);
 
-  const get_user_details = async (user_address: string) => {
-    try {
-      const username = await fetch_username_from_account(user_address);
-      set_user_adahandle(username);
-    } catch (error) {
-      console.error("Failed to fetch user details", error);
-    }
-  }
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [platform_user_details, set_platform_user_details] = useState<platform_user_details | null>(null);
+  const [user_adahandle, set_user_adahandle] = useState<string | null>(null);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
-    if (connected && address) {
-      get_user_details(address);
-    }
-  }, [connected, address]);
+    const fetchAddress = async () => {
+      if (isConnected && wallet && mounted) {
+        try {
+          const raw = await wallet.getChangeAddress();
+          const address = Address.from_bytes(Buffer.from(raw, "hex")).to_bech32();
+          setWalletAddress(address);
+
+          const platform_details = await fetch_platform_user_details(address);
+          if (platform_details.error) {
+            toast('Could not get platform details', {
+              description: platform_details.error,
+            });
+          }
+          if (platform_details.data) {
+            set_platform_user_details(platform_details.data);
+            set_user_adahandle(platform_details.data.ada_handle);
+          }
+        } catch (error) {
+          console.error("Failed to get wallet address:", error);
+        }
+      }
+    };
+
+    fetchAddress();
+  }, [isConnected, wallet, mounted]);
+
+  /** @note boo nextjs, boo */
+  if (!mounted) return null;
 
   const handle_disconnect = () => {
     disconnect();
-    toast({
-      title: 'Wallet Disconnected!',
-      description: 'Your wallet has been disconnected.',
+    toast('Disconnected', {
+      description: 'Your wallet has now been disconnected from Finbyte.',
     });
   }
 
   return (
     <SidebarMenu>
-      {!connected ?
+      {!isConnected ?
         <SidebarMenuButton onClick={() => set_wallet_login_modal_open(true)}>
           <Plug />
           <span>Connect Wallet</span>
         </SidebarMenuButton>
-        :
+        : walletAddress &&
         <SidebarMenuItem>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -92,7 +116,7 @@ export function NavUser({
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <UserAvatar address={address}/>
+                  <UserAvatar address={walletAddress}/>
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -106,7 +130,7 @@ export function NavUser({
                   </span>
 
                   <span className="truncate text-xs tracking-wide text-muted-foreground">
-                    {address.substring(0, 10) + "..." + address.substring(address.length - 10)}
+                    {walletAddress.substring(0, 10) + "..." + walletAddress.substring(walletAddress.length - 10)}
                   </span>
                 </div>
                 <MoreVerticalIcon className="ml-auto size-4" />
@@ -122,7 +146,7 @@ export function NavUser({
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <UserAvatar address={address}/>
+                    <UserAvatar address={walletAddress}/>
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -137,7 +161,7 @@ export function NavUser({
                       }
                     </span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {address.substring(0, 10) + "..." + address.substring(address.length - 10)}
+                      {walletAddress.substring(0, 10) + "..." + walletAddress.substring(walletAddress.length - 10)}
                     </span>
                   </div>
                 </div>
@@ -161,7 +185,19 @@ export function NavUser({
       }
 
       <WalletLoginModal open={wallet_login_modal_open} onOpenChange={set_wallet_login_modal_open} />
-      <AccountModal open={account_modal_open} onOpenChange={set_account_modal_open} />
+
+      {/** @note don't try render until we have the needed data */}
+      {(walletAddress && platform_user_details) && (
+        <>
+          <AccountModal
+            open={account_modal_open}
+            onOpenChange={set_account_modal_open}
+            address={walletAddress}
+            platform_user_details={platform_user_details}
+          />
+        </>
+      )}
+        
     </SidebarMenu>
   )
 }

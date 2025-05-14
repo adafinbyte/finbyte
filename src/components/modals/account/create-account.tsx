@@ -2,25 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FC, useState } from "react";
 import AdaHandlesComboBox from "./adahandles-combobox";
-import { create_account_data } from "@/utils/api/interfaces";
-import { useWallet } from "@meshsdk/react";
+import { create_platform_user_data } from "@/utils/api/interfaces";
 
 interface custom_props {
   toggle_cancel: () => void;
   found_handles: string[] | null;
-  on_create: (details: create_account_data) => Promise<void>;
+  on_create: (details: create_platform_user_data) => Promise<void>;
+  address: string;
 }
 
 const AccountCreateView: FC <custom_props> = ({
-  toggle_cancel, found_handles, on_create
+  toggle_cancel, found_handles, on_create, address
 }) => {
-  const { address } = useWallet();
   const [chosen_handle, set_chosen_handle] = useState<string | null>(null);
 
   const attempt_create = async () => {
     const timestamp = Math.floor(Date.now() / 1000);
-    const details: create_account_data = {
-      f_timestamp: timestamp,
+    const details: create_platform_user_data = {
+      timestamp: timestamp,
       address: address,
       ada_handle: chosen_handle
     }

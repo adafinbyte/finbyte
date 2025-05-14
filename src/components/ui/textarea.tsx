@@ -1,22 +1,39 @@
-import * as React from "react"
+"use client"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/utils/common"
+import React, { useRef, useEffect, type TextareaHTMLAttributes } from "react"
 
-const Textarea = React.forwardRef<
-  HTMLTextAreaElement,
-  React.ComponentProps<"textarea">
->(({ className, ...props }, ref) => {
+interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange"> {
+  value: string
+  onChange: (value: string) => void
+}
+
+export function Textarea({ className, value, onChange, ...props }: TextareaProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const resizeTextarea = () => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = "auto"
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }
+
+  useEffect(() => {
+    resizeTextarea()
+  }, [value])
+
   return (
     <textarea
-      className={cn(
-        "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        className
-      )}
-      ref={ref}
       {...props}
+      value={value}
+      ref={textareaRef}
+      rows={1}
+      onChange={(e) => {
+        onChange(e.target.value)
+        resizeTextarea()
+      }}
+      className={cn("resize-none min-h-4 max-h-80", className)}
     />
   )
-})
-Textarea.displayName = "Textarea"
-
-export { Textarea }
+}

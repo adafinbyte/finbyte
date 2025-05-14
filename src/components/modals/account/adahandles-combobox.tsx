@@ -3,7 +3,6 @@
 import * as React from "react"
 import { Check, ChevronsUpDown, Save } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -18,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { cn } from "@/utils/common"
 
 interface custom_props {
   on_selected: (value: string) => void;
@@ -52,8 +52,9 @@ const AdaHandlesComboBox: React.FC <custom_props> = ({
             <ChevronsUpDown className="opacity-50" />
           </Button>
         </PopoverTrigger>
+
         {on_save_handle && (
-          <Button disabled={!value} onClick={() => on_save_handle(value)} variant='save' size='icon'>
+          <Button disabled={!value} onClick={() => on_save_handle(value)} variant='secondary' size='icon'>
             <Save />
           </Button>
         )}

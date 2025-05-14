@@ -1,6 +1,3 @@
-import { MailIcon, PlusCircleIcon, type LucideIcon } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -11,7 +8,6 @@ import {
 import { FC, ReactNode } from "react"
 import { useRouter } from "next/router"
 import Link from "next/link"
-import { Badge } from "./ui/badge"
 
 interface item {
   title: string;
@@ -36,9 +32,6 @@ const NavMain: FC <custom_props> = ({
                 <SidebarMenuButton tooltip={item.title} isActive={router.pathname === item.url}>
                   {item.icon}
                   <span>{item.title}</span>
-                  {item.title === 'Rarity Checker' && (
-                    <Badge className="ml-auto text-xs" variant='destructive'>WIP</Badge>
-                  )}
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
