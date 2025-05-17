@@ -42,12 +42,12 @@ const FinbyteMarkdown: FC <custom_props> = ({ children, example, ...props }) => 
       components={{
         img: ({ node, ...props }) => {
           if (props.alt && Object.keys(emoji_map).includes(props.alt)) {
-            return <span style={{ display: 'inline-block' }}><img title={`:${props.alt}:`} className='w-4' {...props} /></span>;
+            return <span style={{ display: 'inline-block' }}><img title={`:${props.alt}:`} className='size-3.5' {...props} /></span>;
           } else {
             return <img className={example ? 'max-h-10' : pmd_class.img_class} {...props} />;
           }
         },
-        hr: ({ node, ...props })   => <hr className="my-2 border-neutral-700"/>,
+        hr: ({ node, ...props })   => <hr className="my-4 border-neutral-700"/>,
         p: ({ node, ...props })    => <p className={pmd_class.p_class} {...props} />,
         a: ({ node, ...props }) => {
           const href = props.href || '';

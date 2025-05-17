@@ -1,17 +1,15 @@
-import AddressBlock from "@/blocks/address";
-import Head from "next/head";
+import Head from "next/head";;
+import AddressBlock from "@/blocks/address/address-block";
 
 export default function Home() {
   return (
-    <div className="w-full">
+    <>
       <Head>
         <title>Address | Finbyte</title>
-        <meta name="description" content="A Cardano dApp powered my Mesh" />
+        <meta name="description" content="The future of social, built on Cardano." />
       </Head>
 
-      <main className={`min-h-screen`}>
-        <AddressBlock/>
-      </main>
-    </div>
+      <AddressBlock/>
+    </>
   );
 }

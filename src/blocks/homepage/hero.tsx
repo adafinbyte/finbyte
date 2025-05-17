@@ -1,11 +1,9 @@
 import { FC, useEffect, useRef } from "react";
 import Link from "next/link";
-import { MessageCircle, Search } from "lucide-react";
+import { HandCoins, MessageCircle, MessagesSquare } from "lucide-react";
 import { motion, useAnimation, useInView } from "framer-motion";
-
-import useThemedProps from "@/contexts/themed-props";
-import ForumPostExample from "@/components/forums-core/post/example";
-import Marquee from "@/components/marquee";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const containerVariants = {
   hidden: {},
@@ -30,18 +28,16 @@ const itemVariants = {
 };
 
 const Hero: FC = () => {
-  const themed = useThemedProps();
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, margin: "-100px" });
+  const in_view = useInView(ref, { once: true, margin: "-100px" });
   const controls = useAnimation();
+  const { toast } = useToast();
 
   useEffect(() => {
-    if (isInView) {
+    if (in_view) {
       controls.start("show");
-    } else {
-      controls.set("hidden");
     }
-  }, [isInView, controls]);
+  }, [in_view, controls]);
 
   return (
     <motion.div
@@ -49,60 +45,57 @@ const Hero: FC = () => {
       variants={containerVariants}
       initial="hidden"
       animate={controls}
-      className="min-h-screen flex items-center justify-center"
+      className="min-h-screen flex flex-col gap-2 items-center justify-center text-center"
     >
-      <div className="max-w-6xl mx-auto xl:px-0">
-        <motion.span
-          variants={itemVariants}
-          className={`${themed['300'].text} font-semibold text-2xl md:text-4xl flex flex-col gap-2`}
-        >
-          <span className={`${themed['200'].text} text-5xl md:text-6xl`}>Finbyte:</span>
-          <span>
-            The Future of Social, Built on <span className="text-blue-600">Cardano</span>.
-          </span>
-        </motion.span>
+      <motion.span
+        variants={itemVariants}
+        className="text-neutral-500 dark:text-neutral-400 font-semibold text-2xl md:text-4xl flex flex-col gap-2"
+      >
+        <span className="text-neutral-800 dark:text-neutral-200 text-5xl md:text-6xl">Finbyte:</span>
+        <span>
+          The Future of Social, Built on <span className="text-blue-600">Cardano</span>.
+        </span>
+      </motion.span>
 
-        <motion.p
-          variants={itemVariants}
-          className={`mt-4 ${themed['400'].text} text-sm lg:text-lg lg:w-3/4 lg:mx-auto`}
-        >
-          A social platform designed for the modern web. Built with Cardano, Finbyte puts control,
-          transparency, and community back where it belongs — in your hands.
-        </motion.p>
+      <motion.p
+        variants={itemVariants}
+        className="mt-4 text-neutral-700 dark:text-neutral-400 text-sm lg:text-lg lg:w-3/4 lg:mx-auto"
+      >
+        A social platform designed for the modern web. Built with Cardano, Finbyte puts control,
+        transparency, and community back where it belongs — in your hands.
+      </motion.p>
 
+      <motion.div
+        variants={itemVariants}
+        className="mt-4 lg:mt-6 inline-flex flex-wrap px-2 justify-center gap-2 text-base"
+      >
+        <Link href="/forums">
+          <Button variant="outline">
+            <MessagesSquare size={18} />
+            Forums
+          </Button>
+        </Link>
+
+        <Link href="/chat">
+          <Button variant="outline">
+            <MessageCircle size={18} />
+            Chat
+          </Button>
+        </Link>
+
+        <Link href="/token">
+          <Button>
+            <HandCoins size={18} />
+            Tokens
+          </Button>
+        </Link>
+      </motion.div>
+
+      <div>
         <motion.div
           variants={itemVariants}
-          className="mt-4 lg:mt-6 inline-flex flex-wrap px-2 justify-center gap-2 text-base"
-        >
-          <Link href='/forums'>
-            <button className={`inline-flex gap-2 items-center font-semibold ${themed['900'].bg} hover:${themed['800'].bg} border ${themed['700'].border} p-1 px-4 rounded-lg ${themed['200'].text} duration-300`}>
-              <MessageCircle size={18}/>
-              Forums
-            </button>
-          </Link>
-
-          <Link href='/explore'>
-            <button className={`inline-flex gap-2 items-center font-semibold ${themed['900'].bg} hover:${themed['800'].bg} border ${themed['700'].border} p-1 px-4 rounded-lg ${themed['200'].text} duration-300`}>
-              <Search size={18}/>
-              Explore
-            </button>
-          </Link>
-        </motion.div>
-
-        <div>
-          <motion.div
-            variants={itemVariants}
-            className={`mt-4 relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg bg-background`}
-          >
-            <span className="w-screen">
-              <Marquee>
-                <ForumPostExample type="forum_post" />
-                <ForumPostExample type="forum_comment" />
-                <ForumPostExample type="forum_comment" show_gif_post={true} />
-              </Marquee>
-            </span>
-          </motion.div>
-        </div>
+          className="mt-4 relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg shadow-lg"
+        />
       </div>
     </motion.div>
   );

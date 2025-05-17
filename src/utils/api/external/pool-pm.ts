@@ -3,6 +3,8 @@ export interface pool_pm_fingerprint {
   epoch: number;
   mint:  number;
   owner: string;
+  metadata: object;
+  name?: string;
 }
 
 export const get_pool_pm_asset = async (fingerprint: string): Promise<pool_pm_fingerprint | undefined> => {
@@ -37,7 +39,7 @@ export interface pool_pm_adahandle {
     og_number: number;
     rarity: string;
     version: number;
-},
+  },
 }
 
 export const get_pool_pm_adahandle = async (fingerprint: string): Promise<pool_pm_adahandle | undefined> => {
@@ -51,6 +53,30 @@ export const get_pool_pm_adahandle = async (fingerprint: string): Promise<pool_p
 
     if (data !== null) {
       return data;
+    }
+  } catch (error) {
+    return;
+  }
+}
+
+export interface asset_res {
+  fp: string;
+}
+
+export const get_pool_pm_recent_assets = async (
+  policy: string
+) => {
+  const url = `https://pool.pm/assets/${policy}?max=1024&preview=true`
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`${response.status} - ${response.statusText}`);
+      return;
+    }
+    const data: asset_res[] = await response.json();
+
+    if (data !== null) {
+      return data.slice(0, 5);
     }
   } catch (error) {
     return;

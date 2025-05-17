@@ -1,46 +1,46 @@
-import { FC, ReactNode, useEffect, useRef } from "react";
-import DefaultLayoutNavbar from "./navbar";
-import { useRouter } from "next/router";
-import { motion, AnimatePresence } from "framer-motion";
-import Footer from "./footer";
-import useThemedProps from "@/contexts/themed-props";
+import { AppSidebar } from "@/blocks/layout/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/toaster";
+import { usePathname } from "next/navigation";
+import { FC, ReactNode, useEffect, } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
-interface CustomProps {
+interface custom_props {
   children: ReactNode;
 }
 
-const DefaultLayout: FC<CustomProps> = ({ children }) => {
-  const router = useRouter();
-  const scroll_ref = useRef<HTMLDivElement>(null);
-  const themed = useThemedProps();
+const DefaultLayout: FC <custom_props> = ({
+  children
+}) => {
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (scroll_ref.current) {
-      scroll_ref.current.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [router.pathname]);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pathname]);
 
   return (
-    <div className={`flex flex-col w-full ${themed['950'].bg}`}>
-      <DefaultLayoutNavbar />
-
-      <div ref={scroll_ref} className={`flex-1 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:${themed['700'].bg} [&::-webkit-scrollbar-thumb]:${themed['500'].bg}`}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={router.pathname}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="h-full"
-          >
-            {children}
-            <Footer/>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-};
+    <SidebarProvider>
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <div className="relative w-full min-h-screen overflow-hidden bg-background rounded-xl">
+          <main className="relative z-2">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {children}
+                <Toaster />
+              </motion.div>
+            </AnimatePresence>
+          </main>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}
 
 export default DefaultLayout;

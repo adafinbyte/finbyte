@@ -1,179 +1,199 @@
-import { notification_type } from "./types";
+import { PostgrestError } from "@supabase/supabase-js";
+import { notification_action_type } from "./types";
 
+
+/** @API */
+export interface safe_fetched_return {error?: PostgrestError | string, data?: any | any[]}
+
+/** @PLATFORM_GENERAL */
+export interface platform_notification {
+  action:    notification_action_type;
+  address:   string;
+  timestamp: number;
+  forum_post_id: number | null;
+  token_slug: string | null;
+}
+
+export interface platform_user {
+  type:    'anon' | 'finbyte';
+  address: string;
+}
+
+export interface platform_user_details {
+  community_posts: community_post_data[];
+  forum_posts: forum_post_data[];
+  forum_comments: comment_post_data[];
+
+  total_posts: number;
+  total_kudos: number;
+
+  first_timestamp: number;
+
+  account_data: account_data | null;
+  ada_handle: string | null;
+  type: 'finbyte' | 'anon';
+  address: string;
+}
+
+export interface platform_community_details {
+  id: number;
+  token_slug: string;
+  highlighted: boolean;
+  f_timestamp: number;
+  l_timestamp: number;
+  community_likers: string[];
+}
+
+export interface account_data {
+  id?:        number;
+  address:    string;
+  ada_handle: string | null;
+
+  f_timestamp: number;
+  l_timestamp: number | null;
+
+  badges:          string[] | null;
+  community_badge: string | null;
+}
+
+export interface create_account_data {
+  f_timestamp:  number;
+  address:    string;
+  ada_handle: string | null;
+}
+
+/** @FORUMS_CHAT */
 export interface edit_post_data {
   updated_post:      string;
   updated_timestamp: number;
   author:            string;
 }
 
-/** data for a fetched forum post with comments */
+export interface post_votes {
+  id:      number;
+  address: string;
+  vote:    string;
+  post_id: number;
+  timestamp: number;
+}
+
 export interface post_with_comments {
-  post: fetched_forum_post_data;
-  comments: fetched_comment_post_data[] | null;
+  post:     forum_post_data;
+  comments: comment_post_data[] | null;
+  user: platform_user_details | null;
+  votes: post_votes[] | null;
 }
 
-/** data for a fetched forum post */
-export interface fetched_forum_post_data {
-  id:              number;
-  section:         string;
+export interface forum_post_data {
+  id:         number;
+  author:     string;
 
-  author:          string;
-  ada_handle:      string | undefined | null;
-  timestamp:       number;
-
-  tag:             string;
-  title:           string;
-  post:            string;
-
-  has_poll:        boolean;
-  votes:           string[] | null; //"o" = yes, "x" = no
-
-  updated_post:    string | null;
-  updated_timestamp: number | null;
-
-  post_likers:     string[] | null;
-
-  tip_tx_hashes:   string[] | null;
-
-  /** @todo */
-  marked_spam:     boolean | null;
-}
-
-/** data for a creating forum post */
-export interface create_forum_post_data {
+  section:   string;
+  timestamp: number;
   tag:       string | null;
   title:     string;
   post:      string;
-  author:    string;
-  timestamp: number;
-  section:   string;
-  has_poll:  boolean;
+  request_type: string | null;
 
-  ada_handle: string | undefined | null;
-}
-
-/** data for a fetched forum comment */
-export interface fetched_comment_post_data {
-  id:              number;
-  post_id:         number;
-
-  ada_handle:      string | null;
-  author:          string;
-  timestamp:       number;
-
-  post:         string;
-
-  updated_post:    string | null;
   updated_timestamp: number | null;
-
-  post_likers:     string[] | null;
-
-  tip_tx_hashes:   string[] | null;
-
-  /** @todo */
-  marked_spam:     boolean;
-}
-
-/** data for a creating forum comment */
-export interface create_comment_post_data {
-  post_id:   number;
-  post:   string;
-
-  ada_handle: string | undefined | null;
-  author:    string;
-  timestamp: number;
-}
-
-/** data for a fetched community post */
-export interface fetched_community_post_data {
-  id?:        number;
-  token_slug: string;
-
-  ada_handle: string | undefined;
-  author:     string;
-  timestamp:  number;
-
-  post:       string;
-
-  updated_post:      string | undefined;
-  updated_timestamp: number | undefined;
-
-  post_likers:       string[] | undefined;
-
-  tip_tx_hashes:   string[] | null;
-
-
-  /** @todo */
-  marked_spam: boolean | undefined;
-}
-
-/** data for a creating community post */
-export interface create_community_post_data {
-  token_slug:  string;
-  post:        string;
-
-  ada_handle: string | undefined | null;
-  author:      string;
-  timestamp:   number;
-}
-
-export interface account_data {
-  id?:             number;
-  timestamp:       number;
-  address:         string;
-  ada_handle:      string   | undefined;
-
-  roles:           string[] | undefined;
-
-  badges:          string[] | undefined;
-  community_badge: string   | undefined;
-
-  ra_timestamp:    number   | undefined;
-
-  /** @todo */
-  profile_img:     string   | undefined;
-}
-
-export interface create_account_data {
-  timestamp:  number;
-  address:    string;
-  ada_handle: string | undefined;
-}
-
-export interface platform_interaction {
-  id?:       number;
-  timestamp: number;
-  action:    notification_type;
-  address:   string;
-}
-
-export interface platform_user {
-  type: string;
-  address: string;
-}
-
-export interface create_chat_data {
-  post:       string;
-  ada_handle: string | undefined | null;
-  author:     string;
-  timestamp:  number;
-}
-
-export interface fetched_chat_post_data {
-  id: number;
-
-  ada_handle: string | null;
-  author:     string;
-
-  post:      string;
-  timestamp: number;
-
   updated_post:      string | null;
-  updated_timestamp: number | null;
 
-  post_likers:  string[] | null;
-  tip_tx_hashes: string[] | null;
+  post_likers: string[] | null;
+  tip_hashes:  string[] | null;
+
+  has_poll: boolean;
 
   /** @todo */
-  marked_spam:     boolean;
+  //is_pinned: boolean;
+  marked_spam: boolean | null; //general improvement
+}
+
+export interface comment_post_data {
+  id:         number;
+  post_id:    number;
+  author:     string;
+  ada_handle: string | null;
+
+  timestamp: number;
+  post:      string;
+
+  updated_timestamp: number | null;
+  updated_post:      string | null;
+
+  post_likers: string[] | null;
+  tip_hashes:  string[] | null;
+
+  /** @todo */
+  marked_spam: boolean | null; //general improvement
+}
+
+export interface community_post_data {
+  id:         number;
+  token_slug: string;
+  author:     string;
+  ada_handle: string | null;
+
+  timestamp: number;
+  title:     string;
+  post:      string;
+
+  updated_timestamp: number | null;
+  updated_post:      string | null;
+
+  post_likers: string[] | null;
+  tip_hashes:  string[] | null;
+  user: platform_user_details | null;
+
+  /** @todo */
+  marked_spam: boolean | null; //general improvement
+}
+
+export interface chat_post_data {
+  id:         number;
+  author:     string;
+
+  timestamp: number;
+  post:      string;
+
+  updated_timestamp: number | null;
+  updated_post:      string | null;
+
+  post_likers: string[] | null;
+  user: platform_user_details | null;
+
+  /** @todo */
+  marked_spam: boolean | null; //general improvement
+}
+
+export interface create_forum_post_data {
+  author:     string;
+
+  section:   string;
+  timestamp: number;
+  tag:       string | null;
+  title:     string;
+  post:      string;
+
+  /** @todo */
+  has_poll: boolean; //for requests
+}
+
+export interface create_comment_post_data {
+  author:    string;
+  post_id:   number;
+  timestamp: number;
+  post:      string;
+}
+
+export interface create_community_post_data {
+  author:     string;
+  token_slug: string;
+  timestamp:  number;
+  post:       string;
+}
+
+export interface create_chat_post_data {
+  author:    string;
+  timestamp: number;
+  post:      string;
 }

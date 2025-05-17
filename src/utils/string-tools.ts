@@ -1,4 +1,4 @@
-import toast from "react-hot-toast";
+import { toast } from "@/hooks/use-toast";
 
 export const format_long_string = (str: string): string => {
   return str.length > 14 ? str.substring(0, 14) + "..." : str;
@@ -35,10 +35,33 @@ export function format_unix(unixTimestamp: number) {
   return data;
 }
 
+export const capitalize_first_letter = (word: string) => {
+  return word[0].toUpperCase() + word.slice(1)
+}
+
+export const copy_to_clipboard = (text: string, toast_message: string) => {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      toast({
+        title: 'Copied to clipboard!',
+        description: toast_message,
+      });
+    })
+    .catch(err => {
+      toast({
+        title: 'Failed to clipboard.',
+        description: err,
+        variant: 'destructive'
+      });
+    });
+};
+
 export function format_atomic(decimals: number, total: number): number | string {
   let returning_value = typeof total === 'string' ? parseFloat(total) : total;
 
   switch (decimals) {
+    case 12: returning_value = total / 1e12; break;
+    case 11: returning_value = total / 1e11; break;
     case 10: returning_value = total / 1e10; break;
     case 9:  returning_value = total / 1e9;  break;
     case 8:  returning_value = total / 1e8;  break;
@@ -55,17 +78,3 @@ export function format_atomic(decimals: number, total: number): number | string 
 
   return returning_value;
 }
-
-export const capitalize_first_letter = (word: string) => {
-  return word[0].toUpperCase() + word.slice(1)
-}
-
-export const copy_to_clipboard = (text: string) => {
-  navigator.clipboard.writeText(text)
-    .then(() => {
-      toast.success('Copied to clipboard.');
-    })
-    .catch(err => {
-      toast.error('Failed to copy to clipboard. Error: ' + err);
-    });
-};

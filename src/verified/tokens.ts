@@ -1,6 +1,7 @@
-import { verified_token } from "./interfaces";
+import { thirdparty_logos } from "@/utils/consts";
+import { curated_token } from "./interfaces";
 
-const verified_tokens: verified_token[] = [
+const curated_tokens: curated_token[] = [
   {
     slug_id: 'finbyte',
     name: 'Finbyte',
@@ -47,6 +48,16 @@ const verified_tokens: verified_token[] = [
       x: "https://x.com/IagonOfficial",
       website: "https://iagon.com/",
     },
+    finbyte: {
+      collection: [
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.7b12f25ce8d6f424e1edbc8b61f0742fb13252605f31dc40373d6a245e8ec1d1',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
   },
   {
     slug_id: 'snek',
@@ -73,31 +84,21 @@ const verified_tokens: verified_token[] = [
       x: "https://x.com/snek",
       website:  "https://www.snek.com/",
     },
-  },
-  {
-    slug_id: 'trtl',
-    name: 'The Turtle Syndicate',
-    hex: '5452544c',
-    description: `
-      A portion of the revenue generated through $TRTL is allocated to sea turtle conservation initiatives, including habitat protection and research.
-      The Turtle Syndicate have also adopted turtles through charity programs, directly contributing to the cause.
-      Furthermore, the project envisions creating a self-sustaining ecosystem where $TRTL is used for purchasing goods and services related to marine life welfare, effectively tying the token's utility to real-world conservation efforts.
-    `,
-    category: 'Adoption',
-    token_details: {
-      ticker: 'TRTL',
-      policy: '52162581184a457fad70470161179c5766f00237d4b67e0f1df1b4e6',
-      fingerprint: 'asset1z8eg3p6gezqqfwqnjpfqsyqrt5uv2z0aejuf0p',
-      supply: 356000000000,
-      decimals: 0,
-    },
-    images: {
-      logo: "https://pbs.twimg.com/profile_images/1793645283131179008/eb6ZDAKC_400x400.jpg", //token backs collections, image points to founder unless something else wants to be used
-      header: "/headers/trtl.jpg"
-    },
-    links: {
-      discord:  "discord.gg/JDBSwuzdvj",
-      x: "https://x.com/am__panic", //token backs collections, x points to founder
+    finbyte: {
+      collection: [
+        {
+          title: 'Snek Energy',
+          image: 'https://snek.energy/cdn/shop/files/Product5.jpg?v=1694508666&width=360',
+          url: 'https://snek.energy/',
+          description: 'Unleash the SNEK within.'
+        },
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/snek',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
     },
   },
   {
@@ -124,7 +125,60 @@ const verified_tokens: verified_token[] = [
       x: "https://x.com/bodegacardano",
       website: "https://www.bodegacardano.org/",
     },
+    finbyte: {
+      collection: [
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/41bb9c6a2f4ab79d918c822fa6ff20cef1cfef9e45a2fb02886e2ec5.424f444547415f4144415f4e4654',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
+  },
+  {
+    slug_id: 'sugr',
+    name: 'Sugar Bush',
+    hex: '53554741522042555348',
+    description: `
+      In 2013, Charles Hoskinson had a hair brained idea: enlist Sugar Bush,
+      the world's most photographed squirrel, to promote Bitcoin - a move so
+      ahead of its time it predated the creation of meme coins.
+    `,
+    category: 'Meme',
+    token_details: {
+      ticker: 'SUGR',
+      policy: '766fce8055f39d40fcfc19721677b3deb2e7846950ae08dce757f1e7',
+      fingerprint: 'asset1dh438qmp3nfse3enec9yl6g92tn4ttzkjsrmmg',
+      supply: 1000000000,
+      decimals: 0,
+    },
+    images: {
+      logo: 'https://pbs.twimg.com/profile_images/1903811503221837824/b5CDRDPg_400x400.jpg'
+    },
+    links: {
+      discord: "https://discord.gg/sugarbush",
+      telegram: "https://t.me/sugarcardano",
+      x: "https://x.com/sugr_token",
+      website: "https://www.sugarcardano.io/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.7b12f25ce8d6f424e1edbc8b61f0742fb13252605f31dc40373d6a245e8ec1d1',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+        {
+          title: '$SUGR Factory',
+          image: 'https://www.sugarcardano.io/factory/assets/arena/nut.png',
+          url: 'https://sugarcardano.io/factory/#/',
+          description: 'The Sugar Factory is a decentralized application designed to elevate the $SUGR ecosystem by fostering deeper user engagement and promoting the long term holding of $SUGAR tokens.'
+        }
+      ],
+    },
   },
 ];
 
-export default verified_tokens;
+export default curated_tokens;
