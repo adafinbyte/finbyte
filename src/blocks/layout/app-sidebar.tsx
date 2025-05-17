@@ -1,27 +1,13 @@
 import * as React from "react"
 import {
-  ArrowUpCircleIcon,
-  BarChartIcon,
-  CameraIcon,
-  ClipboardListIcon,
-  DatabaseIcon,
-  FileCodeIcon,
-  FileIcon,
-  FileTextIcon,
-  FolderIcon,
   HelpCircleIcon,
   HomeIcon,
-  ListIcon,
-  SearchIcon,
-  SettingsIcon,
-  UsersIcon,
   MessagesSquareIcon,
-  MessageCircleIcon,
   HandCoinsIcon,
-  Image
+  Image,
+  MessageCircleIcon
 } from "lucide-react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
@@ -55,11 +41,11 @@ const data = {
       url: "/forums",
       icon: <MessagesSquareIcon/>,
     },
-//    {
-//      title: "Chat",
-//      url: "/chat",
-//      icon: <MessageCircleIcon/>,
-//    },
+    {
+      title: "Chat",
+      url: "/chat",
+      icon: <MessageCircleIcon/>,
+    },
     {
       title: "Tokens",
       url: "/tokens",

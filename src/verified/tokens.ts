@@ -136,6 +136,49 @@ const curated_tokens: curated_token[] = [
       ],
     },
   },
+  {
+    slug_id: 'sugr',
+    name: 'Sugar Bush',
+    hex: '53554741522042555348',
+    description: `
+      In 2013, Charles Hoskinson had a hair brained idea: enlist Sugar Bush,
+      the world's most photographed squirrel, to promote Bitcoin - a move so
+      ahead of its time it predated the creation of meme coins.
+    `,
+    category: 'Meme',
+    token_details: {
+      ticker: 'SUGR',
+      policy: '766fce8055f39d40fcfc19721677b3deb2e7846950ae08dce757f1e7',
+      fingerprint: 'asset1dh438qmp3nfse3enec9yl6g92tn4ttzkjsrmmg',
+      supply: 1000000000,
+      decimals: 0,
+    },
+    images: {
+      logo: 'https://pbs.twimg.com/profile_images/1903811503221837824/b5CDRDPg_400x400.jpg'
+    },
+    links: {
+      discord: "https://discord.gg/sugarbush",
+      telegram: "https://t.me/sugarcardano",
+      x: "https://x.com/sugr_token",
+      website: "https://www.sugarcardano.io/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.7b12f25ce8d6f424e1edbc8b61f0742fb13252605f31dc40373d6a245e8ec1d1',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+        {
+          title: '$SUGR Factory',
+          image: 'https://www.sugarcardano.io/factory/assets/arena/nut.png',
+          url: 'https://sugarcardano.io/factory/#/',
+          description: 'The Sugar Factory is a decentralized application designed to elevate the $SUGR ecosystem by fostering deeper user engagement and promoting the long term holding of $SUGAR tokens.'
+        }
+      ],
+    },
+  },
 ];
 
 export default curated_tokens;

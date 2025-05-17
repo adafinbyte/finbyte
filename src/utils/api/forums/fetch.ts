@@ -1,4 +1,4 @@
-import { post_with_comments, safe_fetched_return } from "../interfaces";
+import { chat_post_data, post_with_comments, safe_fetched_return } from "../interfaces";
 
 import { databases } from "../../consts";
 import { supabase } from "../../secrets";
@@ -59,11 +59,30 @@ export const fetch_forum_post_with_comments = async (post_id: number): Promise<s
   return {data: post};
 }
 
-export const fetch_chat_posts = async (): Promise<safe_fetched_return> => {
-  const { data: cp, error: cpe } = await supabase.from(databases.finbyte_chat).select('*');
-  if (cpe) {
-    return {error: cpe.message};
-  }
+interface fetch_chat_post_return {error?: string, data?: chat_post_data[]}
+/** @note use page = 0 for everything */
+export const fetch_chat_posts = async (
+  page: number
+): Promise<fetch_chat_post_return> => {
+  const start = (page - 1) * 10;
+  const end = start + 10 - 1;
 
-  return {data: cp};
-}
+  if (page === 0) {
+    const { data: cp, error: cpe } = await supabase.from(databases.finbyte_chat).select('*');
+
+    if (cpe) {
+      return { error: cpe.message };
+    }
+
+    return { data: cp };
+  } else {
+    const { data: cp, error: cpe } = await supabase.from(databases.finbyte_chat).select('*').range(start, end);
+
+    if (cpe) {
+      return { error: cpe.message };
+    }
+
+    return { data: cp };
+  }
+};
+

@@ -47,8 +47,6 @@ const GetHelpBlock: FC = () => {
           </TableBody>
         </Table>
       </div>
-
-
     </div>
   )
 
@@ -84,6 +82,11 @@ const GetHelpBlock: FC = () => {
             <TableRow>
               <TableCell>PC/Laptop</TableCell>
               <TableCell>Brave Browser</TableCell>
+              <TableCell className="inline-flex items-center gap-2">Eternl<Check className="size-4 text-green-400"/></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Mobile {'(Android)'}</TableCell>
+              <TableCell>Eternl dApp Browser</TableCell>
               <TableCell className="inline-flex items-center gap-2">Eternl<Check className="size-4 text-green-400"/></TableCell>
             </TableRow>
           </TableBody>
@@ -133,13 +136,14 @@ const GetHelpBlock: FC = () => {
       <hr className="dark:border-neutral-800 mb-2"/>
 
       <Label className="p-2">
-        Request Token Listing on Finbyte.
+        Request Token Listings & Features
       </Label>
 
       <p className="p-2">
         Just like creating content, request and updating token information is also a 100% free process.
         Simply head on over to our forum, click Create Post with a connected wallet and then click "Requests" for the post section.
         Once you've created your post, the community can then vote on your request.
+        The same rule applies for requesting a feature.
       </p>
     </div>
   )
@@ -149,7 +153,7 @@ const GetHelpBlock: FC = () => {
     {title: 'Connect a Wallet', children: connect_wallet_child, type: 'platform'},
     {title: 'Finbyte Kudos', children: finbyte_kudos_child, type: 'platform'},
     {title: 'Create Content', children: create_content_child, type: 'platform'},
-    {title: 'Request New Token', children: request_token_child, type: 'platform'},
+    {title: 'Request - Token | Feature', children: request_token_child, type: 'platform'},
     {title: 'Finbyte Markdown', children: null, type: 'style'},
     {title: 'Platform Emojis', children: null, type: 'style'},
     {title: 'Edit Content', children: null, type: 'platform'},

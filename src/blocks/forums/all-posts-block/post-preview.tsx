@@ -32,13 +32,12 @@ const PostPreview: FC <custom_props> = ({
     >
       <div
         className={cn(
-          "w-full p-1.5 rounded-2xl relative isolate overflow-hidden lg:hover:-translate-y-1 duration-300",
+          "w-full p-1.5 rounded-2xl relative isolate overflow-hidden",
           "bg-white/5 dark:bg-black/90",
           "bg-linear-to-br from-black/5 to-black/[0.02] dark:from-white/5 dark:to-white/[0.02]",
           "backdrop-blur-xl backdrop-saturate-[180%]",
           "border border-black/10 dark:border-white/10",
           "shadow-[0_8px_16px_rgb(0_0_0_/_0.15)] dark:shadow-[0_8px_16px_rgb(0_0_0_/_0.25)]",
-          "will-change-transform translate-z-0"
         )}
       >
         <div
@@ -49,9 +48,7 @@ const PostPreview: FC <custom_props> = ({
             "border border-black/[0.05] dark:border-white/[0.08]",
             "text-black/90 dark:text-white",
             "shadow-xs",
-            "will-change-transform translate-z-0",
             "before:absolute before:inset-0 before:bg-linear-to-br before:from-black/[0.02] before:to-black/[0.01] dark:before:from-white/[0.03] dark:before:to-white/[0.01] before:opacity-0 before:transition-opacity before:pointer-events-none",
-            "hover:before:opacity-100",
             "relative group"
           )}
         >
@@ -77,14 +74,13 @@ const PostPreview: FC <custom_props> = ({
               <div className="flex justify-between items-start">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1">
-
                     <span className="font-semibold text-black dark:text-white/90 hover:underline cursor-pointer">
                       {format_long_string(post.author)}
                     </span>
 
-                    {forum_post.user?.account_data ? (
+                    {forum_post.user?.account_data && (
                       <VerifiedIcon className="h-4 w-4 text-blue-400" />
-                    ) : <></>}
+                    )}
                   </div>
 
                   {forum_post?.user?.account_data?.address && (
@@ -103,7 +99,7 @@ const PostPreview: FC <custom_props> = ({
           </div>
 
           <div className="mt-2">
-            <Label className="text-lg text-blue-500 dark:text-blue-200">{post.title}</Label>
+            <Label className="text-lg opacity-50">{post.title}</Label>
             <ScrollArea>
               <div className="max-h-16">
                 <FinbyteMarkdown>

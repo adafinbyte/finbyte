@@ -191,3 +191,9 @@ export interface create_community_post_data {
   timestamp:  number;
   post:       string;
 }
+
+export interface create_chat_post_data {
+  author:    string;
+  timestamp: number;
+  post:      string;
+}

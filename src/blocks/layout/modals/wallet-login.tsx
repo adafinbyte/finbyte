@@ -1,4 +1,3 @@
-// components/SettingsModal.tsx
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -6,27 +5,29 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { toast } from "@/hooks/use-toast"
 import { capitalize_first_letter } from "@/utils/string-tools"
 import { BrowserWallet, Wallet } from "@meshsdk/core"
 import { useWallet } from "@meshsdk/react"
-import { Badge, Check, Moon, Sun, Verified } from "lucide-react"
-import { title } from "process"
+import { Verified } from "lucide-react"
 import { FC, useEffect, useState } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { toast } from "sonner"
 
 interface custom_props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const WalletLoginModal: FC <custom_props> = ({ open, onOpenChange }) => {
+const WalletLoginModal: FC <custom_props> = ({
+  open, onOpenChange
+}) => {
   const { connect } = useWallet();
+  const is_mobile = useIsMobile();
+
   const [import_wallet_view, set_import_wallet_view] = useState(false);
   const [installed_wallets, set_installed_wallets] = useState<Wallet[] | undefined>();
 
@@ -40,13 +41,19 @@ const WalletLoginModal: FC <custom_props> = ({ open, onOpenChange }) => {
   }, []);
 
   const attempt_wallet_connect = async (chosen_wallet: Wallet) => {
+    const eternlIsAvailable = typeof window !== "undefined" && window.cardano?.eternl;
+
+    if (chosen_wallet.id.toLowerCase() === "eternl" && !eternlIsAvailable) {
+      toast.info("Please open this site in the Eternl wallet's dApp browser.");
+      return;
+    }
+
     try {
       await connect(chosen_wallet.name);
       const i = await BrowserWallet.enable(chosen_wallet.name);
       const get_addr = (await (i).getChangeAddress()).toString();
       if (get_addr.length > 0) {
-        toast({
-          title: 'Wallet Connected!',
+        toast('Wallet Connected!', {
           description: 'You have logged in with the wallet: ' + get_addr.substring(0, 10) + "..." + get_addr.substring(get_addr.length - 10),
         });
       }
@@ -54,10 +61,7 @@ const WalletLoginModal: FC <custom_props> = ({ open, onOpenChange }) => {
       onOpenChange(false);
     } catch (error) {
       if (error instanceof Error) {
-        toast({
-          description: error.message,
-          variant: 'destructive'
-        });
+        toast.error(error.message);
       } else {
         throw error;
       }
@@ -75,54 +79,35 @@ const WalletLoginModal: FC <custom_props> = ({ open, onOpenChange }) => {
         </DialogHeader>
 
         <div className="grid gap-2">
-          {/**
-          <div className="pb-2 flex w-full justify-between items-center text-xs">
-            <Label>
-              Login Type
-            </Label>
+          <Label>
+            Installed Wallets
+          </Label>
 
-            <div className="flex gap-2">
-              <Button size='sm' disabled={!import_wallet_view} variant='outline' onClick={() => set_import_wallet_view(false)} type="button">
-                Detect
-              </Button>
-
-              <Button size='sm' disabled={import_wallet_view} variant='outline' onClick={() => set_import_wallet_view(true)} type="button">
-                Import
-              </Button>
-            </div>
-          </div>
-          */}
-
-          {import_wallet_view ?
-            <>
-              <Label>
-                Import Your Wallet
-              </Label>
-            </>
-            :
-            <>
-              <Label>
-                Installed Wallets
-              </Label>
-
-              {installed_wallets?.map((wallet, index) => (
-                <Button key={index} variant='ghost' onClick={() => attempt_wallet_connect(wallet)}>
-                  <span className="flex gap-4 w-full items-center">
-                    <img src={wallet.icon} className="size-5"/>
-                    {capitalize_first_letter(wallet.name)}
-                    {wallet.name === 'eternl' && (
-                      <span className="ml-auto">
-                        <Label className="text-xs border dark:border-green-400/60 inline-flex gap-2 py-0.5 px-2 rounded-lg">
-                          Recommended
-                          <Verified className="text-green-400"/>
-                        </Label>
-                      </span>
-                    )}
+          {installed_wallets ? installed_wallets?.map((wallet, index) => (
+            <Button key={index} variant='ghost' onClick={() => attempt_wallet_connect(wallet)}>
+              <span className="flex gap-4 w-full items-center">
+                <img src={wallet.icon} className="size-5"/>
+                {capitalize_first_letter(wallet.name)}
+                {wallet.name === 'eternl' && (
+                  <span className="ml-auto">
+                    <Label className="text-xs border dark:border-green-400/60 inline-flex gap-2 py-0.5 px-2 rounded-lg">
+                      Recommended
+                      <Verified className="text-green-400"/>
+                    </Label>
                   </span>
-                </Button>
-              ))}
-            </>
-          }
+                )}
+              </span>
+            </Button>
+          )) : (
+            <div>
+              <p>
+                If you're on mobile, we suggest you use the wallet dapp browser Eternl offers within their wallet to connect to Finbyte.
+              </p>
+              <p>
+                Don't have a wallet? "TODO" - Learn how to get started here.
+              </p>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

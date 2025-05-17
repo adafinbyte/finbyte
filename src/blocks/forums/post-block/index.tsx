@@ -102,11 +102,7 @@ const ForumPostBlock: FC <custom_props> = ({
     { title: 'Total Posts', data: author_data?.total_posts?.toLocaleString() ?? '0' },
     { title: 'Finbyte Kudos', data: author_data?.total_kudos.toLocaleString() ?? '0' },
   ];
-  const add_adahandle_stat = { title: 'Adahandle', data: author_data?.account_data?.ada_handle || 'Not Set' }
-  const stat_set = author_data?.account_data?.ada_handle
-    ? [ ...about_stats.slice(0, 1), add_adahandle_stat, ...about_stats.slice(1) ]
-    : [...about_stats];
-  
+
   /** @todo paginate comment data so less stress fetching information */
 
   const toggle_like_unlike_post = async (
@@ -342,7 +338,7 @@ const ForumPostBlock: FC <custom_props> = ({
                   </Label>
 
                   <div className="mt-2 flex flex-col w-full gap-2">
-                    {stat_set.map((stat, index) => stat ? (
+                    {about_stats.map((stat, index) => stat ? (
                       <Button key={index} variant='outline' size='sm' className={(index === 0 || index === 2) ? 'cursor-default' : 'cursor-copy'} onClick={(index === 0 || index === 2) ? undefined : () => copy_to_clipboard(stat.data.toString(), 'The value of "' + stat.title + '" has been copied.')}>
                         <span className="flex w-full gap-4">
                           {stat.title}

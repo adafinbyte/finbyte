@@ -25,7 +25,6 @@ const AddressOwnedNfts: FC <custom_props> = ({
   const [viewing_asset, set_viewing_asset] = useState(false);
   const [chosen_asset, set_chosen_asset] = useState<specific_asset | null>(null);
   const [chosen_asset_rarity_details, set_chosen_asset_rarity_details] = useState<RarityResult | null>(null);
-  const [current_policy, set_current_policy] = useState<string | null>(null);
   const [pool_pm_data, set_pool_pm_data] = useState<pool_pm_fingerprint | null>(null);
 
   const is_known_curated_asset = (unit: string | undefined) => {
@@ -61,7 +60,6 @@ const AddressOwnedNfts: FC <custom_props> = ({
 
   const toggle_chosen_asset = async (unit: string) => {
     set_viewing_asset(true);
-    set_current_policy(unit);
   
     const asset_data = await get_blockfrost_specific_asset(unit);
 
@@ -94,7 +92,6 @@ const AddressOwnedNfts: FC <custom_props> = ({
     set_chosen_asset(null);
     set_chosen_asset_rarity_details(null);
     set_viewing_asset(false);
-    set_current_policy(null);
   }
 
   return (
@@ -122,7 +119,7 @@ const AddressOwnedNfts: FC <custom_props> = ({
                 <div className="flex justify-between gap-2 items-center">
                   {/**@ts-ignore */}
                   <Label>{pool_pm_data?.metadata.name}</Label>
-                  <Badge variant='primary'>{is_known_curated_asset(chosen_asset?.policy_id)?.collection_name}</Badge>
+                  <Badge variant='primary'>{is_known_curated_asset(chosen_asset?.policy_id)?.collection_name ?? chosen_asset?.asset_name}</Badge>
                 </div>
                 {/**@ts-ignore */}
                 <img src={`https://ipfs.io/ipfs/${pool_pm_data?.metadata.image.slice(7)}`} className="w-3/4 mx-auto"/>
@@ -163,12 +160,14 @@ const AddressOwnedNfts: FC <custom_props> = ({
                 </Button>
               ))}
 
-              <div className="flex justify-end gap-1">
+              <div className="flex justify-end gap-1 items-center">
                 <Button size='sm' variant='ghost' onClick={handlePrevPage} disabled={page === 1 || loading}>
                   Previous
                 </Button>
-
-                <Button size='sm' variant='ghost' onClick={handleNextPage} disabled={loading}>
+                <span className="opacity-60 text-sm">
+                  {page}
+                </span>
+                <Button size='sm' variant='ghost' onClick={handleNextPage} disabled={loading || assets.length !== 100 /** @todo check this */}>
                   Next
                 </Button>
               </div>

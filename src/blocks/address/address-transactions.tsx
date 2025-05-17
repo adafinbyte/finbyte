@@ -33,7 +33,8 @@ const AddressTransactions: FC <custom_props> = ({
       <CardHeader>
         <Label>Address Transactions</Label>
       </CardHeader>
-      <CardContent>
+      <hr className="dark:border-neutral-800"/>
+      <div className="p-2">
         <ScrollArea>
           <div className="w-full max-h-64">
             <Table>
@@ -59,7 +60,7 @@ const AddressTransactions: FC <custom_props> = ({
             </Table>
           </div>
         </ScrollArea>
-      </CardContent>
+      </div>
       <BorderBeam duration={20}/>
     </Card>
   )

@@ -61,7 +61,7 @@ const RarityCheckerBlock: FC = () => {
       const asset_rarity_data = computeRarityFromMetadata(
         policy,
         //@ts-ignore
-        pool_pm.metadata.attributes ?? pool_pm.metadata ?? {}
+        pool_pm?.metadata.attributes ?? pool_pm?.metadata ?? {}
       );
       set_pool_pm_data(pool_pm ?? null)
   

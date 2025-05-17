@@ -192,11 +192,10 @@ export interface AddressInformation {
   type?: string;
   script?: boolean;
 }
-
 export const getAddressAssets = async (
   address: string,
   page: number = 1,
-  count: number = 10
+  count: number = 100
 ): Promise<AddressInformation | { error: string }> => {
   const url = `https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}/utxos?page=${page}&count=${count}`;
 
@@ -211,37 +210,48 @@ export const getAddressAssets = async (
 
     const utxos = await response.json();
 
-    const assetsMap: { [unit: string]: Asset } = {};
+    const assetsMap: { [unit: string]: { quantity: bigint } } = {};
 
     for (const utxo of utxos) {
       for (const amount of utxo.amount) {
         if (amount.unit === 'lovelace') continue;
 
         if (!assetsMap[amount.unit]) {
-          const assetDetails = await fetch(
-            `https://cardano-mainnet.blockfrost.io/api/v0/assets/${amount.unit}`,
-            { headers: { 'project_id': blockfrost_key } }
-          ).then((res) => res.json());
-
-          const isNFT = assetDetails.onchain_metadata && assetDetails.quantity === '1';
-
-          assetsMap[amount.unit] = {
-            unit: amount.unit,
-            quantity: amount.quantity,
-            decimals: assetDetails.decimals,
-            has_nft_onchain_metadata: isNFT,
-          };
+          assetsMap[amount.unit] = { quantity: BigInt(amount.quantity) };
         } else {
-          assetsMap[amount.unit].quantity = (
-            BigInt(assetsMap[amount.unit].quantity) + BigInt(amount.quantity)
-          ).toString();
+          assetsMap[amount.unit].quantity += BigInt(amount.quantity);
         }
       }
     }
 
+    const uniqueUnits = Object.keys(assetsMap);
+
+    const assetDetailsList = await Promise.all(
+      uniqueUnits.map(async (unit) => {
+        const res = await fetch(
+          `https://cardano-mainnet.blockfrost.io/api/v0/assets/${unit}`,
+          { headers: { 'project_id': blockfrost_key } }
+        );
+        const details = await res.json();
+        return { unit, details };
+      })
+    );
+
+    const finalAssets: Asset[] = assetDetailsList.map(({ unit, details }) => {
+      const isNFT =
+        details.onchain_metadata && details.quantity === '1';
+
+      return {
+        unit,
+        quantity: assetsMap[unit].quantity.toString(),
+        decimals: details.decimals,
+        has_nft_onchain_metadata: isNFT,
+      };
+    });
+
     return {
       address,
-      assets: Object.values(assetsMap),
+      assets: finalAssets,
     };
   } catch (error) {
     if (error instanceof Error) {

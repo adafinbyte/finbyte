@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { Check, ChevronRight, Eraser, Glasses, Pencil, Plus, Send, Tag } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -25,6 +24,7 @@ import FinbyteMarkdown from "../../finbytemd"
 import { capitalize_first_letter } from "@/utils/string-tools"
 import RequestTypeComboBox from "./request-type-combobox"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { FC, useEffect, useState } from "react"
 
 const steps = [
   {
@@ -51,16 +51,16 @@ interface custom_props {
   on_submit: (details: create_forum_post_data) => Promise<void>;
 }
 
-const CreatePostModal: React.FC <custom_props> = ({
+const CreatePostModal: FC <custom_props> = ({
   on_submit
 }) => {
   const { toast } = useToast();
   const { address, connected } = useWallet();
 
-  const [post_section, set_post_section] = React.useState<string>('general');
+  const [post_section, set_post_section] = useState<string>('general');
 
-  const [open, setOpen] = React.useState(false)
-  const [currentStep, setCurrentStep] = React.useState(0);
+  const [open, setOpen] = useState(false)
+  const [currentStep, setCurrentStep] = useState(0);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -74,11 +74,11 @@ const CreatePostModal: React.FC <custom_props> = ({
     }
   }
 
-  const [preview_post, set_preview_post] = React.useState(false);
-  const [post_query, set_post_query] = React.useState<string>('');
-  const [title_query, set_title_query] = React.useState<string>('');
-  const [post_request_type, set_post_request_type] = React.useState<string | null>(null);
-  const [post_tag_query, set_post_tag_query] = React.useState<string>('');
+  const [preview_post, set_preview_post] = useState(false);
+  const [post_query, set_post_query] = useState<string>('');
+  const [title_query, set_title_query] = useState<string>('');
+  const [post_request_type, set_post_request_type] = useState<string | null>(null);
+  const [post_tag_query, set_post_tag_query] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -119,9 +119,9 @@ const CreatePostModal: React.FC <custom_props> = ({
     post: (post_query.length < boundries.post[0] || post_query.length > boundries.post[1]) ? false : true,
     tag: (post_tag_query.length < boundries.tag[0] || post_tag_query.length > boundries.tag[1]) ? false : true,
   }
-  const [valid_state, set_valid_state] = React.useState(valid);
+  const [valid_state, set_valid_state] = useState(valid);
 
-  React.useEffect(() => {
+  useEffect(() => {
     set_valid_state(valid)
   }, [title_query, post_query, post_tag_query]);
 
@@ -155,7 +155,7 @@ const CreatePostModal: React.FC <custom_props> = ({
         <div className="my-4">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => (
-              <React.Fragment key={index}>
+              <div key={index}>
                 <div className="flex flex-col items-center">
                   <div
                     className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
@@ -181,7 +181,7 @@ const CreatePostModal: React.FC <custom_props> = ({
                     }`}
                   />
                 )}
-              </React.Fragment>
+              </div>
             ))}
           </div>
         </div>

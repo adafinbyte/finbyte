@@ -1,126 +1,91 @@
 import { FC, useEffect, useState } from "react";
+import Link from "next/link";
+import { toast } from "sonner";
+import { ArrowRight } from "lucide-react";
+
+import { ChatForm } from "./chat-box";
 
 import SiteHeader from "@/components/site-header";
-import { useToast } from "@/hooks/use-toast";
-import { chat_post_data, create_comment_post_data, create_forum_post_data, platform_user_details } from "@/utils/api/interfaces";
-import { fetch_chat_posts } from "@/utils/api/forums/fetch";
-import { useWallet } from "@meshsdk/react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+
 import { format_long_string } from "@/utils/string-tools";
-import { checkSignature, generateNonce } from "@meshsdk/core";
-import { create_post } from "@/utils/api/forums/push";
-import { fetch_author_data } from "@/utils/api/account/fetch";
-import { useRouter } from "next/router";
-import ChatBlock from "./chat-box";
+import { fetch_chat_posts } from "@/utils/api/forums/fetch";
 
 const FinbyteChatBlock: FC = () => {
-  const { toast } = useToast();
-  const router = useRouter();
-  const { address, connected, wallet } = useWallet();
+  const [all_authors, set_all_authors] = useState<string[] | null>(null);
 
-  const [chat_posts, set_chat_posts] = useState<chat_post_data[] | null>(null);
-  const [refreshing_state, set_refreshing_state] = useState(false);
-
-  const get_posts = async () => {
-    set_refreshing_state(true);
-    const posts = await fetch_chat_posts();
-    if (posts?.error) {
-      toast({
-        description: posts.error.toString(),
-        variant: 'destructive'
+  const get_all_authors = async () => {
+   const { data: all_posts_data, error: all_posts_error } = await fetch_chat_posts(0);
+    if (all_posts_error) {
+      toast('Failed to get chat posts', {
+        description: all_posts_error
       });
       return;
     }
-
-    /** @todo paginate this properly from the db */
-    const only_lastest_posts: chat_post_data[] = posts.data.slice(0, 25);
-    const enriched_posts = await Promise.all(only_lastest_posts.map(async (post) => {
-      const user_response = await fetch_author_data(post.author);
-      const data: platform_user_details = user_response.data;
-      return {
-        ...post,
-        user: data || null,
-      };
-    }));
-
-    set_chat_posts(enriched_posts.sort((a, b) => b.timestamp - a.timestamp));
-    set_refreshing_state(false);
-  }
-
-  const attempt_create_post = async (details: create_comment_post_data) => {
-    if (!connected) { return; }
-
-    const data_to_sign = `${format_long_string(details.author)} created a forum post at ${details.timestamp}`;
-    try {
-      const nonce = generateNonce(data_to_sign);
-      const signature = await wallet.signData(nonce, address);
-
-      if (signature) {
-        const is_valid_sig = await checkSignature(nonce, signature, address);
-        if (is_valid_sig) {
-          if (address !== details.author) {
-            toast({
-              description: `Your address doesn't seem to match the author!`,
-              variant: 'destructive'
-            });
-            return;
-          }
-          const creation = await create_post(details, 'forum_post', details.timestamp, address);
-          if (creation?.error) {
-            toast({
-              description: creation.error.toString(),
-              variant: 'destructive'
-            });
-            return;
-          }
-          if (creation?.data) {
-            router.push('/forums/' + creation.data);
-          } else {
-            /** @note fallback just refreshes */
-            await get_posts();
-          }
-        } else {
-          toast({
-            description: 'Signature verification failed! Whoops, is it your wallet?',
-            variant: 'destructive'
-          });
-          return;
-        }
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        toast({
-          description: error.message,
-          variant: 'destructive'
-        });
-      } else {
-        throw error;
-      }
+    if (all_posts_data) {
+      const authors = new Set<string>();
+      all_posts_data.forEach((post) => {
+        authors.add(post.author);
+      })
+      set_all_authors(Array.from(authors));
     }
   }
 
-  const attempt_delete_post = async (post_id: number) => {
-
-  }
-
-  const attempt_like_unlike = async (post_id: number, post_likers: string[]) => {
-
-  }
-
   useEffect(() => {
-    get_posts();
+    get_all_authors();
   }, []);
 
-  return chat_posts && (
+  return (
     <>
       <SiteHeader title="Finbyte Chat"/>
       <div className="flex flex-1 flex-col">
-        <div className="@container/main p-2 lg:p-4 lg:w-[75%] lg:mx-auto">
-          <ChatBlock
-            posts={chat_posts}
-            on_create={attempt_create_post}
-            on_delete={attempt_delete_post}
-            on_like_unlike={attempt_like_unlike}
-          />
+        <div className="@container/main p-2 lg:p-4">
+          <div className="grid lg:grid-cols-5 gap-y-2" style={{ placeItems: 'start' }}>
+            <div className="grid gap-4">
+              <Card className="w-full dark:border-neutral-800">
+                <CardHeader>
+                  <Label className="text-center">
+                    Welcome to the Finbyte Chat
+                  </Label>
+                </CardHeader>
+                <hr className="mb-4 dark:border-neutral-800"/>
+                <p className="text-sm opacity-80 text-center pb-4 px-3">
+                  Here, you can speak freely amoungst other Cardano members by just simply connecting your wallet and entring your message.
+                </p>   
+              </Card>
+
+              <Card className="w-full dark:border-neutral-800">
+                <div className="mx-auto my-2 text-center">
+                  <Label>
+                    Recent chatters
+                  </Label>
+                </div>
+                <CardContent>
+                  <div className="flex flex-col gap-1 w-full">
+                    {all_authors && (
+                      all_authors.map((author, index) => (
+                        <Link href={'/address/' + author}>
+                          <Badge variant={'secondary'} key={index} className="group w-full">
+                            <div className="opacity-80 group-hover:opacity-100">
+                              {format_long_string(author)}
+                            </div>
+                            <div className="ml-auto"/>
+                            <ArrowRight className="size-3"/>
+                          </Badge>
+                        </Link>
+                      ))
+                    )}
+                  </div>
+                </CardContent>              
+              </Card>
+            </div>
+
+            <div className="lg:col-span-4 w-full">
+              <ChatForm />
+            </div>
+          </div>
         </div>
       </div>
     </>

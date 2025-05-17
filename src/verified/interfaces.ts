@@ -15,7 +15,7 @@ export interface curated_token {
   name:        string;
   hex:         string | undefined;
   description: string;
-  category?:       string;
+  category:    string;
   token_details: {
     ticker:      string;
     policy:      string | undefined;

@@ -13,6 +13,7 @@ import { checkSignature, generateNonce } from "@meshsdk/core";
 import { create_post } from "@/utils/api/forums/push";
 import { fetch_author_data } from "@/utils/api/account/fetch";
 import { useRouter } from "next/router";
+import { Label } from "@/components/ui/label";
 
 const ForumsBlock: FC = () => {
   const { toast } = useToast();
@@ -121,7 +122,7 @@ const ForumsBlock: FC = () => {
     <>
       <SiteHeader title="Finbyte Forums"/>
       <div className="flex flex-1 flex-col">
-        <div className="@container/main flex flex-1 flex-col gap-2 p-2 lg:p-4">
+        <div className="@container/main flex flex-1 flex-col p-2 lg:p-4">
           <ForumsActions
             on_filter={filter_posts}
             on_create_post={attempt_create_post}
@@ -129,6 +130,7 @@ const ForumsBlock: FC = () => {
             refreshing={refreshing_state}
           />
 
+          <Label>Recent Posts</Label>
           <ForumsPostsList forum_posts={forum_posts} refreshing={refreshing_state}/>
         </div>
       </div>

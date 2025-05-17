@@ -16,7 +16,7 @@ const ForumsPostsList: FC <custom_props> = ({
 }) => {
 
   return (
-    <div className="p-2 grid lg:grid-cols-2 gap-4" style={{ placeItems: 'start' }}>
+    <div className="p-2 grid gap-4">
       <AnimatePresence mode='sync'>
         {forum_posts ?
           forum_posts.sort((a, b)=> b.post.id - a.post.id).map((post, index) => (

@@ -1,20 +1,21 @@
 import { time } from "console";
 import { databases } from "../../consts";
 import { supabase } from "../../secrets";
-import { create_comment_post_data, create_community_post_data, create_forum_post_data, safe_fetched_return } from "../interfaces";
+import { create_chat_post_data, create_comment_post_data, create_community_post_data, create_forum_post_data, safe_fetched_return } from "../interfaces";
 import { notification_action_type, post_type } from "../types";
 import { create_notification } from "../misc";
 
 export const create_post = async (
-  create_data: create_forum_post_data | create_community_post_data | create_comment_post_data,
+  create_data: create_forum_post_data | create_community_post_data | create_comment_post_data | create_chat_post_data,
   post_type:   post_type,
   timestamp:   number,
   address:     string
 ): Promise<safe_fetched_return | void> => {
   if (
     (post_type === 'forum_post' && !(create_data as create_forum_post_data)) ||
-    ((post_type === 'forum_comment' || post_type === 'finbyte_chat') && !(create_data as create_comment_post_data)) ||
-    (post_type === 'community_post' && !(create_data as create_community_post_data))
+    ((post_type === 'forum_comment') && !(create_data as create_comment_post_data)) ||
+    (post_type === 'community_post' && !(create_data as create_community_post_data)) ||
+    (post_type === 'finbyte_chat' && !(create_data as create_chat_post_data))
   ) {
     return { error: 'Invalid post data type for the given post_type.' };
   }
