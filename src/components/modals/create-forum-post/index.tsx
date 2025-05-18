@@ -82,7 +82,7 @@ const CreatePostModal: FC <custom_props> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (valid.post === false || valid.title === false || valid.tag === false) {
+    if (valid.post === false || valid.title === false) {
       toast({
         description: 'Post is invalid.',
         variant: 'destructive'
