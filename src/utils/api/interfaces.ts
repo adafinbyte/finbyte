@@ -101,10 +101,9 @@ export interface forum_post_data {
   post_likers: string[] | null;
   tip_hashes:  string[] | null;
 
-  has_poll: boolean;
+  is_pinned: boolean | null;
 
   /** @todo */
-  //is_pinned: boolean;
   marked_spam: boolean | null; //general improvement
 }
 
@@ -196,4 +195,15 @@ export interface create_chat_post_data {
   author:    string;
   timestamp: number;
   post:      string;
+}
+
+export interface finbyte_general_stats {
+  forum_posts: number;
+  forum_comments: number;
+  community_posts: number;
+  finbyte_chats: number;
+  total_posts: number;
+  likes_given: number;
+  unique_users: number;
+  interactions: number;
 }
