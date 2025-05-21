@@ -56,16 +56,6 @@ const data = {
       url: "/rarity-checker",
       icon: <Image/>,
     },
-//    {
-//      title: "NFTs",
-//      url: "/nfts",
-//      icon: <Image/>,
-//    },
-    {
-      title: "Stats",
-      url: "/finbyte-stats",
-      icon: <FinbyteIcon/>,
-    },
   ],
   navSecondary: [
     {
