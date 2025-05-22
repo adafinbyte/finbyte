@@ -1,16 +1,17 @@
+
+
 import Head from "next/head";;
-import HomepageBlock from "@/blocks/homepage";
-import RarityCheckerBlock from "@/blocks/rarity-checker";
+import ToolsBlock from "@/blocks/tools";
 
 export default function Home() {
   return (
     <>
       <Head>
-        <title>Rarity Checker | Finbyte</title>
+        <title>Finbyte Tools</title>
         <meta name="description" content="The future of social, built on Cardano." />
       </Head>
 
-      <RarityCheckerBlock/>
+      <ToolsBlock/>
     </>
   );
 }

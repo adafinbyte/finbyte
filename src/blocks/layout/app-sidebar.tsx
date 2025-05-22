@@ -5,7 +5,8 @@ import {
   MessagesSquareIcon,
   HandCoinsIcon,
   Image,
-  MessageCircleIcon
+  MessageCircleIcon,
+  Hammer
 } from "lucide-react"
 
 import { NavSecondary } from "@/components/nav-secondary"
@@ -44,13 +45,13 @@ const data = {
       url: "/tokens",
       icon: <HandCoinsIcon/>,
     },
-    {
-      title: "Rarity Checker",
-      url: "/rarity-checker",
-      icon: <Image/>,
-    },
   ],
   navSecondary: [
+    {
+      title: "Tools",
+      url: "/tools",
+      icon: <Hammer/>,
+    },
     {
       title: "Get Help",
       url: "/get-help",

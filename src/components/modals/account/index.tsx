@@ -313,7 +313,7 @@ const AccountModal: FC <custom_props> = ({ open, onOpenChange }) => {
   const views = user_details?.account_data?.address === null ? { ...basic_views, ...non_finbyte_user_views } : {...basic_views, ...finbyte_user_views};
   const view_keys = Object.keys(views) as view[];
 
-  return user_details && (
+  return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] dark:border-neutral-800">
         <DialogHeader>
