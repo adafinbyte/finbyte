@@ -179,6 +179,47 @@ const curated_tokens: curated_token[] = [
       ],
     },
   },
+  {
+    slug_id: 'catsky',
+    name: 'Catsky AI',
+    hex: '434154534b59',
+    description: `
+      Catsky AI is what happens when you combine Cat Memes, Artificial Intelligence, and Cardano to building innovative AI enabled tools and services.
+    `,
+    category: 'AI',
+    token_details: {
+      ticker: 'CATSKY',
+      policy: '9b426921a21f54600711da0be1a12b026703a9bd8eb9848d08c9d921',
+      fingerprint: 'asset18zpauqujk3cu9cypneh8t7l46wmrwa5klmslnm',
+      supply: 999999999997,
+      decimals: 0,
+    },
+    images: {
+      logo: "https://pbs.twimg.com/profile_images/1889133863382712320/WfhhLK9T_400x400.jpg",
+      header: "https://pbs.twimg.com/profile_banners/1651627976759341056/1689021631/1500x500"
+    },
+    links: {
+      discord:  "https://discord.gg/JTH8WZfnM3",
+      x: "https://x.com/Catskycrypto",
+      website:  "https://catsky.io/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'Purfessor Catsky: Your AI Guide to Cardano!',
+          image: 'https://chat.catsky.io/_next/image?url=%2Fprofessor.png&w=384&q=75',
+          url: 'https://chat.catsky.io/',
+          description: 'Purfessor Catsky is an AI-powered learning assistant designed to make understanding the Cardano blockchain easy and engaging. This interactive tool combines advanced AI technology with a user-friendly interface to provide clear, concise explanations tailored to both beginners and advanced users.'
+        },
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.b5200ecdc38ecb2e5fb138ecb5ac74f93d95890253126302f1e9c27527798333?rankBy=mcap&order=desc&minLiq=10000&minHolders=100&mcapCustomFilters=true',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
+  },
 ];
 
 export default curated_tokens;
