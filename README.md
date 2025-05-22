@@ -1,37 +1,17 @@
-# Starter Next.js TypeScript
+# Finbyte
 
-Start a new project on Next.js. This starter template consists of a connect wallet button and wallet integration.
-      
-## Getting Started
+## The Future of Social, Built on Cardano.
 
-Start project locally using CLI:
+Finbyte is a Cardano-native forum platform designed for the crypto-savvy and community-minded. Inspired by the simplicity of Reddit, Finbyte goes further by offering powerful on-chain tools, token-based engagement, and an open-source foundation for transparency and growth. Whether you're looking to discuss crypto topics, check NFT rarities, explore tokens, or support projects directly, Finbyte puts it all at your fingertips.
 
-```bash
-npx meshjs app-name
-```
+***
 
-## Learn More
+### Submit New Token
 
-### [APIs](https://meshjs.dev/apis)
+Refer to this PR: https://github.com/adafinbyte/finbyte/pull/6
 
-From wallet integrations to transaction builders, Mesh makes Web3 development easy with reliable, scalable, and well-engineered APIs & developer tools.
+### Build
 
-### [Guides](https://meshjs.dev/guides)
-
-Whether you are new to web development or a seasoned blockchain full-stack developer, these guides will help you get started.
-
-### [Smart Contracts](https://meshjs.dev/smart-contracts)
-
-Open-source smart contracts, complete with documentation, live demos, and end-to-end source code.
-
-### [React components and hooks](https://meshjs.dev/react)
-
-Frontend components for wallet connections, and useful React hooks to getting wallet states - Mesh provides everything you need to bring your Web3 user interface to life.
-
-## Connect with us
-
-Give a star on our [GitHub](https://meshjs.dev/go/github) to stay up to date with our latest developments.
-
-Follow us on [Twitter](https://meshjs.dev/go/twitter) for updates.
-
-Join our [Discord](https://meshjs.dev/go/discord) for any questions and suggestions.
+- `npm i`
+- `npm run dev`
+- `localhost:3000`
