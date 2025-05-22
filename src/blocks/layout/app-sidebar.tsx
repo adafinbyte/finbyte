@@ -40,11 +40,6 @@ const data = {
       icon: <MessagesSquareIcon/>,
     },
     {
-      title: "Chat",
-      url: "/chat",
-      icon: <MessageCircleIcon/>,
-    },
-    {
       title: "Tokens",
       url: "/tokens",
       icon: <HandCoinsIcon/>,
