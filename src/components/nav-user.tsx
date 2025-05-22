@@ -161,7 +161,9 @@ export function NavUser({
       }
 
       <WalletLoginModal open={wallet_login_modal_open} onOpenChange={set_wallet_login_modal_open} />
-      <AccountModal open={account_modal_open} onOpenChange={set_account_modal_open} />
+      {account_modal_open && (
+        <AccountModal open={account_modal_open} onOpenChange={set_account_modal_open} />
+      )}
     </SidebarMenu>
   )
 }
