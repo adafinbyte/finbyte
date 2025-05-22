@@ -1,3 +1,5 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/adafinbyte/finbyte)
+
 # Finbyte
 
 ## The Future of Social, Built on Cardano.
