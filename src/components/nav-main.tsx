@@ -36,9 +36,6 @@ const NavMain: FC <custom_props> = ({
                 <SidebarMenuButton tooltip={item.title} isActive={router.pathname === item.url}>
                   {item.icon}
                   <span>{item.title}</span>
-                  {item.title === 'Rarity Checker' && (
-                    <Badge className="ml-auto text-xs" variant='destructive'>WIP</Badge>
-                  )}
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

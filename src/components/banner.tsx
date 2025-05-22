@@ -17,7 +17,7 @@ const Banner: FC <custom_props> = ({
   return (
     <div className={cn(
       "w-full flex flex-col gap-2",
-      "relative"
+      "relative mb-2"
       )}
     >
       <div
@@ -27,7 +27,7 @@ const Banner: FC <custom_props> = ({
           "transition-opacity duration-300",
         )}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(96,165,250,1)_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.5)_1px,transparent_1px)] bg-[length:4px_4px]" />
+        <div className="absolute inset-0 rounded-xl bg-[radial-gradient(circle_at_center,rgba(96,165,250,1)_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.8)_1px,transparent_1px)] bg-[length:4px_4px]" />
       </div>
 
       <div className="flex gap-2 items-center justify-between py-2 px-4 relative">

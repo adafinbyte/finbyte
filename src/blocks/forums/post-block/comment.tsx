@@ -17,6 +17,7 @@ import DeletePostModal from "@/components/modals/delete-post";
 import LikePostModal from "@/components/modals/like-post";
 import { fetch_author_data } from "@/utils/api/account/fetch";
 import { toast } from "@/hooks/use-toast";
+import { Card } from "@/components/ui/card";
 
 interface custom_props {
   comment_post: comment_post_data;
@@ -24,10 +25,11 @@ interface custom_props {
   toggle_hide: () => void;
   on_delete: () => Promise<void>;
   on_like: () => Promise<void>;
+  comment_index: number;
 }
 
 const ForumCommentComponent: FC <custom_props> = ({
-  comment_post, original_post_author, toggle_hide, on_delete, on_like
+  comment_post, original_post_author, toggle_hide, on_delete, on_like, comment_index
 }) =>{
   const is_registered = false; //todo
   const { address, connected } = useWallet();
@@ -66,41 +68,7 @@ const ForumCommentComponent: FC <custom_props> = ({
 
   return (
     <>
-      <div
-        className={cn(
-          "w-full p-1.5 rounded-2xl relative isolate overflow-hidden",
-          "bg-white/5 dark:bg-black/90",
-          "bg-linear-to-br from-black/5 to-black/[0.02] dark:from-white/5 dark:to-white/[0.02]",
-          "backdrop-blur-xl backdrop-saturate-[180%]",
-          "border border-black/10 dark:border-white/10",
-          "shadow-[0_8px_16px_rgb(0_0_0_/_0.15)] dark:shadow-[0_8px_16px_rgb(0_0_0_/_0.25)]",
-          "will-change-transform translate-z-0"
-        )}
-      >
-        <div
-        className={cn(
-          "w-full p-5 rounded-xl relative",
-          "bg-linear-to-br from-black/[0.05] to-transparent dark:from-white/[0.08] dark:to-transparent",
-          "backdrop-blur-md backdrop-saturate-150",
-          "border border-black/[0.05] dark:border-white/[0.08]",
-          "text-black/90 dark:text-white",
-          "shadow-xs",
-          "will-change-transform translate-z-0",
-          "before:absolute before:inset-0 before:bg-linear-to-br before:from-black/[0.02] before:to-black/[0.01] dark:before:from-white/[0.03] dark:before:to-white/[0.01] before:opacity-0 before:transition-opacity before:pointer-events-none",
-          "hover:before:opacity-100",
-          "relative"
-        )}
-      >
-      <div
-        className={cn(
-          "absolute inset-0",
-          "opacity-80",
-          "transition-opacity duration-300",
-          "pointer-events-none"
-        )}
-      >
-        <div className="rounded-xl absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:4px_4px]" />
-      </div>
+      <Card className="relative dark:border-neutral-800 p-4">
         <div className="flex gap-4 items-center relative">
           <div className="shrink-0">
             <div className="size-10 rounded-lg overflow-hidden">
@@ -168,7 +136,7 @@ const ForumCommentComponent: FC <custom_props> = ({
               {show_alternative_timestamp ? format_unix(comment_post.timestamp).date : format_unix(comment_post.timestamp).time_ago}
 
               <Badge variant={'outline'}>
-                #{comment_post.id}
+                #{comment_index}
               </Badge>
             </span>
 
@@ -181,8 +149,7 @@ const ForumCommentComponent: FC <custom_props> = ({
               </Button>
             </div>
           </div>
-        </div>
-      </div>
+      </Card>
 
       <ViewLikersModal
     open={view_likers_modal_open}

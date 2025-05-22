@@ -10,26 +10,24 @@ import { Button } from "@/components/ui/button";
 import { get_blockfrost_specific_asset, specific_asset } from "@/utils/api/external/blockfrost";
 import { toast } from "@/hooks/use-toast";
 import { get_pool_pm_asset, pool_pm_fingerprint } from "@/utils/api/external/pool-pm";
-import { computeRarityFromMetadata, RarityResult } from "@/verified/nft-traits";
+import { computeRarityFromMetadata, RarityResult, supported_nfts } from "@/verified/nft-traits";
 import { LoadingDots } from "@/components/ui/loading-dots";
 import curated_nfts from "@/verified/nfts";
 import { capitalize_first_letter } from "@/utils/string-tools";
 import { X } from "lucide-react";
 import Link from "next/link";
+import { title } from "process";
+import { Marquee } from "@/components/marquee";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const RarityCheckerBlock: FC = () => {
   const [search_query, set_search_query] = useState<string>('');
-  const [close_banner, set_close_banner] = useState(false);
 
   const [viewing_asset, set_viewing_asset] = useState(false);
   const [chosen_asset, set_chosen_asset] = useState<specific_asset | null>(null);
   const [chosen_asset_rarity_details, set_chosen_asset_rarity_details] = useState<RarityResult | null>(null);
   const [pool_pm_data, set_pool_pm_data] = useState<pool_pm_fingerprint | null>(null);
-
-  const supported = [
-    {title: 'TheBabyDux', policy: 'de53e935d272dd079f3e785ee0f3aa21db5579d5399a3b5d0ce3485c'},
-    {title: 'TheChosenDux', policy: '444c89e7c273530f108c4b68b8788fba58ae4e503b0b439a4806d1cb',}
-  ];
 
   const is_known_curated_asset = (unit: string | undefined) => {
     const nft = curated_nfts.find(a => a.policy === unit);
@@ -58,11 +56,12 @@ const RarityCheckerBlock: FC = () => {
 
       const policy = search_query.slice(0, 56);
       const pool_pm = await get_pool_pm_asset(asset_data.data.fingerprint);
-      const asset_rarity_data = computeRarityFromMetadata(
-        policy,
-        //@ts-ignore
-        pool_pm?.metadata.attributes ?? pool_pm?.metadata ?? {}
-      );
+      //@ts-ignore
+      const rawAttributes = pool_pm?.metadata.attributes ?? pool_pm?.metadata.Attributes;
+      const flattenedAttributes = Array.isArray(rawAttributes)
+        ? Object.assign({}, ...rawAttributes)
+        : pool_pm?.metadata ?? {};
+      const asset_rarity_data = computeRarityFromMetadata(policy, flattenedAttributes);
       set_pool_pm_data(pool_pm ?? null)
   
       if (asset_rarity_data) {
@@ -81,12 +80,8 @@ const RarityCheckerBlock: FC = () => {
 
   return (
     <>
-      <SiteHeader title='Rarity Checker'/>
+      <SiteHeader title='Tool: Rarity Checker'/>
       <div className="flex flex-1 flex-col">
-        {!close_banner && (
-          <Banner text="This page is under construction" subtext="Details on this page maybe inaccurate." on_close={() => set_close_banner(true)}/>
-        )}
-
         <div className="@container/main flex flex-1 flex-col gap-2 p-2 lg:p-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -94,18 +89,47 @@ const RarityCheckerBlock: FC = () => {
             transition={{ type: "spring" }}
             className="flex flex-col gap-2"
           >
-            <Label>Support CNTs</Label>
-            <div className="flex flex-wrap gap-2">
-              {supported.map((item, index) => (
-                <Badge variant='secondary' key={index}>{item.title}</Badge>
-              ))}
-              <Link href={'/forums/'} className="cursor-pointer ml-auto"><Badge variant='primary'>Request Support</Badge></Link>
+            <div className="w-full flex justify-between items-center">
+              <Label>Support NFTs</Label>
+              
+              <Link href={'/forums/'} className="cursor-pointer ml-auto">
+                <Badge variant='primary'>Request Support</Badge>
+              </Link>
             </div>
+
+            <Marquee pauseOnHover className="w-full [--duration:80s]">
+              <div className="flex flex-wrap gap-2">
+                {supported_nfts.map((item, index) => (
+                  <Card key={index} className="dark:border-neutral-800 p-2 max-w-96">
+                    <div className="flex gap-4 items-center">
+                      <div className="flex flex-col">
+                        <h1 className="text-sm">{item.title}</h1>
+                        <ScrollArea>
+                          <p className="text-xs opacity-80 max-h-14 p-2">{item.description}</p>
+                        </ScrollArea>
+                        <Link href={item.website} target="_blank">
+                          <Button size='sm' variant={'link'}>
+                            Website
+                          </Button>
+                        </Link>
+                      </div>
+
+                      <img src={item.image} className="size-14 rounded-lg mr-4"/>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </Marquee>
           </motion.div>
 
           <div className="grid lg:grid-cols-4 gap-4 mt-2" style={{ placeItems: 'start'}}>
-            <AnimatePresence mode="wait">
-              <div className="flex flex-col lg:col-start-2 lg:col-span-2 gap-2 w-full border dark:border-neutral-800 p-2 lg:p-4 rounded-xl">
+            <AnimatePresence mode="sync">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring" }}
+                className="flex flex-col lg:col-start-2 lg:col-span-2 gap-2 w-full border dark:border-neutral-800 p-2 lg:p-4 rounded-xl"
+              >
                 <Label>Search Asset ID</Label>
                 <div className="flex gap-2 items-center w-full">
                   <Input
@@ -158,7 +182,7 @@ const RarityCheckerBlock: FC = () => {
                   <div>
                   </div>
                 }
-              </div>
+              </motion.div>
             </AnimatePresence>
           </div>
         </div>
