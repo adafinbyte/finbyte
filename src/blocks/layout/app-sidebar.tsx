@@ -21,8 +21,6 @@ import {
 } from "@/components/ui/sidebar"
 import NavMain from "@/components/nav-main"
 
-const FinbyteIcon = () => <img src="/finbyte.png" alt="logo" className="w-4 h-4" />;
-
 const data = {
   user: {
     name: "shadcn",
@@ -68,7 +66,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -78,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="/">
                 <img src='/finbyte.png' className="size-4" />
-                <span className="text-base font-semibold">Finbyte.</span>
+                <span className="text-base font-semibold text-xl">Finbyte.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

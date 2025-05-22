@@ -1,29 +1,32 @@
 import { FC, useEffect, useRef, useState } from "react";
-
-import SiteHeader from "@/components/site-header";
-import { useToast } from "@/hooks/use-toast";
-import { create_comment_post_data, create_community_post_data, create_forum_post_data, edit_post_data, platform_user_details, post_with_comments } from "@/utils/api/interfaces";
-import { fetch_all_forum_posts_with_comments, fetch_forum_post_with_comments } from "@/utils/api/forums/fetch";
-import { useWallet } from "@meshsdk/react";
-import { copy_to_clipboard, format_long_string, format_unix } from "@/utils/string-tools";
-import { checkSignature, generateNonce } from "@meshsdk/core";
-import { create_post, like_unlike_post } from "@/utils/api/forums/push";
+import { toast } from "sonner";
 import { useRouter } from "next/router";
-import { fetch_author_data } from "@/utils/api/account/fetch";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useWallet } from "@meshsdk/react";
+import { AnimatePresence, motion, useAnimation, useInView } from "framer-motion";
+import { Eye, RefreshCw } from "lucide-react";
+
+import ForumPostComponent from "./post";
+import ForumCommentComponent from "./comment";
+import CreateCommentComponent from "./actions/create-comment";
+
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import UserAvatar from "@/components/user-avatar";
 import FormatAddress from "@/components/format-address";
 import { Button } from "@/components/ui/button";
-import { Copy, Eye, EyeClosed, EyeOff, RefreshCw } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import ForumPostComponent from "./post";
-import { AnimatePresence, motion, useAnimation, useInView } from "framer-motion";
+import SiteHeader from "@/components/site-header";
+
 import { cn } from "@/lib/utils";
-import ForumCommentComponent from "./comment";
-import CreateCommentComponent from "./actions/create-comment";
+
+import { create_comment_post_data, create_community_post_data, edit_post_data, platform_user_details, post_with_comments } from "@/utils/api/interfaces";
+import { fetch_forum_post_with_comments } from "@/utils/api/forums/fetch";
+import { copy_to_clipboard, format_unix } from "@/utils/string-tools";
+import { create_post, like_unlike_post } from "@/utils/api/forums/push";
+import { fetch_author_data } from "@/utils/api/account/fetch";
 import { post_type } from "@/utils/api/types";
 import { delete_post } from "@/utils/api/mod";
+import Banner from "@/components/banner";
 
 interface custom_props {
   initial_forum_post: post_with_comments;
@@ -34,8 +37,11 @@ const ForumPostBlock: FC <custom_props> = ({
   initial_forum_post, initial_author_data
 }) => {
   const router = useRouter();
-  const { toast } = useToast();
-  const { address, connected, wallet } = useWallet();
+  const { address, connected } = useWallet();
+  
+  const ref = useRef(null);
+  const in_view = useInView(ref, { once: false, margin: "-100px" });
+  const controls = useAnimation();
 
   const [forum_post, set_forum_post] = useState<post_with_comments>(initial_forum_post);
   const [author_data, set_author_data] = useState<platform_user_details>(initial_author_data);
@@ -49,19 +55,13 @@ const ForumPostBlock: FC <custom_props> = ({
 
     const post = await fetch_forum_post_with_comments(post_id);
     if (post?.error) {
-      toast({
-        description: post.error.toString(),
-        variant: 'destructive'
-      });
+      toast.error('Failed to fetch Forum Posts', { description: post.error.toString() });
       return;
     }
     if (post?.data) {
       const author = await fetch_author_data(post.data.post.author);
       if (author?.error) {
-        toast({
-          description: author.error.toString(),
-          variant: 'destructive'
-        });
+        toast.error('Failed to fetch Author Data', { description: author.error.toString() });
         return;
       }
       if (author?.data) {
@@ -82,26 +82,12 @@ const ForumPostBlock: FC <custom_props> = ({
       if (author_data.account_data?.ada_handle) {
         set_view_adahandle(!view_adahandle);
       } else {
-        toast({
-          description: 'Could not find adahandle.',
-          variant: 'destructive'
-        });
+        toast.error("Couldn't find users AdaHandle.");
       }
     } else {
-      toast({
-        description: 'No account data found.',
-        variant: 'destructive'
-      });
+      toast.error("No account data found.");
     }
   }
-
-  const about_stats = [
-    { title: 'Status', data: author_data?.account_data ? 'Registered' : 'Anonymous' },
-    { title: 'First Post', data: author_data?.first_timestamp ? format_unix(Number(author_data?.first_timestamp)).time_ago : 'Loading...' },
-    null,
-    { title: 'Total Posts', data: author_data?.total_posts?.toLocaleString() ?? '0' },
-    { title: 'Finbyte Kudos', data: author_data?.total_kudos.toLocaleString() ?? '0' },
-  ];
 
   /** @todo paginate comment data so less stress fetching information */
 
@@ -120,29 +106,11 @@ const ForumPostBlock: FC <custom_props> = ({
         like_data = post_likers ? [...post_likers, address] : [address];
       }
 
-      const signing_data = `${format_long_string(address)} ${post_likers?.includes(address) ? 'removed a like' : 'liked a post'} ${timestamp}.`;
-      const nonce = generateNonce(signing_data);
-      const signature = await wallet.signData(nonce, address);
-
-      if (signature) {
-        const is_valid = await checkSignature(nonce, signature, address);
-        if (is_valid) {
-          await like_unlike_post(like_data, post_id, timestamp, address, type, post_likers?.includes(address) ? 'unlike' : 'like');
-          await fetch_post(forum_post.post.id);
-        } else {
-          toast({
-            description: `Signature verification failed! Whoops.`,
-            variant: 'destructive'
-          });
-          return;
-        }
-      }
+      await like_unlike_post(like_data, post_id, timestamp, address, type, post_likers?.includes(address) ? 'unlike' : 'like');
+      await fetch_post(forum_post.post.id);
     } catch (error) {
       if (error instanceof Error) {
-        toast({
-          description: error.message,
-          variant: 'destructive'
-        });
+        toast.error('Failed to Like/Unlike Post', { description: error.message });
       } else {
         throw error;
       }
@@ -154,28 +122,11 @@ const ForumPostBlock: FC <custom_props> = ({
     if (!connected) { return; } else {
       try {
         const timestamp = Math.floor(Date.now() / 1000);
-        const signing_data = `${format_long_string(details.author)} created a comment at ${details.timestamp} on post: ${details.post_id}`;
-        const nonce = generateNonce(signing_data);
-        const signature = await wallet.signData(nonce, address);
-        if (signature) {
-          const is_valid_sig = await checkSignature(nonce, signature, address);
-          if (is_valid_sig) {
-            await create_post(details, 'forum_comment', timestamp, address);
-            await fetch_post(forum_post.post.id);
-          } else {
-            toast({
-              description: `Signature verification failed! Whoops.`,
-              variant: 'destructive'
-            });
-            return;
-          }
-        }
+        await create_post(details, 'forum_comment', timestamp, address);
+        await fetch_post(forum_post.post.id);
       } catch (error) {
         if (error instanceof Error) {
-          toast({
-            description: error.message,
-            variant: 'destructive'
-          });
+          toast.error('Failed to Create Comment', { description: error.message });
         } else {
           throw error;
         }
@@ -183,6 +134,7 @@ const ForumPostBlock: FC <custom_props> = ({
     }
   }
 
+  /** @todo */
   const edit_content = async (
     type: post_type,
     details: edit_post_data,
@@ -190,22 +142,12 @@ const ForumPostBlock: FC <custom_props> = ({
   ) => {
     if (!connected) { return; } else {
       try {
-        const signing_data = `${format_long_string(details.author)} is editing their post at ${details.updated_timestamp}`;
-        const nonce = generateNonce(signing_data);
-        const signature = await wallet.signData(nonce, address);
-        if (signature) {
-          const is_valid_sig = await checkSignature(nonce, signature, address);
-          if (is_valid_sig) {
-            //await edit_post(post_id, use_wallet.address, details.updated_post, details.updated_timestamp, type);
-            await fetch_post(forum_post.post.id);
-          } else {
-            //toast.error('Signature verification failed! Whoops.');
-            return;
-          }
-        }
+        const timestamp = Math.floor(Date.now() / 1000);
+        //await edit_post(post_id, use_wallet.address, details.updated_post, details.updated_timestamp, type);
+        await fetch_post(forum_post.post.id);
       } catch (error) {
         if (error instanceof Error) {
-          //toast.error(error.message)
+          toast.error('Failed to Edit Content', { description: error.message });
         } else {
           throw error;
         }
@@ -222,37 +164,17 @@ const ForumPostBlock: FC <custom_props> = ({
     } else {
       try {
         const timestamp = Math.floor(Date.now() / 1000);
-        const signing_data = `This post is about to be removed by: ${address} at ${timestamp}.`;
-        const nonce = generateNonce(signing_data);
-        const signature = await wallet.signData(nonce, address);
-        if (signature) {
-          const is_valid_sig = await checkSignature(nonce, signature, address);
-          if (is_valid_sig) {
-            await delete_post(post_id, post_type, address, timestamp);
-            if (post_type === 'forum_comment') {
-              await fetch_post(forum_post.post.id as number);
-            } else {
-              router.push('/forums');
-            }
-
-            toast({
-              description: `Content has been deleted`,
-              variant: 'destructive'
-            });
-          } else {
-            toast({
-              description: `Signature verification failed! Whoops.`,
-              variant: 'destructive'
-            });
-            return;
-          }
+        await delete_post(post_id, post_type, address, timestamp);
+        if (post_type === 'forum_comment') {
+          await fetch_post(forum_post.post.id as number);
+        } else {
+          router.push('/forums');
         }
+
+        toast.error('Content has been deleted.');
       } catch (error) {
         if (error instanceof Error) {
-          toast({
-            description: error.message,
-            variant: 'destructive'
-          });
+          toast.error('Failed to Delete Post', { description: error.message });
         } else {
           throw error;
         }
@@ -272,10 +194,6 @@ const ForumPostBlock: FC <custom_props> = ({
     });
   };
 
-  const ref = useRef(null);
-  const in_view = useInView(ref, { once: false, margin: "-100px" });
-  const controls = useAnimation();
-
   useEffect(() => {
     if (in_view) {
       controls.start("show");
@@ -288,12 +206,24 @@ const ForumPostBlock: FC <custom_props> = ({
     exit: { opacity: 0, height: 0, overflow: 'hidden' },
   };
 
+  const about_stats = [
+    { title: 'Account Status', data: author_data?.account_data ? 'Registered' : 'Anonymous' },
+    { title: 'First Post', data: author_data?.first_timestamp ? format_unix(Number(author_data?.first_timestamp)).time_ago : 'Loading...' },
+    { title: 'Total Posts', data: author_data?.total_posts?.toLocaleString() ?? '0' },
+    { title: 'Finbyte Kudos', data: author_data?.total_kudos.toLocaleString() ?? '0' },
+    { title: 'Supports Community', data: author_data?.account_data?.community_badge ? '$' + author_data.account_data.community_badge : 'No Found' },
+  ];
+
   return (
     <>
       <SiteHeader title={`Viewing: ` + forum_post.post.title}/>
 
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2 p-2 lg:p-4">
+          {!connected && (
+            <Banner text="Connect your wallet to interact with this post."/>
+          )}
+
           <div className="grid lg:grid-cols-4 gap-2 items-start" ref={ref}>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -301,21 +231,11 @@ const ForumPostBlock: FC <custom_props> = ({
               transition={{ type: "spring", delay: 0.2 }}
               className="lg:mb-4"
             >
-              <Card className="relative w-full border-black/10 dark:border-white/10 bg-white/5 dark:bg-black/90">
-                <div
-                  className={cn(
-                    "absolute inset-0",
-                    "opacity-80",
-                    "transition-opacity duration-300",
-                    "pointer-events-none"
-                  )}
-                >
-                  <div className="rounded-xl absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.05)_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[length:4px_4px]" />
-                </div>
-
-                <div className="p-4 relative">
+              <Card className="w-full dark:border-neutral-800 p-2">
+                <div className="relative">
                   <div className="flex gap-4 items-center justify-between w-full">
-                    <UserAvatar address={forum_post.post.author} className="size-14"/>
+                    <UserAvatar address={forum_post.post.author} className="size-10 mx-1"/>
+
                     <div className="flex flex-col gap-1 w-fit">
                       <Button size='sm' onClick={handle_view_adahandle} variant='secondary'>
                         <FormatAddress address={author_data.account_data?.ada_handle ? !view_adahandle ? author_data.account_data.ada_handle : forum_post.post.author : forum_post.post.author}/>
@@ -330,9 +250,7 @@ const ForumPostBlock: FC <custom_props> = ({
                   </div>
                 </div>
 
-                <hr className="border-black/10 dark:border-white/10"/>
-
-                <CardContent className="pt-4 relative">
+                <div className="mt-2">
                   <Label className="text-xs">
                     About Author
                   </Label>
@@ -349,7 +267,7 @@ const ForumPostBlock: FC <custom_props> = ({
                       </Button>
                     ) : <div className="mt-4"/>)}
                   </div>
-                </CardContent>
+                </div>
               </Card>
 
               <div className="mt-2 flex gap-2">
@@ -434,7 +352,7 @@ const ForumPostBlock: FC <custom_props> = ({
                         </Button>
 
                         <Label className="opacity-50">
-                          This comment has been hidden. ID: #{comment.id}
+                          This comment has been hidden. ID: #{index}
                         </Label>
                       </motion.div>
                     ) : (
@@ -453,6 +371,7 @@ const ForumPostBlock: FC <custom_props> = ({
                           toggle_hide={() => toggle_hide(index)}
                           on_delete={() => delete_content('forum_comment', comment.id)}
                           on_like={() => toggle_like_unlike_post('forum_comment', comment.id, comment.post_likers)}
+                          comment_index={index + 1}
                         />
                       </motion.div>
                     )}

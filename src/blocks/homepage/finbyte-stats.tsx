@@ -49,14 +49,14 @@ const FinbyteStats: FC <custom_props> = ({
           <motion.div
             key={index}
             variants={itemVariants}
-            className={`px-2`}
+            className={`px-4`}
           >
             <Card className={`bg-gradient-to-r border-transparent ${index % 2 ? 'from-neutral-500/10 to-cyan-500/10' : 'from-neutral-500/10 to-blue-500/10'} dark:text-white`}>
               <CardContent className="p-6">
                 <div className="flex items-center gap-4 justify-between">
                   <div>
                     <p className="text-sm font-medium opacity-60">{item.title}</p>
-                    <h3 className="text-4xl font-bold mt-2 opacity-90 tabular-nums">{item.data}</h3>
+                    <h3 className="text-4xl font-bold mt-2 opacity-90 tabular-nums text-left">{item.data}</h3>
                   </div>
 
                   <div className={`px-4 py-2 rounded-full`}>

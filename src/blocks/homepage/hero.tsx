@@ -176,7 +176,7 @@ const why_finbyte_sections = [
       <div>
         <motion.div
           variants={itemVariants}
-          className="mt-4 relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg shadow-lg"
+          className="mt-4 w-full flex flex-col justify-center"
         >
           <Accordion type="multiple" className="grid lg:grid-cols-4 w-full gap-4">
             {why_finbyte_sections.map((section, sectionIndex) => (

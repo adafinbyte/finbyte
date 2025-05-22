@@ -108,7 +108,7 @@ const CreateCommentComponent: FC <custom_props> = ({
             <X/>
           </Button>
 
-          <Button onClick={attempt_create} className="size-8 p-1" variant='primary' size='sm'>
+          <Button disabled={!valid_state} onClick={attempt_create} className="size-8 p-1" variant='primary' size='sm'>
             <Send/>
           </Button>
         </span>
