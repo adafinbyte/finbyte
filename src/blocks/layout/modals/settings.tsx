@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
 import { FC, useEffect, useState } from "react"
 
 interface SettingsModalProps {
@@ -22,12 +23,14 @@ interface SettingsModalProps {
 
 const SettingsModal: FC<SettingsModalProps> = ({ open, onOpenChange }) => {
   const [isDark, setIsDark] = useState(false);
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const dark = storedTheme === "dark" || (!storedTheme && prefersDark);
     setIsDark(dark);
+    setTheme(storedTheme??'');
     document.documentElement.classList.toggle("dark", dark);
   }, []);
 
@@ -36,6 +39,7 @@ const SettingsModal: FC<SettingsModalProps> = ({ open, onOpenChange }) => {
     document.documentElement.classList.toggle("dark", !isDark);
     localStorage.setItem("theme", newTheme);
     setIsDark(!isDark);
+    setTheme(newTheme);
   };
 
   return (

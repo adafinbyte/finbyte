@@ -3,8 +3,8 @@
 import { ArrowRight, Ellipsis, Heart, MessageCircle, MessagesSquare, VerifiedIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { FC, useState } from "react";
-import { forum_post_data, post_with_comments } from "@/utils/api/interfaces";
+import { FC, JSX, useState } from "react";
+import { forum_post_data, platform_user_details, post_with_comments } from "@/utils/api/interfaces";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import UserAvatar from "@/components/user-avatar";
 import { capitalize_first_letter, format_long_string, format_unix } from "@/utils/string-tools";
@@ -25,6 +25,8 @@ import { checkSignature, generateNonce } from "@meshsdk/core";
 import { toggle_vote } from "@/utils/api/forums/push";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import AboutAuthorModal from "./modals/about-author";
+import FormatAddress from "@/components/format-address";
 
 interface custom_props {
   forum_post: post_with_comments;
@@ -33,10 +35,13 @@ interface custom_props {
   on_delete: () => Promise<void>;
   on_refresh: () => Promise<void>;
   on_like_unlike: () => Promise<void>;
+  author_data: platform_user_details;
+
+  refresh_button: JSX.Element;
 }
 
 const ForumPostComponent: FC <custom_props> = ({
-  forum_post, is_registered, on_create, on_delete, on_refresh, on_like_unlike
+  forum_post, is_registered, on_create, on_delete, on_refresh, on_like_unlike, author_data, refresh_button
 }) =>{
   const { address, connected, wallet } = useWallet();
 
@@ -57,6 +62,7 @@ const ForumPostComponent: FC <custom_props> = ({
   const [view_repliers_modal_open, set_view_repliers_modal_open] = useState(false);
   const [delete_post_modal_open, set_delete_post_modal_open] = useState(false);
   const [like_post_modal_open, set_like_post_modal_open] = useState(false);
+  const [author_details_modal_open, set_author_details_modal_open] = useState(false);
 
   const cast_vote = async (type: 'yes' | 'no') =>  {
     if (!connected) { return; }
@@ -122,12 +128,12 @@ const ForumPostComponent: FC <custom_props> = ({
           <div className="flex-1">
             <div className="flex justify-between items-start">
               <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <span className="inline-flex items-center gap-2">
                     <Badge className="text-xs cursor-default" variant='secondary'>OP</Badge>
-                    <span className="font-semibold text-black dark:text-white/90 hover:underline cursor-pointer">
-                      <Link href={'/address/' + post.author}>{format_long_string(post.author)}</Link>
-                    </span>
+                    <Button variant={'ghost'} onClick={() => set_author_details_modal_open(true)}>
+                      <FormatAddress address={post.author}/>
+                    </Button>
                   </span>
 
                   {is_registered && (
@@ -203,6 +209,11 @@ const ForumPostComponent: FC <custom_props> = ({
           <hr className='border-black/10 dark:border-white/10 my-4'/>
 
           <div className="flex gap-2 items-center">
+            <Button size={'sm'} variant='ghost' onClick={on_refresh}>
+              {refresh_button}
+              Refresh Post
+            </Button>
+
             <Button size={'sm'} disabled={!connected} variant='ghost' onClick={() => set_like_post_modal_open(true)}>
               <Heart className={`${post.post_likers?.includes(address) ? 'text-rose-400 fill-rose-400' : ''}`}/>
               {post.post_likers?.includes(address) ? 'Unlike Post' : 'Like Post'}
@@ -229,6 +240,12 @@ const ForumPostComponent: FC <custom_props> = ({
 
         <BorderBeam duration={120}/>
       </Card>
+
+      <AboutAuthorModal
+        open={author_details_modal_open}
+        onOpenChange={set_author_details_modal_open}
+        author_details={author_data}
+      />
 
       <SharePostModal
         open={share_post_modal_open}

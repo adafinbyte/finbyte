@@ -214,6 +214,10 @@ const ForumPostBlock: FC <custom_props> = ({
     { title: 'Supports Community', data: author_data?.account_data?.community_badge ? '$' + author_data.account_data.community_badge : 'No Found' },
   ];
 
+  const refresh_button = (
+    <RefreshCw className={refreshing_state ? "animate-spin" : ""}/>
+  );
+
   return (
     <>
       <SiteHeader title={`Viewing: ` + forum_post.post.title}/>
@@ -224,61 +228,7 @@ const ForumPostBlock: FC <custom_props> = ({
             <Banner text="Connect your wallet to interact with this post."/>
           )}
 
-          <div className="grid lg:grid-cols-4 gap-2 items-start" ref={ref}>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ type: "spring", delay: 0.2 }}
-              className="lg:mb-4"
-            >
-              <Card className="w-full dark:border-neutral-800 p-2">
-                <div className="relative">
-                  <div className="flex gap-4 items-center justify-between w-full">
-                    <UserAvatar address={forum_post.post.author} className="size-10 mx-1"/>
-
-                    <div className="flex flex-col gap-1 w-fit">
-                      <Button size='sm' onClick={handle_view_adahandle} variant='secondary'>
-                        <FormatAddress address={author_data.account_data?.ada_handle ? !view_adahandle ? author_data.account_data.ada_handle : forum_post.post.author : forum_post.post.author}/>
-                      </Button>
-
-                      <span className="ml-auto cursor-default">
-                        <Badge variant='primary'>
-                          Kudos: {author_data?.total_kudos.toLocaleString() ?? '0'}
-                        </Badge>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-2">
-                  <Label className="text-xs">
-                    About Author
-                  </Label>
-
-                  <div className="mt-2 flex flex-col w-full gap-2">
-                    {about_stats.map((stat, index) => stat ? (
-                      <Button key={index} variant='outline' size='sm' className={(index === 0 || index === 2) ? 'cursor-default' : 'cursor-copy'} onClick={(index === 0 || index === 2) ? undefined : () => copy_to_clipboard(stat.data.toString(), 'The value of "' + stat.title + '" has been copied.')}>
-                        <span className="flex w-full gap-4">
-                          {stat.title}
-                          <span className="ml-auto">
-                            {stat.data}
-                          </span>
-                        </span>
-                      </Button>
-                    ) : <div className="mt-4"/>)}
-                  </div>
-                </div>
-              </Card>
-
-              <div className="mt-2 flex gap-2">
-                <Button variant={'ghost'} className="size-8 p-1" onClick={() => fetch_post(forum_post.post.id)}>
-                  <RefreshCw className={refreshing_state ? "animate-spin" : ""}/>
-                </Button>
-              </div>
-            </motion.div>
-
-            <div className="px-2 lg:col-span-3 w-full">
-
+          <div className="grid gap-2 items-start" ref={ref}>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -292,6 +242,8 @@ const ForumPostBlock: FC <custom_props> = ({
                 on_delete={() => delete_content('forum_post', forum_post.post.id)}
                 on_refresh={() => fetch_post(forum_post.post.id)}
                 on_like_unlike={() => toggle_like_unlike_post('forum_post', forum_post.post.id, forum_post.post.post_likers)}
+                author_data={author_data}
+                refresh_button={refresh_button}
               />
             </motion.div>
 
@@ -314,7 +266,7 @@ const ForumPostBlock: FC <custom_props> = ({
                 </motion.div>
               )}
             </AnimatePresence>
-
+            
             <motion.div
               layout
               className="flex flex-col w-full gap-2 mt-2"
@@ -322,64 +274,65 @@ const ForumPostBlock: FC <custom_props> = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", delay: 0.4 }}
             >
-              <Label className={`text-xs text-left flex gap-1 ml-auto`}>
+              <Label className="text-xs text-left flex gap-1 ml-auto">
                 Post Comments:
                 <span className="text-blue-400">
                   {forum_post.comments ? forum_post.comments.length : 0}
                 </span>
               </Label>
 
-              {forum_post.comments && forum_post.comments.map((comment, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ type: "spring", delay: 0.4 + (index * 0.2) }}
-                >
-                  <AnimatePresence mode="wait">
-                    {hidden_comments.has(index) ? (
-                      <motion.div
-                        key="hidden"
-                        variants={commentVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        className="flex gap-2 items-center w-full mb-2"
-                      >
-                        <Button variant='outline' size='sm' onClick={() => toggle_hide(index)}>
-                          View Comment
-                          <Eye/>
-                        </Button>
-
-                        <Label className="opacity-50">
-                          This comment has been hidden. ID: #{index}
-                        </Label>
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="visible"
-                        variants={commentVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        className="grow"
-                      >
-                        <ForumCommentComponent
-                          key={index}
-                          comment_post={comment}
-                          original_post_author={forum_post.post.author}
-                          toggle_hide={() => toggle_hide(index)}
-                          on_delete={() => delete_content('forum_comment', comment.id)}
-                          on_like={() => toggle_like_unlike_post('forum_comment', comment.id, comment.post_likers)}
-                          comment_index={index + 1}
-                        />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ))}
-              </motion.div>
-            </div>
+              <div className="relative pl-6 before:absolute before:top-0 before:left-2 before:bottom-0 before:w-0.5 before:bg-neutral-700">
+                {forum_post.comments && forum_post.comments.map((comment, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ type: "spring", delay: 0.4 + index * 0.2 }}
+                    className="relative mb-4"
+                  >
+                    <AnimatePresence mode="wait">
+                      {hidden_comments.has(index) ? (
+                        <motion.div
+                          key="hidden"
+                          variants={commentVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          className="flex gap-2 items-center w-full ml-2 pl-4 relative"
+                        >
+                          <Button variant="outline" size="sm" onClick={() => toggle_hide(index)}>
+                            View Comment
+                          <Eye />
+                          </Button>
+                          <Label className="opacity-50">This comment has been hidden. ID: #{index + 1}</Label>
+                        </motion.div>
+                        ) : (
+                        <motion.div
+                          key="visible"
+                          variants={commentVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
+                          className="grow ml-2 pl-4 relative"
+                        >
+                          <ForumCommentComponent
+                            key={index}
+                            comment_post={comment}
+                            original_post_author={forum_post.post.author}
+                            toggle_hide={() => toggle_hide(index)}
+                            on_delete={() => delete_content("forum_comment", comment.id)}
+                            on_like={() =>
+                              toggle_like_unlike_post("forum_comment", comment.id, comment.post_likers)
+                            }
+                            comment_index={index + 1}
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -2,7 +2,8 @@ import { supabase } from "@/utils/secrets";
 import { account_data, comment_post_data, community_post_data, forum_post_data, platform_user_details, safe_fetched_return } from "../interfaces";
 import { databases } from "@/utils/consts";
 
-export const fetch_author_data = async (author: string): Promise<safe_fetched_return> => {
+interface fetch_author_data_return { error?: string; data?: platform_user_details}
+export const fetch_author_data = async (author: string): Promise<fetch_author_data_return> => {
   let community_posts: community_post_data[] = [];
   let forum_posts: forum_post_data[] = [];
   let forum_comments: comment_post_data[] = [];

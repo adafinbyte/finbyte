@@ -30,9 +30,10 @@ export const get_blockfrost_asset_transactions = async (policy_plus_hex: string)
   }
 }
 
+interface get_blockfrost_address_transactions_return { error?: string; data?: asset_tx[] }
 export const get_blockfrost_address_transactions = async (
   address: string
-): Promise<safe_fetched_return | void> => {  
+): Promise<get_blockfrost_address_transactions_return | void> => {  
   const params = new URLSearchParams({
     order: 'desc',
     count: '25'
@@ -50,6 +51,9 @@ export const get_blockfrost_address_transactions = async (
       return {data: data};
     }
   } catch (error) {
+    if (error instanceof Error) {
+      return { error: error.message };
+    }
     return;
   }
 }
@@ -192,11 +196,12 @@ export interface AddressInformation {
   type?: string;
   script?: boolean;
 }
+interface get_address_assets_return { error?: string; data?: AddressInformation; }
 export const getAddressAssets = async (
   address: string,
   page: number = 1,
   count: number = 100
-): Promise<AddressInformation | { error: string }> => {
+): Promise<get_address_assets_return> => {
   const url = `https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}/utxos?page=${page}&count=${count}`;
 
   try {
@@ -249,10 +254,10 @@ export const getAddressAssets = async (
       };
     });
 
-    return {
+    return { data: {
       address,
       assets: finalAssets,
-    };
+    }};
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };

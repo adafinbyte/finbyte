@@ -60,7 +60,7 @@ const RarityCheckerBlock: FC = () => {
       const rawAttributes = pool_pm?.metadata.attributes ?? pool_pm?.metadata.Attributes;
       const flattenedAttributes = Array.isArray(rawAttributes)
         ? Object.assign({}, ...rawAttributes)
-        : pool_pm?.metadata ?? {};
+        : rawAttributes ?? {};
       const asset_rarity_data = computeRarityFromMetadata(policy, flattenedAttributes);
       set_pool_pm_data(pool_pm ?? null)
   
@@ -79,57 +79,8 @@ const RarityCheckerBlock: FC = () => {
   }
 
   return (
-    <>
-      <SiteHeader title='Tool: Rarity Checker'/>
-      <div className="flex flex-1 flex-col">
-        <div className="@container/main flex flex-1 flex-col gap-2 p-2 lg:p-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring" }}
-            className="flex flex-col gap-2"
-          >
-            <div className="w-full flex justify-between items-center">
-              <Label>Support NFTs</Label>
-              
-              <Link href={'/forums/'} className="cursor-pointer ml-auto">
-                <Badge variant='primary'>Request Support</Badge>
-              </Link>
-            </div>
-
-            <Marquee pauseOnHover className="w-full [--duration:80s]">
-              <div className="flex flex-wrap gap-2">
-                {supported_nfts.map((item, index) => (
-                  <Card key={index} className="dark:border-neutral-800 p-2 max-w-96">
-                    <div className="flex gap-4 items-center">
-                      <div className="flex flex-col">
-                        <h1 className="text-sm">{item.title}</h1>
-                        <ScrollArea>
-                          <p className="text-xs opacity-80 max-h-14 p-2">{item.description}</p>
-                        </ScrollArea>
-                        <Link href={item.website} target="_blank">
-                          <Button size='sm' variant={'link'}>
-                            Website
-                          </Button>
-                        </Link>
-                      </div>
-
-                      <img src={item.image} className="size-14 rounded-lg mr-4"/>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </Marquee>
-          </motion.div>
-
-          <div className="grid lg:grid-cols-4 gap-4 mt-2" style={{ placeItems: 'start'}}>
-            <AnimatePresence mode="sync">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: "spring" }}
-                className="flex flex-col lg:col-start-2 lg:col-span-2 gap-2 w-full border dark:border-neutral-800 p-2 lg:p-4 rounded-xl"
-              >
+    <div>
+      
                 <Label>Search Asset ID</Label>
                 <div className="flex gap-2 items-center w-full">
                   <Input
@@ -141,6 +92,9 @@ const RarityCheckerBlock: FC = () => {
                     Search
                   </Button>
                 </div>
+                {viewing_asset && (
+          <div className="grid gap-4 mt-2" style={{ placeItems: 'start'}}>
+              <div className="flex flex-col gap-4 w-full border dark:border-neutral-800 p-2 lg:p-4 rounded-xl">
 
                 {viewing_asset ?
                   <div>
@@ -182,12 +136,11 @@ const RarityCheckerBlock: FC = () => {
                   <div>
                   </div>
                 }
-              </motion.div>
-            </AnimatePresence>
-          </div>
+              </div>
         </div>
-      </div>
-    </>
+
+                )}
+    </div>
   )
 }
 
