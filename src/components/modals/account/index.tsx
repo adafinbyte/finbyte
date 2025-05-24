@@ -333,18 +333,16 @@ const AccountModal: FC <custom_props> = ({ open, onOpenChange }) => {
         </div>
 
         <div className="grid gap-2 h-64">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current_view}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              variants={transition_variants}
-              transition={{ duration: 0.2 }}
-            >
-              {views[current_view]}
-            </motion.div>
-          </AnimatePresence>
+          <motion.div
+            key={current_view}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={transition_variants}
+            transition={{ duration: 0.2 }}
+          >
+            {views[current_view]}
+          </motion.div>
         </div>
       </DialogContent>
     </Dialog>
