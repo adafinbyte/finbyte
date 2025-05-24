@@ -21,13 +21,13 @@ const ForumsAction: FC <custom_props> = ({
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Finbyte Forums</h1>
-          <p className="text-muted-foreground mt-1 md:pr-12">
+          <p className="opacity-80 mt-1 md:pr-12">
             Join the conversation, ask questions, share your knowledge, and connect with innovators shaping the future of finance.
           </p>
         </div>
 
         <div className="flex gap-3">
-          <Button size={'sm'} variant={'outline'} onClick={on_refresh}>
+          <Button size={'sm'} variant={'ghost'} onClick={on_refresh}>
             <RefreshCw size={12} className={refreshing ? "animate-spin" : ""}/>
           </Button>
           <FilterButton on_filter={on_filter}/>

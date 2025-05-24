@@ -4,6 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { usePathname } from "next/navigation";
 import { FC, ReactNode, useEffect, } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 interface custom_props {
   children: ReactNode;
@@ -17,6 +19,7 @@ const DefaultLayout: FC <custom_props> = ({
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [pathname]);
+  const { theme } = useTheme();
 
   return (
     <SidebarProvider>
@@ -31,6 +34,7 @@ const DefaultLayout: FC <custom_props> = ({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
+                className="relative"
               >
                 {children}
                 <Toaster />

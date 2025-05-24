@@ -34,16 +34,12 @@ const PostPreview: FC <custom_props> = ({
   const post_votes = forum_post.votes;
   const votes = forum_post.post.section === 'requests' ? {yes: post_votes?.filter(vote => vote.vote === "yes").length ?? 0, no: post_votes?.filter(vote => vote.vote === "no").length ?? 0 } : null;
   return (
-    <Card className="dark:border-neutral-800 p-2 px-3">
+    <Card className="border-transparent p-2 px-3 dark:bg-black/40 bg-white/40 backdrop-blue-lg">
       <div className="flex gap-2 items-center">
-        <UserAvatar className="size-8" address={post.author}/>
+        <UserAvatar className="size-10" address={post.author}/>
 
         <div className="flex flex-col justify-start">
-          <div>
-            <Label className="text-xs opacity-60">{post.author.substring(0, 10) + "..."}</Label>
-            <Label className="text-base font-bold tracking-wide bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-300 text-transparent bg-clip-text">{post.author.substring(post.author.length - 10)}</Label>
-          </div>
-
+          <FormatAddress address={post.author}/>
           {forum_post.user?.ada_handle && (
             <FormatAddress address={forum_post.user.ada_handle}/>
           )}

@@ -57,11 +57,11 @@ const SettingsModal: FC<SettingsModalProps> = ({ open, onOpenChange }) => {
             Theme Select
           </Label>
           <div className="flex gap-4">
-            <Button disabled={!isDark} variant={!isDark ? 'default' : 'outline'} onClick={toggleTheme} type="submit">
+            <Button disabled={!isDark} variant='secondary' onClick={toggleTheme} type="submit">
               <Sun/>
             </Button>
 
-            <Button disabled={isDark} variant={isDark ? 'default' : 'outline'} onClick={toggleTheme} type="submit">
+            <Button disabled={isDark} variant='secondary' onClick={toggleTheme} type="submit">
               <Moon/>
             </Button>
           </div>

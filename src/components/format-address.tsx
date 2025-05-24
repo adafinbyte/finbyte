@@ -12,8 +12,8 @@ const FormatAddress: FC <custom_props> = ({
     <div className={`inline-flex items-center`} {...props}>
       {address.startsWith('addr1') ?
         <span className="inline-flex gap-1 items-center">
-          <span>{address.substring(0, 5) + "..."}</span>
-          <span className={`text-left text-blue-400`}>{address.substring(address.length - 10)}</span>
+          <span className="text-xs opacity-80">{address.substring(0, 5) + "..."}</span>
+          <span className={`text-left text-base tracking-wide font-semibold bg-gradient-to-r from-cyan-600 via-sky-700 to-blue-500 dark:from-cyan-300 dark:via-sky-400 dark:to-blue-300 text-transparent bg-clip-text`}>{address.substring(address.length - 10)}</span>
         </span>
         :
         <span className="inline-flex gap-1 text-sm items-center">

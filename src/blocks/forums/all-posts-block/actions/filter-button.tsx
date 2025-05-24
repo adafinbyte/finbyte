@@ -21,7 +21,7 @@ const FilterButton: FC <custom_props> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="ghost" size="sm">
           <FilterIcon className="h-4 w-4 mr-2" />
           Filter
         </Button>

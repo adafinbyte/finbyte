@@ -78,7 +78,7 @@ export function NavUser({
 
   return (
     <SidebarMenu>
-      {!connected ?
+      {!connected && !address ?
         <SidebarMenuButton onClick={() => set_wallet_login_modal_open(true)}>
           <Plug />
           <span>Connect Wallet</span>
