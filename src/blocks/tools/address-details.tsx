@@ -9,22 +9,22 @@ import { FC } from "react";
 
 
 interface custom_props {
-  finbyte_details: platform_user_details;
-  author_transactions: asset_tx[];
-  author_assets: AddressInformation;
+  finbyte_details: platform_user_details | null;
+  author_transactions: asset_tx[] | null;
+  author_assets: AddressInformation | null;
 }
 
 const AddressDetails: FC <custom_props> = ({
   finbyte_details, author_transactions, author_assets
 }) => {
   const finbyte_data = [
-    { title: 'User Type', data: finbyte_details.type === 'anon' ? 'Anonymous User' : 'Finbyte User' },
-    { title: 'Total Posts', data: finbyte_details.total_posts },
-    { title: 'First Interacted', data: format_unix(finbyte_details.first_timestamp).time_ago },
-    { title: 'Total Kudos', data: finbyte_details.total_kudos },
+    { title: 'User Type', data: finbyte_details?.type === 'anon' ? 'Anonymous User' : 'Finbyte User'},
+    { title: 'Total Posts', data: finbyte_details?.total_posts ?? 0 },
+    { title: 'First Interacted', data: format_unix(finbyte_details?.first_timestamp ?? 0).time_ago },
+    { title: 'Total Kudos', data: finbyte_details?.total_kudos ?? 0 },
 
-    { title: 'Total Assets', data: author_assets.assets.length },
-    { title: 'Total TXs', data: author_transactions.length },
+    { title: 'Total Assets', data: author_assets?.assets.length ?? 0 },
+    { title: 'Total TXs', data: author_transactions?.length ?? 0 },
   ];
 
   return (

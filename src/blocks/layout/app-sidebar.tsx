@@ -21,6 +21,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import NavMain from "@/components/nav-main"
+import { Card } from "@/components/ui/card"
 
 const data = {
   user: {
@@ -82,7 +83,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         {/**@ts-ignore */}
         <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <div className="mt-auto"/>
+
+        {/**
+        <div className="transition-all duration-300 group-data-[collapsible=icon]:hidden pb-2">
+          <Card className="border-transparent p-2">
+            <p className="text-sm font-medium">Did you know?</p>
+            <p className="text-muted-foreground text-xs">
+              The $FIN token will be launching soon on the Cardano blockchain, allowing you to earn free through real social engagement.
+            </p>
+          </Card>
+        </div>
+         */}
+
+        <NavSecondary items={data.navSecondary} />
       </SidebarContent>
 
       <SidebarFooter>

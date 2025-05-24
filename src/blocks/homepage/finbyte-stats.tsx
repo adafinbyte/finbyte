@@ -44,14 +44,14 @@ const FinbyteStats: FC <custom_props> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", delay: 0.1 }}
     >
-      <div className="flex flex-wrap items-start justify-center gap-2">
+      <div className="grid lg:grid-cols-4 gap-2">
         {stat_items.map((item, index) => (
           <motion.div
             key={index}
             variants={itemVariants}
-            className={`px-4`}
+            className={`px-4 w-full`}
           >
-            <Card className={`bg-gradient-to-r border-transparent ${index % 2 ? 'from-neutral-500/10 to-cyan-500/10' : 'from-neutral-500/10 to-blue-500/10'} dark:text-white`}>
+            <Card className={`backdrop-blur-lg dark:bg-black/40 bg-white/40 border-transparent dark:text-white`}>
               <CardContent className="p-6">
                 <div className="flex items-center gap-4 justify-between">
                   <div>

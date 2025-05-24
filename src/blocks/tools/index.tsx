@@ -27,7 +27,6 @@ const ToolsBlock: FC = () => {
   const [finbyte_author_details, set_finbyte_author_details] = useState<platform_user_details | null>(null);
   const [author_transactions, set_author_transactions] = useState<asset_tx[] | null>(null);
   const [author_assets, set_author_assets] = useState<AddressInformation | null>(null);
-  const [found_complete_data, set_found_complete_data] = useState(false);
 
   const attempt_search_address = async () => {
     if (!search_address.startsWith('addr1')) {
@@ -134,7 +133,7 @@ const ToolsBlock: FC = () => {
                   </Button>
                 </div>
 
-                {(finbyte_author_details && author_transactions && author_assets) &&
+                {finbyte_author_details &&
                   <AddressDetails
                     finbyte_details={finbyte_author_details}
                     author_transactions={author_transactions}

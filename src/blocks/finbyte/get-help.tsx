@@ -287,7 +287,6 @@ const GetHelpBlock: FC = () => {
                   </motion.div>
                 ))}
               </Accordion>
-
             </div>
           </div>
           

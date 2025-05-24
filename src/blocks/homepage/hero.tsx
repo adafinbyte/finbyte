@@ -142,27 +142,29 @@ const why_finbyte_sections = [
         variants={itemVariants}
         className="text-neutral-500 dark:text-neutral-400 font-semibold text-2xl md:text-4xl flex flex-col gap-2"
       >
-        <span className="text-neutral-800 dark:text-neutral-200 text-5xl md:text-6xl">Finbyte:</span>
-        <span>
-          The Future of Social, Built on <span className="text-blue-600">Cardano</span>.
+        <span className="text-neutral-800 dark:text-white text-5xl md:text-6xl">Finbyte;</span>
+        <span className="dark:text-white/70 text-black/80">
+          The Future of Social, Built on <span className="text-blue-400">Cardano</span>.
         </span>
       </motion.span>
 
       <motion.p
         variants={itemVariants}
-        className="mt-4 text-neutral-700 dark:text-neutral-400 text-sm lg:text-lg lg:w-3/4 lg:mx-auto"
+        className="mt-4 text-neutral-700 dark:text-neutral-200 text-sm lg:text-lg lg:w-4/5 lg:mx-auto p-2"
       >
-        Finbyte is a Cardano-native forum platform designed for the crypto-savvy and
-        community-minded. Inspired by the simplicity of Reddit, Finbyte goes further by
-        offering powerful on-chain tools, token-based engagement, and an open-source
-        foundation for transparency and growth. Whether you're looking to discuss crypto
-        topics, check NFT rarities, explore tokens, or support projects directly, Finbyte
-        puts it all at your fingertips.
+        <span className="italic dark:text-white text-xl">
+          "Where do builders meet supporters?
+          Where do token holders, NFT collectors, and on-chain thinkers connect and collaborate?"
+        </span>
+        <br/>
+        <br/>
+        Welcome to Finbyte.
+        An open-source, Cardano-native social platform built to empower conversation, collaboration, and contribution with real on-chain incentives.
       </motion.p>
 
       <motion.div
         variants={itemVariants}
-        className="mt-4 lg:mt-6 inline-flex flex-wrap px-2 justify-center gap-2 text-base"
+        className="mt-8 lg:mt-12"
       >
         {finbyte_stats ?
           <FinbyteStats
@@ -170,50 +172,7 @@ const why_finbyte_sections = [
           />
           : <LoadingDots/>
         }
-
       </motion.div>
-
-      <div>
-        <motion.div
-          variants={itemVariants}
-          className="mt-4 w-full flex flex-col justify-center"
-        >
-          <Accordion type="multiple" className="grid lg:grid-cols-4 w-full gap-4">
-            {why_finbyte_sections.map((section, sectionIndex) => (
-              <motion.div
-                key={sectionIndex}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  type: "spring",
-                  delay: sectionIndex * 0.2
-                }}
-                className="w-full"
-                >
-                  <AccordionItem value={section.section}>
-                    <AccordionTrigger>
-                      {section.section}
-                    </AccordionTrigger>
-
-                    <AccordionContent>
-                      <ScrollArea className="px-2 max-h-96">
-                        <ul className="space-y-4 py-2">
-                          {section.items.map((item, itemIndex) => (
-                            <li key={itemIndex}>
-                              <h4 className="font-medium">{item.title}</h4>
-                              <p className="text-sm text-muted-foreground">{item.description}</p>
-                            </li>
-                          ))}
-                        </ul>
-                      </ScrollArea>
-                    </AccordionContent>
-                  </AccordionItem>
-                </motion.div>
-              ))
-            }
-          </Accordion>
-        </motion.div>
-      </div>
     </motion.div>
   );
 };
