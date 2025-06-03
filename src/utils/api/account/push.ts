@@ -1,105 +1,87 @@
-import { supabase } from "@/utils/secrets";
-import { account_data, safe_fetched_return } from "../interfaces";
 import { databases } from "@/utils/consts";
+import { supabase } from "../secrets";
 import { create_notification } from "../misc";
-import { notification_action_type } from "../types";
 
-export const create_user_account = async (
-  account_data: account_data
-): Promise<safe_fetched_return | void> => {
-  const { error } = await supabase
-    .from(databases.accounts).insert(account_data).single();
-
-  if (error) {
-    return {error: error.message};
-  } else {
-    await create_notification(
-      account_data.f_timestamp,
-      account_data.address,
-      'New Account',
-      null,
-      {forum_post_id: null, token_slug: null}
-    );
-  }
-};
-
-export const delete_account = async (
+interface bookmarked_post_return { error?: string; done?: boolean }
+export const bookmarked_post = async (
+  post_id: number,
   address: string,
-  timestamp: number,
-): Promise<safe_fetched_return | void> => {
+  bookmarked_posts: number[]
+): Promise<bookmarked_post_return> => {
+  const is_bookmarked = bookmarked_posts.includes(post_id);
 
-  const noti_type: notification_action_type = 'Account Deleted';
+  const updated_bookmarks = is_bookmarked
+    ? bookmarked_posts.filter(id => id !== post_id)
+    : [...bookmarked_posts, post_id];
 
   const { error } = await supabase
     .from(databases.accounts)
-    .delete()
+    .update({ bookmarked_posts: updated_bookmarks })
     .eq('address', address)
     .single();
 
   if (error) {
     return { error: error.message }
   } else {
-    await create_notification(
-      timestamp,
-      address,
-      noti_type,
-      null,
-      {forum_post_id: null, token_slug: null}
-    );
-    return;
+    const noti = await create_notification('bookmarked_post', null, address);
+    if (noti.error) { return { error: noti.error } }
+    return { done: true };
+    //noti
   }
-}
+};
 
-export const update_username = async (
-  address:         string,
-  timestamp:       number,
-  ada_handle: string
-): Promise<safe_fetched_return | void> => {
+interface mute_user_return { error?: string; done?: boolean }
+export const mute_user = async (
+  muting_address: string,
+  address: string,
+  user_muted_users: string[]
+): Promise<mute_user_return> => {
+  const is_muted = user_muted_users.includes(muting_address);
+
+  const updated_muted = is_muted
+    ? user_muted_users.filter(ad => ad !== muting_address)
+    : [...user_muted_users, muting_address];
+
   const { error } = await supabase
     .from(databases.accounts)
-    .update({
-        l_timestamp: timestamp,
-        ada_handle:   ada_handle
-      }
-    )
-    .eq('address', address);
-  
-  if (error) {
-    return { error: error.message }
-  } else {
-    await create_notification(
-      timestamp,
-      address,
-      'Updated AdaHandle',
-      null,
-      {forum_post_id: null, token_slug: null}
-    );
-  }
-}
-
-export const update_community_badge = async (
-  address:      string,
-  timestamp:    number,
-  token_ticker: string
-): Promise<safe_fetched_return | void> => {
-  const { error } = await supabase
-    .from(databases.accounts)
-    .update({
-        l_timestamp:    timestamp,
-        community_badge: token_ticker
-      }
-    )
-    .eq('address', address);
+    .update({ muted: updated_muted })
+    .eq('address', address)
+    .single();
 
   if (error) {
     return { error: error.message }
   } else {
-    await create_notification(
-      timestamp,
-      address,
-      'Updated Community Badge',
-      null,
-      {forum_post_id: null, token_slug: null}
-    );
+    const noti = await create_notification('muted_user', null, address);
+    if (noti.error) { return { error: noti.error } }
+    return { done: true }
+    //noti
   }
-}
+};
+
+interface mute_user_return { error?: string; done?: boolean }
+export const follow_user = async (
+  follow_address: string,
+  address: string,
+  user_following: string[]
+): Promise<mute_user_return> => {
+  const is_following = user_following.includes(follow_address);
+
+  const updated_following = is_following
+    ? user_following.filter(ad => ad !== follow_address)
+    : [...user_following, follow_address];
+
+  const { error } = await supabase
+    .from(databases.accounts)
+    .update({ following: updated_following })
+    .eq('address', address)
+    .single();
+
+  if (error) {
+    return { error: error.message }
+  } else {
+    const noti = await create_notification('followed_user', null, address);
+    if (noti.error) { return { error: noti.error } }
+    return { done: true }
+    //noti
+  }
+};

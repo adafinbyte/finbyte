@@ -1,39 +1,24 @@
-import { supabase } from "@/utils/secrets";
-import { account_data, comment_post_data, community_post_data, forum_post_data, platform_user_details, safe_fetched_return } from "../interfaces";
 import { databases } from "@/utils/consts";
+import { supabase } from "../secrets";
+import { comment_post_data, forum_post_data, platform_user_details } from "@/utils/interfaces";
 
-interface fetch_author_data_return { error?: string; data?: platform_user_details}
-export const fetch_author_data = async (author: string): Promise<fetch_author_data_return> => {
-  let community_posts: community_post_data[] = [];
+interface fetch_user_data_return { error?: string; data?: platform_user_details}
+export const fetch_user_data = async (author: string): Promise<fetch_user_data_return> => {
   let forum_posts: forum_post_data[] = [];
   let forum_comments: comment_post_data[] = [];
   let first_timestamp: string | number;
   const timestamps: string[] = [];
   let total_kudos = 0;
-  let account = null;
 
   const { data, error } = await supabase.rpc('search_author', { author_query: author });
-
-  if (error) {
-    return { error: error.message }
-  }
+  if (error) { return { error: error.message } }
 
   const forumPostIds = new Set<number>();
 
   data?.forEach((row: any) => {
-    const postTimestamp = row.post_timestamp?.toString() || '';
-
-    if (row.db === databases.community_posts) {
-      community_posts.push({ ...row, type: 'community_post' });
-      timestamps.push(postTimestamp);
-      total_kudos += 1;
-      total_kudos += (row.post_likers?.length ?? 0) * 2;
-      total_kudos += (row.tip_tx_hashes?.length ?? 0) * 3;
-    }
-
     if (row.db === databases.forum_posts) {
-      forum_posts.push({ ...row, type: 'forum_post' });
-      timestamps.push(postTimestamp);
+      forum_posts.push({ ...row, type: 'forum_post', id: row.post_id });
+      timestamps.push(row.post_timestamp);
       total_kudos += 1;
       total_kudos += (row.post_likers?.length ?? 0) * 2;
       total_kudos += (row.tip_tx_hashes?.length ?? 0) * 3;
@@ -43,7 +28,7 @@ export const fetch_author_data = async (author: string): Promise<fetch_author_da
 
     else if (row.db === databases.forum_comments) {
       forum_comments.push({ ...row, type: 'forum_comment' });
-      timestamps.push(postTimestamp);
+      timestamps.push(row.comment_timestamp);
       total_kudos += 1;
       total_kudos += (row.post_likers?.length ?? 0) * 2;
       total_kudos += (row.tip_tx_hashes?.length ?? 0) * 3;
@@ -67,32 +52,29 @@ export const fetch_author_data = async (author: string): Promise<fetch_author_da
     return new Date(timestamp) < new Date(minTimestamp) ? timestamp : minTimestamp;
   }, timestamps[0] || new Date().toISOString());
 
-  const total_posts = community_posts.length + forum_posts.length + forum_comments.length;
+  const total_posts = forum_posts.length + forum_comments.length;
 
-  const { data: ad } = await supabase
+  const { data: ad, error: ade } = await supabase
     .from(databases.accounts).select('*').eq('address', author).single();
+  if (ade) { return { error: ade.message } }
 
   const platform_details: platform_user_details = {
-    community_posts,
+    id: ad.id,
     forum_posts,
     forum_comments,
-    first_timestamp: Number(first_timestamp),
     total_posts,
     total_kudos,
-    account_data: ad,
-    ada_handle: ad?.ada_handle,
-    type: ad ? 'finbyte' : 'anon',
-    address: author
+    first_timestamp: Number(first_timestamp),
+    address: ad.address,
+    ada_handle: ad.ada_handle,
+    f_timestamp: ad.f_timestamp,
+    l_timestamp: ad.l_timestamp,
+    badges: ad.badges,
+    community_badge: ad.community_badge,
+    following: ad.following,
+    muted: ad.muted,
+    bookmarked_posts: ad.bookmarked_posts
   };
 
-  return {data: platform_details}
+  return { data: platform_details }
 };
-
-export const fetch_username_from_account = async (author: string): Promise<string | undefined> => {
-  const { data } = await supabase
-    .from(databases.accounts)
-    .select('ada_handle')
-    .eq('address', author)
-    .single();
-  return data?.ada_handle ?? undefined;
-}

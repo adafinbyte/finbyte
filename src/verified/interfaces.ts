@@ -1,8 +1,3 @@
-/**
- * @NOTE
- * - Undefined values could state token getting ready for listed.
- */
-
 interface collection_item {
   title: string;
   image: string;
@@ -35,32 +30,6 @@ export interface curated_token {
     website?:     string;
     x?:           string;
   };
-  finbyte?: {
-    collection?: collection_item[];
-  }
-}
-
-export interface curated_nft {
-  slug_id:         string;
-  collection_name: string;
-  description:     string;
-  category?:       string;
-  policy:          string;
-
-  images: {
-    logo:        string;
-    header?:     string;
-  };
-
-  links: {
-    discord?:     string;
-    github?:      string;
-    reddit?:      string;
-    telegram?:    string;
-    website?:     string;
-    x?:           string;
-  };
-
   finbyte?: {
     collection?: collection_item[];
   }

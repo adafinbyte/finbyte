@@ -19,45 +19,15 @@ const curated_tokens: curated_token[] = [
       logo: '/finbyte.png'
     },
     links: {
-      discord: '',
-      github: '',
-      x: '',
-    },
-  },
-  {
-    slug_id: 'iagon',
-    name: 'Iagon',
-    hex: '494147',
-    description: `
-      IAGON is bridging decentralization with compliance for Web 3.0.
-    `,
-    category: 'Cloud Services',
-    token_details: {
-      ticker: 'IAG',
-      policy: '5d16cc1a177b5d9ba9cfa9793b07e60f1fb70fea1f8aef064415d114',
-      fingerprint: 'asset1z62wksuv4sjkl24kjgr2sm8tfr4p0cf9p32rca',
-      supply: 1000000000,
-      decimals: 6,
-    },
-    images: {
-      logo: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11078.png'
-    },
-    links: {
-      discord: "https://discord.gg/TCS23VWuWm",
-      telegram: "https://t.me/iagon_official",
-      x: "https://x.com/IagonOfficial",
-      website: "https://iagon.com/",
+      discord: 'https://discord.com/invite/EVawcspwyp',
+      github: 'https://github.com/adafinbyte/finbyte',
+      x: 'https://x.com/adaFinbyte',
     },
     finbyte: {
       collection: [
-        {
-          title: 'View on TapTools',
-          image: thirdparty_logos.taptools,
-          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.7b12f25ce8d6f424e1edbc8b61f0742fb13252605f31dc40373d6a245e8ec1d1',
-          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
-        },
-      ],
-    },
+        {title: 'Finbyte Network', image: '/finbyte.png', url: 'https://finbyte.network/', description: 'Finbyte, The Future of Social; Built on Cardano. Finbyte is a web3-native community platform tailored for the Cardano ecosystem.' },
+      ]
+    }
   },
   {
     slug_id: 'snek',

@@ -1,3 +1,4 @@
+import ExploreProjects from "@/components/explore/projects"
 import FinbyteFeed from "@/components/feed"
 import MobileNavigation from "@/components/mobile-navigation"
 import Sidebar from "@/components/sidebar"
@@ -15,57 +16,10 @@ import { HandCoins, Hash, HeartHandshake, Newspaper, Users } from "lucide-react"
 import { ReactNode, useEffect, useState } from "react"
 import { toast } from "sonner"
 
-export default function Home() {
+export default function Explore() {
   const { address, connected } = useWallet();
-  const [all_feed_posts, set_all_feed_posts] = useState<full_post_data[] | null>(null);
   const [finbyte_stats, set_finbyte_stats] = useState<finbyte_general_stats | null>(null);
   const [connected_user_details, set_connected_user_details] = useState<platform_user_details | null>(null);
-  const [refreshing_state, set_refreshing_state] = useState(false);
-  const [selected_topic, set_selected_topic] = useState<string | null>(null);
-
-  const [post_offset, set_post_offset] = useState<number>(0);
-  const POSTS_PER_PAGE = 25;
-
-  const get_posts = async (append: boolean = false) => {
-    set_refreshing_state(true);
-
-    const offset = append ? post_offset : 0;
-    const posts = await fetch_all_feed_posts(POSTS_PER_PAGE, offset);
-
-    if (posts.error) {
-      toast(posts.error);
-      set_refreshing_state(false);
-      return;
-    }
-
-    if (posts.data) {
-      const enriched_posts = (
-        await Promise.all(
-          posts.data.map(async (post) => {
-            const user_response = await fetch_user_data(post.post.author);
-            const data: platform_user_details | undefined = user_response.data;
-            if (!data) return null;
-
-            return {
-              ...post,
-              author_details: data,
-            };
-          })
-        )
-      ).filter((post): post is full_post_data & { author_details: platform_user_details } => post !== null);
-
-      if (append) {
-        set_all_feed_posts(prev => prev && [...prev, ...enriched_posts]);
-        set_post_offset(prev => prev + POSTS_PER_PAGE);
-      } else {
-        set_all_feed_posts(enriched_posts);
-        set_post_offset(POSTS_PER_PAGE);
-      }
-      await get_stats();
-    }
-
-    set_refreshing_state(false);
-  };  
 
   const get_stats = async () => {
     const finbyte_stats = await fetch_finbyte_general_stats();
@@ -92,7 +46,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    get_posts();
     get_stats();
 
     /** @note connecting doesnt instantly get the address, wait until we have it */
@@ -110,12 +63,6 @@ export default function Home() {
     { title: 'Curated Projects', data: curated_tokens.length, icon: <HandCoins className="size-8" /> },
   ];
 
-  const topic_counts: Record<string, number> = {};
-  all_feed_posts && all_feed_posts.forEach((post) => {
-    const topic = post.post.topic;
-    topic_counts[topic] = (topic_counts[topic] || 0) + 1;
-  });
-
   return (
     <div className="min-h-screen bg-background">
       <TopNavigation />
@@ -126,14 +73,9 @@ export default function Home() {
           </div>
 
           <div className="col-span-1 md:col-span-4 lg:col-span-4">
-            <FinbyteFeed
-              all_posts={all_feed_posts}
-              refreshing_state={refreshing_state}
-              get_posts={get_posts}
-              get_user_details={get_user_details}
-              selected_topic={selected_topic}
-              user_details={connected_user_details}
-            />
+            <div className="w-full flex flex-col gap-4">
+              <ExploreProjects />
+            </div>
           </div>
 
           <div className="hidden lg:col-span-2 lg:block">
@@ -153,23 +95,7 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-              <div className="rounded-xl border dark:border-slate-800 bg-card p-4 shadow">
-                <h2 className="mb-4 font-semibold">Topics</h2>
-                <div className="space-y-3">
-                  <Button onClick={() => set_selected_topic(null)} variant={selected_topic === null ? 'secondary' : 'ghost'} className="w-full justify-start">
-                    Latest Posts
-                  </Button>
 
-                  {finbyte_topics.map((topic) => (
-                    <Button key={topic} onClick={() => set_selected_topic(topic)} variant={selected_topic === topic ? 'secondary' : 'ghost'} className="w-full justify-start">
-                      #{capitalize_first_letter(topic)}
-                      <div className="ml-auto">
-                        {topic_counts[topic] ?? 0} posts
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -191,23 +117,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <div className="rounded-xl border dark:border-slate-800 bg-card p-4 shadow">
-              <h2 className="mb-4 font-semibold">Topics</h2>
-              <div className="space-y-3">
-                <Button onClick={() => set_selected_topic(null)} variant={selected_topic === null ? 'secondary' : 'ghost'} className="w-full justify-start">
-                  Latest Posts
-                </Button>
 
-                {finbyte_topics.map((topic) => (
-                  <Button key={topic} onClick={() => set_selected_topic(topic)} variant={selected_topic === topic ? 'secondary' : 'ghost'} className="w-full justify-start">
-                    #{capitalize_first_letter(topic)}
-                    <div className="ml-auto">
-                      {topic_counts[topic] ?? 0} posts
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>
