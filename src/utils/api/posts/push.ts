@@ -1,0 +1,89 @@
+import { databases } from "@/utils/consts";
+import { create_feed_comment, create_feed_post } from "@/utils/interfaces";
+import { post_type } from "@/utils/types";
+import { supabase } from "../secrets";
+import { create_notification } from "../misc";
+
+interface create_post_return { error?: string; created?: boolean }
+export const create_post = async (
+  create_data: create_feed_post | create_feed_comment,
+  post_type: post_type
+): Promise<create_post_return> => {
+  if (
+    (post_type === 'feed_post' && !(create_data as create_feed_post)) ||
+    ((post_type === 'feed_comment') && !(create_data as create_feed_comment))
+  ) {
+    return { error: 'Invalid post data type for the given post_type.' };
+  }
+
+  const db =
+    post_type === 'feed_post' ?
+    databases.forum_posts :
+    databases.forum_comments
+
+  const { error } = await supabase.from(db).insert([create_data]).select().single();
+
+  if (error) {
+    return { error: error.message }
+  } else {
+    const noti = await create_notification(post_type === 'feed_post' ? 'new_post' : 'new_comment', null, create_data.author);
+    if (noti.error) { return { error: noti.error } }
+    return { created: true};
+  }
+}
+
+interface mark_post_as_spam_return { error?: string; marked?: boolean }
+export const mark_post_as_spam = async (
+  post_id: number,
+  post_type: post_type,
+  address: string,
+): Promise<mark_post_as_spam_return> => {
+  const db =
+    post_type === 'feed_post' ?
+    databases.forum_posts :
+    databases.forum_comments
+
+  const { error } = await supabase
+    .from(db)
+    .update({ topic: 'spam' })
+    .eq('id', post_id)
+    .select()
+    .single();
+
+  if (error) {
+    return { error: error.message }
+  } else {
+    const noti = await create_notification('marked_spam_post', null, address);
+    if (noti.error) { return { error: noti.error } }
+    return { marked: true }
+    //noti
+  }
+};
+
+interface like_unlike_post_return { error?: string; done?: boolean }
+export const like_unlike_post = async (
+  post_likers: string[],
+  post_id: number,
+  timestamp: number,
+  address: string,
+  post_type: post_type,
+  action: 'like' | 'unlike'
+): Promise<like_unlike_post_return> => {
+  const db =
+    post_type === 'feed_post' ? databases.forum_posts : databases.forum_comments;
+
+  const { error } = await supabase
+    .from(db)
+    .update({ post_likers: post_likers.length ? post_likers : [] })
+    .eq('id', post_id)
+    .single();
+
+  if (error) {
+    return { error: error.message }
+  } else {
+    const noti = await create_notification('like/unlike', post_id, address);
+    if (noti.error) { return { error: noti.error } }
+    return { done: true }
+    //noti
+  }
+};

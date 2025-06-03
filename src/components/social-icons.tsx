@@ -44,7 +44,7 @@ const SocialIcon: FC <custom_props> = ({
   :
    !disabled && link ?
     <Link href={link} target="_blank">
-      <Button variant='outline'>
+      <Button variant='outline' size='sm'>
         {render_icon()}
       </Button>
     </Link>

@@ -1,9 +1,8 @@
-import { format_unix } from "@/utils/string-tools";
+import { get_timestamp } from "../common";
 import { databases } from "../consts";
-import { discord_webhook_ping, supabase } from "../secrets";
-import { finbyte_general_stats, platform_notification, platform_user, platform_user_details, safe_fetched_return } from "./interfaces";
-import { notification_action_type, post_type } from "./types";
-import { fetch_author_data } from "./account/fetch";
+import { finbyte_general_stats } from "../interfaces";
+import { notification_action } from "../types";
+import { supabase } from "./secrets";
 
 interface fetch_finbyte_general_stats_return { error?: string; data?: finbyte_general_stats }
 export const fetch_finbyte_general_stats = async (): Promise<fetch_finbyte_general_stats_return> => {
@@ -15,57 +14,54 @@ export const fetch_finbyte_general_stats = async (): Promise<fetch_finbyte_gener
   return { data: data[0] };
 };
 
+interface check_user_on_login_return { error?: string; data?: boolean }
+/** @note a true return means the user exists, a false is a user has been created */
+export const check_user_on_login = async (address: string): Promise<check_user_on_login_return> => {
+  const { data: eu, error: eue } = await supabase
+    .from(databases.accounts)
+    .select("*")
+    .eq("address", address)
+    .single();
+  if (eue && eue.code !== "PGRST116") {
+    return { error: ("Error checking wallet address: " + eue.message) }
+  }
+
+  if (eu) {
+    const noti = await create_notification('user_logged_in', null, address);
+    if (noti.error) { return { error: noti.error } }
+    return { data: true };
+  }
+
+  const { error: nue } = await supabase
+    .from(databases.accounts)
+    .insert({ address: address })
+    .select()
+    .single();
+  if (nue) { return { error: ("Error creating new user: " + nue.message) } }
+  const noti = await create_notification('new_user', null, address);
+  if (noti.error) { return { error: noti.error } }
+  return { data: false };
+};
+
+interface create_notification_return { error?: string; done?: boolean; }
 export const create_notification = async (
-  timestamp: number,
-  address:   string,
-  action: notification_action_type,
-  post_type: post_type | null,
-  page_id: { forum_post_id: number | null, token_slug: string | null }
-): Promise<safe_fetched_return | void> => {
-  const data: platform_notification = {
-    action: action,
-    address: address,
+  action: notification_action,
+  post_id: number | null,
+  address: string,
+): Promise<create_notification_return> => {
+  const timestamp = get_timestamp();
+  const data = {
+    action,
+    address,
     timestamp: timestamp,
-    forum_post_id: page_id.forum_post_id,
-    token_slug: page_id.token_slug
+    notification_timestamp: timestamp,
+    forum_post_id: post_id
   }
 
   const { error } = await supabase
     .from(databases.notifications)
-    .insert([data])
+    .insert(data)
     .single();
-
-  if (error) return { error: error.message }
-
-  try {
-    if (!discord_webhook_ping) return { error: 'Discord webhook URL is not set'}
-
-    const forum_post_url = 'https://finbyte.vercel.app/forums/' + page_id.forum_post_id;
-    const community_post_url = post_type === 'community_post' ?
-      'https://finbyte.vercel.app/tokens/' + page_id.token_slug : null;
-
-    const forum_post_string = `:speech_balloon: ${forum_post_url}`;
-    const community_post_string = `:speech_balloon: ${community_post_url}`;
-    const is_forum_post = (post_type === 'forum_post' || post_type === 'forum_comment') ? true : false;
-    const is_community_post = post_type === 'community_post' ? true : false;
-
-    const discord_post_text = `
-:bell: **${action}**
-:bust_in_silhouette: *${address.substring(0, 10) + '...' + address.substring(address.length - 10)}*
-:clock: *${format_unix(timestamp).date}*
-${action.startsWith('Del') ? '' : is_community_post ? community_post_string : is_forum_post ? forum_post_string : ''}
-    `;
-
-    await fetch(discord_webhook_ping, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        content: discord_post_text
-      }),
-    });
-  } catch (err) {
-    console.error("Failed to send Discord webhook:", err);
-  }
-}
+  if (error) { return { error: error.message } }
+  return { done: true }
+};
