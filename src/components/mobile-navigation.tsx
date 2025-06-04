@@ -45,22 +45,20 @@ export default function MobileNavigation() {
         </Link>
 
         {/** @todo */}
-        <Link
-          href="/"
-          className="opacity-50 flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
+        <div
+          className="opacity-50 flex flex-col items-center justify-center text-muted-foreground"
         >
           <User className="h-5 w-5" />
           <span className="text-xs">Profile</span>
-        </Link>
+        </div>
 
         {/** @todo */}
-        <Link
-          href="/"
-          className="opacity-50 flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
+        <div
+          className="opacity-50 flex flex-col items-center justify-center text-muted-foreground"
         >
           <Settings className="h-5 w-5" />
           <span className="text-xs">Settings</span>
-        </Link>
+        </div>
       </div>
     </div>
   )

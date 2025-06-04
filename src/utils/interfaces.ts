@@ -41,6 +41,18 @@ export interface comment_post_data {
   type?: 'forum_comment';
 }
 
+export interface community_post_data {
+  id:         number;
+  token_slug: string;
+  author:     string;
+  post_timestamp: number;
+  post:      string;
+  updated_timestamp: number | null;
+  updated_post:      string | null;
+  post_likers: string[] | null;
+  topic: string; /** @note our cheat to mark posts as spam */
+}
+
 export interface platform_user_details {
   id:        number;
   forum_posts:    forum_post_data[];
@@ -85,6 +97,13 @@ export interface create_feed_comment {
   post:      string;
   post_id:   number;
   comment_timestamp: number;
+}
+
+export interface create_community_post {
+  author:    string;
+  post:      string;
+  token_slug: string;
+  post_timestamp: number;
 }
 
 export interface project_community_data {

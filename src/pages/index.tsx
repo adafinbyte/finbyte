@@ -24,7 +24,7 @@ export default function Home() {
   const [selected_topic, set_selected_topic] = useState<string | null>(null);
 
   const [post_offset, set_post_offset] = useState<number>(0);
-  const POSTS_PER_PAGE = 25;
+  const POSTS_PER_PAGE = 100;
 
   const get_posts = async (append: boolean = false) => {
     set_refreshing_state(true);
@@ -39,28 +39,8 @@ export default function Home() {
     }
 
     if (posts.data) {
-      const enriched_posts = (
-        await Promise.all(
-          posts.data.map(async (post) => {
-            const user_response = await fetch_user_data(post.post.author);
-            const data: platform_user_details | undefined = user_response.data;
-            if (!data) return null;
-
-            return {
-              ...post,
-              author_details: data,
-            };
-          })
-        )
-      ).filter((post): post is full_post_data & { author_details: platform_user_details } => post !== null);
-
-      if (append) {
-        set_all_feed_posts(prev => prev && [...prev, ...enriched_posts]);
-        set_post_offset(prev => prev + POSTS_PER_PAGE);
-      } else {
-        set_all_feed_posts(enriched_posts);
-        set_post_offset(POSTS_PER_PAGE);
-      }
+      set_all_feed_posts(posts.data);
+      set_post_offset(POSTS_PER_PAGE);
       await get_stats();
     }
 
@@ -101,13 +81,13 @@ export default function Home() {
     }
   }, [connected]);
 
-  interface stat_item { title: string; data: string | number; icon: ReactNode; }
+  interface stat_item { title: string; data: string | number; }
   const stat_items: stat_item[] = [
-    { title: 'Total Posts', data: finbyte_stats?.total_posts ?? 0, icon: <Newspaper className="size-8" /> },
-    { title: 'Unique Users', data: finbyte_stats?.unique_users ?? 0, icon: <Users className="size-8" /> },
-    { title: 'Interactions', data: finbyte_stats?.interactions ?? 0, icon: <Hash className="size-8" /> },
-    { title: 'Total Post Likes', data: finbyte_stats?.likes_given ?? 0, icon: <HeartHandshake className="size-8" /> },
-    { title: 'Curated Projects', data: curated_tokens.length, icon: <HandCoins className="size-8" /> },
+    { title: 'Total Posts', data: finbyte_stats?.total_posts ?? 0 },
+    { title: 'Feed Posts', data: finbyte_stats?.forum_posts ?? 0 },
+    { title: 'Unique Users', data: finbyte_stats?.unique_users ?? 0 },
+    { title: 'Interactions', data: finbyte_stats?.interactions ?? 0 },
+    { title: 'Curated Projects', data: curated_tokens.length },
   ];
 
   const topic_counts: Record<string, number> = {};

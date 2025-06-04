@@ -9,16 +9,21 @@ import { copy_to_clipboard } from "@/utils/common";
 import { like_unlike_community } from "@/utils/api/community/push";
 import { toast } from "sonner";
 import { project_community_data } from "@/utils/interfaces";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import UserAvatar from "../user-avatar";
+import { Card } from "../ui/card";
+import { FileWarning, MessageCircleWarning } from "lucide-react";
 
 interface custom_props {
   token_details: curated_token;
   poolpm_fp_data: pool_pm_fingerprint | null;
   community_data: project_community_data | null;
   get_community_data: () => Promise<void>;
+  change_tab: () => void;
 }
 
 const ProjectsInformation: FC <custom_props> = ({
-  token_details, poolpm_fp_data, community_data, get_community_data
+  token_details, poolpm_fp_data, community_data, get_community_data, change_tab
 }) => {
   const { address, connected } = useWallet();
 
@@ -52,6 +57,18 @@ const ProjectsInformation: FC <custom_props> = ({
   return (
     <div className="p-4">
       <h1 className="text-sm text-muted-foreground font-semibold mb-2">
+        About {token_details.name}
+      </h1>
+
+      <p className="text-sm">
+        {token_details.description}
+      </p>
+
+      {/**
+       * @note we will have to update this if we want to include nft projects as
+       * this is just getting the token information
+       **/}
+      <h1 className="text-sm text-muted-foreground font-semibold mt-4 mb-2">
         Core Details
       </h1>
 
@@ -69,51 +86,48 @@ const ProjectsInformation: FC <custom_props> = ({
         ))}
       </div>
 
-      <h1 className="mt-4 text-sm text-muted-foreground font-semibold mb-2">
+      <h1 className="text-sm text-muted-foreground font-semibold mt-4 mb-2">
         On Finbyte
       </h1>
 
-      <div className="grid grid-cols-2 gap-2 items-start">
-        <div className="bg-secondary rounded-lg px-4 py-2 text-center">
-          <h1 className="text-sm font-semibold text-muted-foreground">
-            Community Likes
-          </h1>
+      <div className="grid md:grid-cols-2 gap-2 items-start">
+        <Card className="px-4 py-2 text-center">
+          <div className="text-sm text-left font-semibold text-muted-foreground flex justify-between items-center">
+            Community Likers
+            <span>
+              {community_data?.community_likers?.length.toLocaleString() ?? 0}
+            </span>
+          </div>
 
-          <p>
-            {community_data?.community_likers?.length ?? 0}
-          </p>
-        </div>
+          <div className="flex flex-wrap -space-x-2 p-2">
+            {community_data?.community_likers?.map((liker, index) => (
+              <Avatar key={index} className="size-10" title={`${liker.substring(0, 10) + "..." + liker.substring(liker.length - 10)}`}>
+                <UserAvatar address={liker} />
+                <AvatarFallback>{liker.charAt(0)}</AvatarFallback>
+              </Avatar>
+            ))}
+          </div>
 
-        <div className="bg-secondary rounded-lg px-4 py-2 text-center">
-          <h1 className="text-sm font-semibold text-muted-foreground">
-            Community Posts
-          </h1>
+          <div className="flex justify-end pt-4">
+            <Button size='sm' variant='secondary' disabled={!connected} onClick={attempt_like_unlike_community}>
+              {community_data?.community_likers?.includes(address) ? 'Unlike' : 'Like'}
+            </Button>
+          </div>
+        </Card>
 
-          <p>
-            0
-          </p>
-        </div>
+        <Card className="px-4 py-2 flex flex-col gap-2">
+          <h1 className="text-sm text-left font-semibold text-muted-foreground">Engage with ${token_details.token_details.ticker}</h1>
 
-        <div className={`bg-secondary rounded-lg px-4 py-2 text-center ${connected ? '' : 'opacity-50'}`}>
-          <h1 className="text-sm font-semibold text-muted-foreground">
-            Support Community
-          </h1>
-
-          <Button size='sm' variant='link' disabled={!connected} onClick={attempt_like_unlike_community}>
-            {community_data?.community_likers?.includes(address) ? 'Unlike' : 'Like'}
+          <Button variant="outline" size="sm" onClick={change_tab}>
+            Community Feed
           </Button>
-        </div>
 
-        <div className={`bg-secondary rounded-lg px-4 py-2 text-center ${ready_and_built ? '' : 'opacity-50'}`}>
-          <h1 className="text-sm font-semibold text-muted-foreground">
-            Community Badge
-          </h1>
+          <h1 className="mt-2 text-sm text-left font-semibold text-muted-foreground">Support ${token_details.token_details.ticker}</h1>
 
-          <Button size='sm' variant='link' disabled={!ready_and_built}>
-            Apply
+          <Button variant="outline" disabled>
+            Represent Community
           </Button>
-        </div>
-
+        </Card>
       </div>
     </div>
   )

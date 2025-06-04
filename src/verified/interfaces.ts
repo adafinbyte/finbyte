@@ -32,5 +32,6 @@ export interface curated_token {
   };
   finbyte?: {
     collection?: collection_item[];
+    donate_wallet?: string;
   }
 }

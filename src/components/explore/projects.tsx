@@ -32,6 +32,8 @@ const ExploreProjects: FC = () => {
         </Button>
       </div>
 
+      {/** @todo search input here */}
+
       {hide_all ?
         <div className="bg-secondary rounded-lg opacity-60 p-2">
           <div className="flex justify-center w-full">

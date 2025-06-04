@@ -36,7 +36,7 @@ export default function TopNavigation() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[240px] sm:w-[300px]">
+            <SheetContent side="left" className="w-[240px] sm:w-[300px] dark:border-slate-800">
               <div className="flex flex-col gap-6 py-6">
                 <Link href="/" className="flex items-center gap-2 font-semibold">
                   <div className="h-8 w-8 rounded-full text-center text-lg font-bold leading-8 text-primary-foreground">

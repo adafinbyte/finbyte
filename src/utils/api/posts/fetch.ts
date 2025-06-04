@@ -1,6 +1,6 @@
 import { databases } from "@/utils/consts";
 import { supabase } from "../secrets";
-import { full_post_data } from "@/utils/interfaces";
+import { community_post_data, full_post_data } from "@/utils/interfaces";
 
 interface fetch_all_feed_posts_return {
   error?: string;
@@ -71,9 +71,19 @@ export const fetch_single_feed_post = async (post_id: number): Promise<fetch_sin
 
   const post: full_post_data = {
     post: p,
-    comments: c.sort((a, b) => b.timestamp - a.timestamp),
+    comments: c.sort((a, b) => b.post_timestamp - a.post_timestamp),
     author_details: null,
   };
 
   return { data: post };
+}
+
+interface fetch_community_posts_return { error?: string; data?: community_post_data[] }
+export const fetch_community_posts = async (token_slug: string): Promise<fetch_community_posts_return> => {
+  const { data: cp, error: cpe } = await supabase.from(databases.community_posts).select('*').eq('token_slug', token_slug);
+  if (cpe) {
+    return {error: cpe.message};
+  }
+
+  return {data: cp};
 }
