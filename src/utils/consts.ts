@@ -15,7 +15,8 @@ export const databases = {
 
   finbyte_chat:    "Finbyte Chat",
   community_posts: "Community Posts",
-  communities: 'Tokens (Communities)'
+
+  communities: 'Communities'
 };
 
 export const moderation_addresses = [

@@ -39,47 +39,36 @@ export default function TopNavigation() {
             <SheetContent side="left" className="w-[240px] sm:w-[300px]">
               <div className="flex flex-col gap-6 py-6">
                 <Link href="/" className="flex items-center gap-2 font-semibold">
-                  <div className="h-8 w-8 rounded-full bg-primary text-center text-lg font-bold leading-8 text-primary-foreground">
-                    S
+                  <div className="h-8 w-8 rounded-full text-center text-lg font-bold leading-8 text-primary-foreground">
+                    <img src='/finbyte.png'/>
                   </div>
-                  <span>SocialApp</span>
+                  <span>Finbyte</span>
                 </Link>
                 <nav className="flex flex-col gap-4">
                   <Link
-                    href="#"
+                    href="/"
                     className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >
                     <Home className="h-5 w-5" />
                     <span>Home</span>
                   </Link>
                   <Link
-                    href="#"
+                    href="/explore"
                     className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >
                     <Search className="h-5 w-5" />
                     <span>Explore</span>
                   </Link>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <Bell className="h-5 w-5" />
-                    <span>Notifications</span>
-                  </Link>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <MessageSquare className="h-5 w-5" />
-                    <span>Messages</span>
-                  </Link>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <User className="h-5 w-5" />
-                    <span>Profile</span>
-                  </Link>
+
+                  {connected ?
+                    <Button onClick={disconnect} variant='secondary' className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+                      Disconnect
+                    </Button>
+                    :
+                    <Button onClick={() => set_wallet_login_open(true)} variant='secondary' className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+                      Connect
+                    </Button>
+                  }
                 </nav>
               </div>
             </SheetContent>
@@ -103,9 +92,11 @@ export default function TopNavigation() {
         }
 
         <div className="ml-auto flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSearchOpen(!isSearchOpen)}>
-            {isSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
-          </Button>
+          <Link href={'/explore'}>
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+              <Search className="h-5 w-5" />
+            </Button>
+          </Link>
 
           {
             /**
@@ -131,14 +122,6 @@ export default function TopNavigation() {
           }
         </div>
       </div>
-      {isSearchOpen && (
-        <div className="border-t border-slate-800 bg-background p-2 md:hidden">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input type="search" placeholder="Search..." className="w-full rounded-full bg-muted pl-8" />
-          </div>
-        </div>
-      )}
 
       <WalletLoginModal onOpenChange={set_wallet_login_open} open={wallet_login_open} />
     </header>
