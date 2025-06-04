@@ -1,4 +1,4 @@
-export type post_type = 'feed_post' | 'feed_comment';
+export type post_type = 'feed_post' | 'feed_comment' | 'community';
 
 export type notification_action = |
  'new_post' | 'new_comment' | 'like/unlike' | 'followed_user' | 'new_user' | 'muted_user' |

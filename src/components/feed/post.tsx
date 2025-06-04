@@ -290,12 +290,6 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
                   <FormatAddress address={feed_post.post.author} />
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  {feed_post.author_details?.ada_handle && (
-                    <>
-                      {" · "}
-                      <FormatAddress address={feed_post.author_details.ada_handle} />
-                    </>
-                  )}
                   <span className="px-1.5">· {format_unix(feed_post.post.post_timestamp).time_ago}</span>
                 </span>
               </div>
@@ -371,7 +365,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
 
         {show_comments && (
           <div className="p-4 bg-secondary rounded-lg mt-4">
-            <CreateFeedPost post_type="feed_comment" post_id={feed_post.post.id} on_create={get_posts} />
+            <CreateFeedPost post_type="feed_comment" post_id={feed_post.post.id} on_create={get_posts} token_slug={undefined}/>
 
             <div className="w-full flex justify-end mt-4">
               <span className="text-xs text-muted-foreground">Comments: {feed_post.comments.length}</span>

@@ -54,13 +54,13 @@ export default function Explore() {
     }
   }, [connected]);
 
-  interface stat_item { title: string; data: string | number; icon: ReactNode; }
+  interface stat_item { title: string; data: string | number; }
   const stat_items: stat_item[] = [
-    { title: 'Total Posts', data: finbyte_stats?.total_posts ?? 0, icon: <Newspaper className="size-8" /> },
-    { title: 'Unique Users', data: finbyte_stats?.unique_users ?? 0, icon: <Users className="size-8" /> },
-    { title: 'Interactions', data: finbyte_stats?.interactions ?? 0, icon: <Hash className="size-8" /> },
-    { title: 'Total Post Likes', data: finbyte_stats?.likes_given ?? 0, icon: <HeartHandshake className="size-8" /> },
-    { title: 'Curated Projects', data: curated_tokens.length, icon: <HandCoins className="size-8" /> },
+    { title: 'Total Posts', data: finbyte_stats?.total_posts ?? 0 },
+    { title: 'Feed Posts', data: finbyte_stats?.forum_posts ?? 0 },
+    { title: 'Unique Users', data: finbyte_stats?.unique_users ?? 0},
+    { title: 'Interactions', data: finbyte_stats?.interactions ?? 0},
+    { title: 'Curated Projects', data: curated_tokens.length },
   ];
 
   return (

@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useWallet } from "@meshsdk/react";
 import { post_type } from "@/utils/types";
 import { create_post } from "@/utils/api/posts/push";
-import { create_feed_comment, create_feed_post } from "@/utils/interfaces";
+import { create_community_post, create_feed_comment, create_feed_post } from "@/utils/interfaces";
 import { capitalize_first_letter, get_timestamp } from "@/utils/common";
 import { fetch_single_feed_post } from "@/utils/api/posts/fetch";
 import { finbyte_topics } from "@/utils/consts";
@@ -18,10 +18,11 @@ interface custom_props {
   post_type: post_type;
   post_id: number | undefined;
   on_create: () => Promise<void>;
+  token_slug: string | undefined;
 }
 
 const CreateFeedPost: FC <custom_props> = ({
-  post_type, post_id, on_create
+  post_type, post_id, on_create, token_slug
 }) => {
   const { address, connected } = useWallet();
   const [chosen_topic, set_chosen_topic] = useState("General");
@@ -36,7 +37,7 @@ const CreateFeedPost: FC <custom_props> = ({
 
     const post_timestamp = get_timestamp();
 
-    const handle_post_creation = async (post_data: create_feed_post | create_feed_comment) => {
+    const handle_post_creation = async (post_data: create_feed_post | create_feed_comment | create_community_post) => {
       try {
         const post_creation = await create_post(post_data, post_type);
         if (post_creation.error) {
@@ -52,6 +53,15 @@ const CreateFeedPost: FC <custom_props> = ({
       }
     };
 
+    if (post_type === 'community' && token_slug) {
+      const post_data: create_community_post = {
+        author: address,
+        post: create_post_input,
+        token_slug,
+        post_timestamp
+      }
+      await handle_post_creation(post_data);
+    }
     if (post_type === 'feed_post') {
       const post_data: create_feed_post = {
         author: address,
@@ -70,9 +80,9 @@ const CreateFeedPost: FC <custom_props> = ({
       await handle_post_creation(post_data);
     }
   };
-  
+
   return (
-    <Card className={`${post_type === 'feed_comment' ? 'border-0' : ''}`}>
+    <Card className={`${(post_type === 'feed_comment' || post_type === 'community') ? 'border-0' : ''}`}>
       <CardContent className="p-4">
         <div className="flex gap-4">
           <div className="flex-1">
@@ -123,7 +133,7 @@ const CreateFeedPost: FC <custom_props> = ({
               </div>
 
               <Button size="sm" disabled={!create_post_input.trim() || !connected} onClick={attempt_create_post}>
-                Post
+                {!connected ? 'No wallet found' : 'Post' }
               </Button>
             </div>
           </div>

@@ -58,6 +58,13 @@ export default function Sidebar() {
           </Button>
         }
 
+        <hr className="w-4/5 mx-auto dark:border-slate-800 my-4"/>
+
+          <Button variant="ghost" disabled className="w-full justify-start gap-2 rounded-full">
+            <img src='/finbyte.png' className="h-5 w-5" />
+            <span>$tFIN</span>
+          </Button>
+
         <Button disabled variant="ghost" className="w-full justify-start gap-2 rounded-full">
           <Settings className="h-5 w-5" />
           <span>Settings</span>

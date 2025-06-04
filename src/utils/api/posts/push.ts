@@ -1,25 +1,26 @@
 import { databases } from "@/utils/consts";
-import { create_feed_comment, create_feed_post } from "@/utils/interfaces";
+import { create_community_post, create_feed_comment, create_feed_post } from "@/utils/interfaces";
 import { post_type } from "@/utils/types";
 import { supabase } from "../secrets";
 import { create_notification } from "../misc";
 
 interface create_post_return { error?: string; created?: boolean }
 export const create_post = async (
-  create_data: create_feed_post | create_feed_comment,
+  create_data: create_feed_post | create_feed_comment | create_community_post,
   post_type: post_type
 ): Promise<create_post_return> => {
   if (
     (post_type === 'feed_post' && !(create_data as create_feed_post)) ||
-    ((post_type === 'feed_comment') && !(create_data as create_feed_comment))
+    ((post_type === 'feed_comment') && !(create_data as create_feed_comment)) ||
+    ((post_type === 'community') && !(create_data as create_community_post))
   ) {
     return { error: 'Invalid post data type for the given post_type.' };
   }
 
   const db =
     post_type === 'feed_post' ?
-    databases.forum_posts :
-    databases.forum_comments
+    databases.forum_posts : post_type === 'feed_comment' ?
+    databases.forum_comments : databases.community_posts;
 
   const { error } = await supabase.from(db).insert([create_data]).select().single();
 
@@ -40,8 +41,8 @@ export const mark_post_as_spam = async (
 ): Promise<mark_post_as_spam_return> => {
   const db =
     post_type === 'feed_post' ?
-    databases.forum_posts :
-    databases.forum_comments
+    databases.forum_posts : post_type === 'feed_comment' ?
+    databases.forum_comments : databases.community_posts;
 
   const { error } = await supabase
     .from(db)
@@ -70,7 +71,9 @@ export const like_unlike_post = async (
   action: 'like' | 'unlike'
 ): Promise<like_unlike_post_return> => {
   const db =
-    post_type === 'feed_post' ? databases.forum_posts : databases.forum_comments;
+    post_type === 'feed_post' ?
+    databases.forum_posts : post_type === 'feed_comment' ?
+    databases.forum_comments : databases.community_posts;
 
   const { error } = await supabase
     .from(db)

@@ -22,8 +22,9 @@ export const check_user_on_login = async (address: string): Promise<check_user_o
     .select("*")
     .eq("address", address)
     .single();
+
   if (eue && eue.code !== "PGRST116") {
-    return { error: ("Error checking wallet address: " + eue.message) }
+    return { error: "Error checking wallet address: " + eue.message };
   }
 
   if (eu) {
@@ -32,16 +33,36 @@ export const check_user_on_login = async (address: string): Promise<check_user_o
     return { data: true };
   }
 
+  const { count, error: countError } = await supabase
+    .from(databases.accounts)
+    .select('id', { count: 'exact', head: true });
+
+  if (countError) {
+    return { error: "Error counting users: " + countError.message };
+  }
+
+  if (typeof count !== 'number') {
+    return { error: "Failed to retrieve user count." };
+  }
+
+  const badges = count < 25 ? ['beta'] : [];
+
   const { error: nue } = await supabase
     .from(databases.accounts)
-    .insert({ address: address })
+    .insert({ address: address, badges: badges })
     .select()
     .single();
-  if (nue) { return { error: ("Error creating new user: " + nue.message) } }
+
+  if (nue) {
+    return { error: "Error creating new user: " + nue.message };
+  }
+
   const noti = await create_notification('new_user', null, address);
   if (noti.error) { return { error: noti.error } }
+
   return { data: false };
 };
+
 
 interface create_notification_return { error?: string; done?: boolean; }
 export const create_notification = async (

@@ -31,14 +31,13 @@ interface custom_props {
 const FinbyteFeed: FC <custom_props> = ({
   all_posts, refreshing_state, get_posts, get_user_details, selected_topic, user_details
 }) => {
-  const { connected } = useWallet();
   const [current_tab, set_current_tab] = useState("all");
 
   /** @todo - we should do a different fetch function to get the connected users "following" posts **/
 
   return (
     <div className="space-y-4">
-      <CreateFeedPost post_type='feed_post' post_id={undefined} on_create={get_posts}/>
+      <CreateFeedPost post_type='feed_post' post_id={undefined} on_create={get_posts} token_slug={undefined}/>
 
       <Card className="overflow-hidden">
         <CardHeader className="p-4 pb-2">
