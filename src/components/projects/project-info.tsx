@@ -6,14 +6,19 @@ import { format_long_string, format_unix } from "@/utils/format";
 import { Button } from "../ui/button";
 import { useWallet } from "@meshsdk/react";
 import { copy_to_clipboard } from "@/utils/common";
+import { like_unlike_community } from "@/utils/api/community/push";
+import { toast } from "sonner";
+import { project_community_data } from "@/utils/interfaces";
 
 interface custom_props {
   token_details: curated_token;
   poolpm_fp_data: pool_pm_fingerprint | null;
+  community_data: project_community_data | null;
+  get_community_data: () => Promise<void>;
 }
 
 const ProjectsInformation: FC <custom_props> = ({
-  token_details, poolpm_fp_data
+  token_details, poolpm_fp_data, community_data, get_community_data
 }) => {
   const { address, connected } = useWallet();
 
@@ -32,6 +37,17 @@ const ProjectsInformation: FC <custom_props> = ({
   const token_stats = [...base_stats, ...additional_stats];
 
   const ready_and_built = false;
+
+  const attempt_like_unlike_community = async () => {
+    const like_community = await like_unlike_community(address, token_details.slug_id);
+    if (like_community.error) {
+      toast.error(like_community.error);
+      return;
+    } else {
+      toast.success(`Successfully ${like_community.action} like from Community.`);
+      await get_community_data();
+    }
+  }
 
   return (
     <div className="p-4">
@@ -64,7 +80,7 @@ const ProjectsInformation: FC <custom_props> = ({
           </h1>
 
           <p>
-            0
+            {community_data?.community_likers?.length ?? 0}
           </p>
         </div>
 
@@ -78,13 +94,13 @@ const ProjectsInformation: FC <custom_props> = ({
           </p>
         </div>
 
-        <div className={`bg-secondary rounded-lg px-4 py-2 text-center ${ready_and_built ? '' : 'opacity-50'}`}>
+        <div className={`bg-secondary rounded-lg px-4 py-2 text-center ${connected ? '' : 'opacity-50'}`}>
           <h1 className="text-sm font-semibold text-muted-foreground">
             Support Community
           </h1>
 
-          <Button size='sm' variant='link' disabled={!ready_and_built}>
-            Like
+          <Button size='sm' variant='link' disabled={!connected} onClick={attempt_like_unlike_community}>
+            {community_data?.community_likers?.includes(address) ? 'Unlike' : 'Like'}
           </Button>
         </div>
 

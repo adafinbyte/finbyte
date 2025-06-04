@@ -9,8 +9,9 @@ import TopNavigation from "@/components/top-navigation"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { fetch_user_data } from "@/utils/api/account/fetch"
+import { fetch_community_data } from "@/utils/api/community/fetch"
 import { get_pool_pm_asset, pool_pm_fingerprint } from "@/utils/api/external/pool-pm"
-import { platform_user_details } from "@/utils/interfaces"
+import { platform_user_details, project_community_data } from "@/utils/interfaces"
 import { curated_token } from "@/verified/interfaces"
 import curated_tokens from "@/verified/tokens"
 import { useWallet } from "@meshsdk/react"
@@ -27,7 +28,7 @@ export default function Home() {
   const [found_token, set_found_token] = useState<curated_token | null>(null);
   const [current_tab, set_current_tab] = useState("info");
   const [refreshing_state, set_refreshing_state] = useState(false);
-
+  const [community_data, set_community_data] = useState<project_community_data | null>(null);
   const [poolpm_fp_data, set_poolpm_fp_data] = useState<pool_pm_fingerprint | null>(null);
 
   useEffect(() => {
@@ -61,8 +62,24 @@ export default function Home() {
     }
   }
 
+  const get_community_data = async () => {
+    if (!found_token) { return; }
+    const data = await fetch_community_data(found_token.slug_id);
+    if (data.error) {
+      toast.error(data.error);
+      return;
+    }
+    if (data.data) {
+      set_community_data(data.data);
+    }
+  }
+
   useEffect(() => {
     get_pool_pm_details();
+
+    if (found_token) {
+      get_community_data();
+    }
 
     /** @note connecting doesnt instantly get the address, wait until we have it */
     if (connected && address) {
@@ -101,9 +118,6 @@ export default function Home() {
                     <TabsTrigger value="community_feed" onClick={() => set_current_tab('community_feed')} disabled className="flex-1">
                       Community Feed
                     </TabsTrigger>
-                    <TabsTrigger value="trade" onClick={() => set_current_tab('trade')} className="flex-1" disabled>
-                      Trade ${found_token.token_details.ticker}
-                    </TabsTrigger>
                   </TabsList>
                 </Tabs>
               </CardHeader>
@@ -113,6 +127,8 @@ export default function Home() {
                   <ProjectsInformation
                     token_details={found_token}
                     poolpm_fp_data={poolpm_fp_data}
+                    community_data={community_data}
+                    get_community_data={get_community_data}
                   />
                 )}
 

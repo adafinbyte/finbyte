@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
-import { Bell, Home, Plus, Search, User } from "lucide-react"
+import { Bell, Home, Plus, Search, Settings, User } from "lucide-react"
 
 export default function MobileNavigation() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function MobileNavigation() {
         </Link>
 
         <Link
-          href="#"
+          href="/explore"
           className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
         >
           <Search className="h-5 w-5" />
@@ -43,19 +43,23 @@ export default function MobileNavigation() {
             <Plus className="size-6"/>
           </div>
         </Link>
+
+        {/** @todo */}
         <Link
-          href="#"
-          className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
-        >
-          <Bell className="h-5 w-5" />
-          <span className="text-xs">Alerts</span>
-        </Link>
-        <Link
-          href="#"
-          className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
+          href="/"
+          className="opacity-50 flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
         >
           <User className="h-5 w-5" />
           <span className="text-xs">Profile</span>
+        </Link>
+
+        {/** @todo */}
+        <Link
+          href="/"
+          className="opacity-50 flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
+        >
+          <Settings className="h-5 w-5" />
+          <span className="text-xs">Settings</span>
         </Link>
       </div>
     </div>
