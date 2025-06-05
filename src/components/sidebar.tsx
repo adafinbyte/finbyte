@@ -29,23 +29,13 @@ export default function Sidebar() {
 
         {connected ?
           <>
-          {
-            /**
-            <Link href="#">
-              <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
-                <Bookmark className="h-5 w-5" />
-                <span>Bookmarks</span>
-              </Button>
-            </Link>
-            <Link href="#">
+            <Link href="/profile">
               <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
                 <User className="h-5 w-5" />
                 <span>Profile</span>
               </Button>
             </Link>
-             * 
-             */
-          }
+
             <Button onClick={disconnect} variant="ghost" className="w-full justify-start gap-2 rounded-full">
               <Unplug className="h-5 w-5" />
               <span>Disconnect</span>

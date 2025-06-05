@@ -11,8 +11,7 @@ import { finbyte_topics } from "@/utils/consts"
 import { finbyte_general_stats, full_post_data, platform_user_details } from "@/utils/interfaces"
 import curated_tokens from "@/verified/tokens"
 import { useWallet } from "@meshsdk/react"
-import { HandCoins, Hash, HeartHandshake, Newspaper, Users } from "lucide-react"
-import { ReactNode, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export default function Home() {
