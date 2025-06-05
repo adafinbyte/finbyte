@@ -5,15 +5,22 @@ const curated_tokens: curated_token[] = [
   {
     slug_id: 'finbyte',
     name: 'Finbyte',
-    hex: '',
-    description: 'Helping users get engaged with Cardano.',
+    hex: '7446494e',
+    description: `
+        Finbyte is a Cardano-native forum platform designed for the crypto-savvy and
+        community-minded. Inspired by the simplicity of Reddit, Finbyte goes further by
+        offering powerful on-chain tools, token-based engagement, and an open-source
+        foundation for transparency and growth. Whether you're looking to discuss crypto
+        topics, check NFT rarities, explore tokens, or support projects directly, Finbyte
+        puts it all at your fingertips.
+    `,
     category: 'Communications',
     token_details: {
-      ticker: 'FIN',
-      policy: '',
-      fingerprint: '',
-      supply: 0,
-      decimals: 0,
+      ticker: 'tFIN',
+      policy: '37524129746446a5a55da896fe5379508244ea85e4c140156badbdc6',
+      fingerprint: 'asset1cclcn3xtx7fzr7mj4zgj6ek8dpyx3qdzluuujq',
+      supply: 1000000000,
+      decimals: 4,
     },
     images: {
       logo: '/finbyte.png'
@@ -25,6 +32,7 @@ const curated_tokens: curated_token[] = [
     },
     finbyte: {
       collection: [
+        {title: '[PreProd] Cardanoscan', image: 'https://strica.io/_nuxt/img/cardanoscan-logo.c8891c5.png', url: 'https://preprod.cardanoscan.io/token/37524129746446a5a55da896fe5379508244ea85e4c140156badbdc67446494e', description: 'Feature rich blockchain explorer and analytics platform for Cardano.'},
         {title: 'Finbyte Network', image: '/finbyte.png', url: 'https://finbyte.network/', description: 'Finbyte, The Future of Social; Built on Cardano. Finbyte is a web3-native community platform tailored for the Cardano ecosystem.' },
       ]
     }

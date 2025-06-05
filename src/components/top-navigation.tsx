@@ -60,6 +60,14 @@ export default function TopNavigation() {
                     <span>Explore</span>
                   </Link>
 
+                  <Link
+                    href="/tFIN"
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <img src='/finbyte.png' className="h-5 w-5" />
+                    <span>$tFIN</span>
+                  </Link>
+
                   {connected ?
                     <Button onClick={disconnect} variant='secondary' className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
                       Disconnect

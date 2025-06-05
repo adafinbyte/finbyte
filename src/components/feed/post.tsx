@@ -80,7 +80,9 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
 
   useEffect(() => {
     const spam_hidden = () => {
-      return feed_post.post.topic === 'spam' ? set_hidden_post(true) : set_hidden_post(false)
+      if (feed_post.post.topic === 'spam') {
+        set_hidden_post(true);
+      }
     }
     spam_hidden();
   }, [feed_post]);
@@ -248,6 +250,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
   };
 
   if (hidden_post) {
+
     return (
       <div className="w-full bg-secondary p-4 flex flex-col text-center">
         <div>
