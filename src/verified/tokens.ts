@@ -11,7 +11,7 @@ const curated_tokens: curated_token[] = [
         community-minded. Inspired by the simplicity of Reddit, Finbyte goes further by
         offering powerful on-chain tools, token-based engagement, and an open-source
         foundation for transparency and growth. Whether you're looking to discuss crypto
-        topics, check NFT rarities, explore tokens, or support projects directly, Finbyte
+        topics, explore tokens, or support projects directly, Finbyte
         puts it all at your fingertips.
     `,
     category: 'Communications',
