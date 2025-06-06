@@ -9,9 +9,9 @@ import { Card } from "./ui/card";
 const data = [
   { name: "Platform Rewards", value: 10, fill: "hsl(var(--chart-2))" },
   { name: "Staking Rewards", value: 10, fill: "hsl(var(--chart-3))" },
-  { name: "Team Funding", value: 10, fill: "hsl(var(--chart-4))" },
+  { name: "Team Funding", value: 5, fill: "hsl(var(--chart-4))" },
   { name: "Presale & Liquidity", value: 15, fill: "hsl(var(--chart-5))" },
-  { name: "Vesting", value: 55, fill: "hsl(var(--chart-1))" },
+  { name: "Vesting", value: 60, fill: "hsl(var(--chart-1))" },
 ];
 
 const chartConfig = {
@@ -114,13 +114,13 @@ export default function FinPieChart() {
 
                 <div className="w-3/4 text-center mx-auto p-4 bg-secondary rounded-xl my-4">
                   <div className="grid grid-cols-2 gap-8">
-                    <h1>550 Million $FIN</h1>
-                    <h1>55% of Total Supply</h1>
+                    <h1>600 Million $FIN</h1>
+                    <h1>60% of Total Supply</h1>
                   </div>
                 </div>
 
                 <div>
-                  To align with our long-term vision, 55% of the total $FIN supply (550 million tokens)
+                  To align with our long-term vision, 60% of the total $FIN supply (600 million tokens)
                   will be locked and vested using trusted Cardano-native locking tools like cnft.tools.
                   These tokens will be gradually released over several years and allocated toward:
 
@@ -133,7 +133,7 @@ export default function FinPieChart() {
                     </ol>
                   </div>
 
-                  <div className="p-4 border-l bg-secondary rounded-r-xl my-10">
+                  <div className="p-4 border-l border-l-green-400 bg-secondary rounded-r-xl my-10">
                     Why vesting?
                     We believe token vesting discourages speculation and promotes confidence in Finbyte's long-term commitment.
                   </div>
@@ -205,25 +205,43 @@ export default function FinPieChart() {
 
                 <div className="w-3/4 text-center mx-auto p-4 bg-secondary rounded-xl my-4">
                   <div className="grid grid-cols-2 gap-8">
-                    <h1>100 Million $FIN</h1>
-                    <h1>10% of Total Supply</h1>
+                    <h1>50 Million $FIN</h1>
+                    <h1>5% of Total Supply</h1>
                   </div>
                 </div>
 
                 <div>
-                  We've reserved 100 million $FIN tokens for the Finbyte team,
-                  contributors, and future platform development needs.
-                  These tokens will also be vested, with a structured release
-                  schedule to ensure transparency and accountability.
+                  We've reserved 50 million $FIN tokens (5% of the total supply) for the
+                  Finbyte team, core contributors, and future platform development.
+                  These tokens will be vested with a structured release schedule to promote
+                  long-term commitment, transparency, and responsible stewardship.
 
                   <div className="my-4">
-                    Funds will be used for:
+                    Funds from this allocation will support:
                     <ol className="list-disc list-inside space-y-1">
                       <li>Ongoing development and R&D</li>
                       <li>Infrastructure, servers, and APIs</li>
-                      <li>Contributor grants and bounties</li>
-                      <li>Legal, audit, and marketing efforts</li>
+                      <li>Contributor grants, audits and bounties</li>
+                      <li>Legal compliance, community events, and marketing campaigns</li>
                     </ol>
+                  </div>
+                </div>
+
+                <div className="p-4 border-l border-l-green-400 bg-secondary rounded-r-xl my-10">
+                  <h1 className="font-semibold">Why only 5%?</h1>
+
+                  <div className="my-2 text-sm pl-4">
+                    <p>
+                      We believe in building alongside our community, not above it.
+                      By limiting our team allocation, we're signaling our commitment
+                      to sustainability and decentralization. To remain aligned with
+                      our values and goals, our team will also participate in our own
+                      staking platform to earn additional rewards, just like any
+                      other user. Only a portion of the 5% will be released upfront;
+                      the rest is gradually vested over time. This keeps us accountable,
+                      while still ensuring we have enough resources to fund ongoing
+                      development and scale responsibly as the platform grows.
+                    </p>
                   </div>
                 </div>
               </li>

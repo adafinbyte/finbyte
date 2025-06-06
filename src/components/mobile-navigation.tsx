@@ -2,8 +2,10 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
 import { Bell, Home, Plus, Search, Settings, User } from "lucide-react"
+import { useWallet } from "@meshsdk/react"
 
 export default function MobileNavigation() {
+  const { connected } = useWallet();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -45,12 +47,27 @@ export default function MobileNavigation() {
         </Link>
 
         {/** @todo */}
-        <div
-          className="opacity-50 flex flex-col items-center justify-center text-muted-foreground"
-        >
-          <User className="h-5 w-5" />
-          <span className="text-xs">Profile</span>
-        </div>
+
+        {connected ?
+          <Link
+            href="/profile"
+            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
+          >
+            <div
+              className="flex flex-col items-center justify-center text-muted-foreground"
+            >
+              <User className="h-5 w-5" />
+              <span className="text-xs">Profile</span>
+            </div>
+          </Link>
+          :
+          <div
+            className="opacity-50 flex flex-col items-center justify-center text-muted-foreground"
+          >
+            <User className="h-5 w-5" />
+            <span className="text-xs">Profile</span>
+          </div>
+        }
 
         {/** @todo */}
         <div

@@ -112,3 +112,11 @@ export interface project_community_data {
   community_likers: string[] | null;
   highlighted: boolean | null;
 }
+
+export interface tfin_requests_data {
+  id: number;
+  requested_timestamp: number;
+  address: string;
+  fulfilled: boolean | null;
+  tx_hash: string | null;
+}

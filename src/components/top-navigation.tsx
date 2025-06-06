@@ -37,14 +37,18 @@ export default function TopNavigation() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[240px] sm:w-[300px] dark:border-slate-800">
-              <div className="flex flex-col gap-6 py-6">
+              <div className="flex flex-col gap-4 py-6">
                 <Link href="/" className="flex items-center gap-2 font-semibold">
                   <div className="h-8 w-8 rounded-full text-center text-lg font-bold leading-8 text-primary-foreground">
                     <img src='/finbyte.png'/>
                   </div>
                   <span>Finbyte</span>
                 </Link>
-                <nav className="flex flex-col gap-4">
+                <nav className="flex flex-col gap-2 mt-2">
+                  <h1 className="font-bold uppercase text-xs tracking-wide text-muted-foreground mb-2">
+                    Platform
+                  </h1>
+
                   <Link
                     href="/"
                     className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"

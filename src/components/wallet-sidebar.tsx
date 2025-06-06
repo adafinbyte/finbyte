@@ -35,8 +35,8 @@ const WalletSidebar: FC = () => {
   const wallet_balances = [
     { 
       title: '$tFIN: ƒ',
-      data: (() => {
-        const supply = wallet_details?.balances[1] ?? 0;
+      data: wallet_details?.balances[1] ? (() => {
+        const supply = wallet_details.balances[1];
         const [intPart, decPart] = supply.toLocaleString(undefined, { minimumFractionDigits: 4 }).split('.');
         return (
           <span>
@@ -44,12 +44,12 @@ const WalletSidebar: FC = () => {
             <span className="text-muted-foreground text-sm">{decPart}</span>
           </span>
         );
-      })()
+      })() : 0
      },
     {
       title: '$tADA: t₳',
-      data: (() => {
-        const supply = wallet_details?.balances[0] ?? 0;
+      data: wallet_details?.balances[0] ? (() => {
+        const supply = wallet_details.balances[0];
         const [intPart, decPart] = supply.toLocaleString(undefined, { minimumFractionDigits: 6 }).split('.');
         return (
           <span>
@@ -57,7 +57,7 @@ const WalletSidebar: FC = () => {
             <span className="text-muted-foreground text-sm">{decPart}</span>
           </span>
         );
-      })()
+      })() : 0,
     },
   ];
 

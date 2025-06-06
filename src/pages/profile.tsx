@@ -2,6 +2,7 @@
 import FormatAddress from "@/components/format-address"
 import { LoadingDots } from "@/components/loading-dots"
 import MobileNavigation from "@/components/mobile-navigation"
+import ProfileAdminPanel from "@/components/profile/admin-panel"
 import ProfileFinbyteStats from "@/components/profile/finbyte-stats"
 import ProfileWalletInfo from "@/components/profile/wallet-info"
 import Sidebar from "@/components/sidebar"
@@ -11,14 +12,17 @@ import { Card } from "@/components/ui/card"
 import UserAvatar from "@/components/user-avatar"
 import { fetch_user_data } from "@/utils/api/account/fetch"
 import { capitalize_first_letter, copy_to_clipboard } from "@/utils/common"
+import { moderation_addresses } from "@/utils/consts"
 import { platform_user_details } from "@/utils/interfaces"
 import { useWallet } from "@meshsdk/react"
 import { BookmarkPlus, UserMinus, Users } from "lucide-react"
+import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export default function Profile() {
   const { address, connected } = useWallet();
+  const router = useRouter();
 
   const [connected_user_details, set_connected_user_details] = useState<platform_user_details | null>(null);
   const [refreshing_state, set_refreshing_state] = useState(false);
@@ -37,6 +41,9 @@ export default function Profile() {
   useEffect(() => {
     if (connected && address) {
       get_user_details();
+    }
+    if (!connected) {
+      router.push('/')
     }
   }, [connected, address]);
 
@@ -80,6 +87,10 @@ export default function Profile() {
             </div>
 
             <hr className="dark:border-slate-800 my-6 w-4/5 mx-auto" />
+
+            {moderation_addresses.includes(address) && (
+              <ProfileAdminPanel/>
+            )}
 
             {connected_user_details ?
               <ProfileFinbyteStats
