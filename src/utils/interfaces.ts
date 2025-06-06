@@ -12,8 +12,6 @@ export interface forum_post_data {
 
   topic:     string;
   post_timestamp: number;
-  tag:       string | null;
-  title:     string;
   post:      string;
   request_type: string | null;
 
@@ -21,8 +19,6 @@ export interface forum_post_data {
   updated_post:      string | null;
 
   post_likers: string[] | null;
-  is_pinned: boolean | null;
-
   type?: 'forum_post';
 }
 
