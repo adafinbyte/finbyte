@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useWallet } from "@meshsdk/react"
 import WalletLoginModal from "./modals/wallet-login";
 import { useState } from "react";
+import WalletSidebar from "./wallet-sidebar";
 
 export default function Sidebar() {
   const { connected, disconnect } = useWallet();
@@ -13,6 +14,10 @@ export default function Sidebar() {
   return (
     <div className="sticky top-20 space-y-4">
       <nav className="flex flex-col gap-1">
+        <h1 className="font-bold uppercase text-xs tracking-wide text-muted-foreground mb-2">
+          Platform
+        </h1>
+
         <Link href="/">
           <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
             <Home className="h-5 w-5" />
@@ -26,6 +31,19 @@ export default function Sidebar() {
             <span>Explore</span>
           </Button>
         </Link>
+
+        <Link href="/tFIN">
+          <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
+            <img src='/finbyte.png' className="h-5 w-5" />
+            <span>$tFIN</span>
+          </Button>
+        </Link>
+
+        <hr className="w-4/5 mx-auto dark:border-slate-800 my-4" />
+
+        <h1 className="font-bold uppercase text-xs tracking-wide text-muted-foreground my-2">
+          Wallet
+        </h1>
 
         {connected ?
           <>
@@ -48,18 +66,13 @@ export default function Sidebar() {
           </Button>
         }
 
-        <hr className="w-4/5 mx-auto dark:border-slate-800 my-4"/>
-
-          <Button variant="ghost" disabled className="w-full justify-start gap-2 rounded-full">
-            <img src='/finbyte.png' className="h-5 w-5" />
-            <span>$tFIN</span>
-          </Button>
-
         <Button disabled variant="ghost" className="w-full justify-start gap-2 rounded-full">
           <Settings className="h-5 w-5" />
           <span>Settings</span>
         </Button>
       </nav>
+
+      <WalletSidebar/>
 
       <WalletLoginModal onOpenChange={set_wallet_login_open} open={wallet_login_open}/>
     </div>

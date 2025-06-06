@@ -1,8 +1,12 @@
+import FinPieChart from "@/components/fin-piechart"
 import MobileNavigation from "@/components/mobile-navigation"
 import Sidebar from "@/components/sidebar"
 import TopNavigation from "@/components/top-navigation"
 import { Card } from "@/components/ui/card"
 import { fetch_user_data } from "@/utils/api/account/fetch"
+import { asset_address, bf_specific_asset, get_asset_addresses, get_specific_asset } from "@/utils/api/external/blockfrost"
+import { copy_to_clipboard } from "@/utils/common"
+import { format_atomic, format_long_string } from "@/utils/format"
 import { platform_user_details } from "@/utils/interfaces"
 import { useWallet } from "@meshsdk/react"
 import Link from "next/link"
@@ -10,40 +14,55 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export default function Home() {
-  const { address, connected } = useWallet();
+  const [finbyte_token_details, set_finbyte_token_details] = useState<bf_specific_asset | null>(null);
+  const [finbyte_asset_address, set_finbyte_asset_address] = useState<asset_address[] | null>(null);
 
-  const [connected_user_details, set_connected_user_details] = useState<platform_user_details | null>(null);
-
-  const get_user_details = async () => {
-    const user_details = await fetch_user_data(address);
-    if (user_details.error) {
-      toast.error(user_details.error);
+  const get_tfin_data = async () => {
+    const bf_specific_asset = await get_specific_asset('37524129746446a5a55da896fe5379508244ea85e4c140156badbdc67446494e');
+    if (bf_specific_asset.error) {
+      toast.error(bf_specific_asset.error);
       return;
     }
-    if (user_details.data) {
-      set_connected_user_details(user_details.data);
+    if (bf_specific_asset.data) {
+      set_finbyte_token_details(bf_specific_asset.data);
     }
-  }
 
-  const get_tfin_data = async () => {}
+    const bf_asset_addresses = await get_asset_addresses('37524129746446a5a55da896fe5379508244ea85e4c140156badbdc67446494e');
+    if (bf_asset_addresses.error) {
+      toast.error(bf_asset_addresses.error);
+      return;
+    }
+    if (bf_asset_addresses.data) {
+      set_finbyte_asset_address(bf_asset_addresses.data);
+    }
+
+  }
 
   useEffect(() => {
     get_tfin_data();
+  }, []);
 
-    /** @note connecting doesnt instantly get the address, wait until we have it */
-    if (connected && address) {
-      get_user_details();
-    }
-  }, [connected]);
+  const token_details = [
+    { title: 'Unique Owners', data: finbyte_asset_address?.length.toLocaleString() ?? 0 },
+    {
+      title: 'Total Supply',
+      data: (() => {
+        const supply = format_atomic(4, Number(finbyte_token_details?.quantity ?? 0));
+        const [intPart, decPart] = supply.toLocaleString(undefined, { minimumFractionDigits: 4 }).split('.');
+        return (
+          <span>
+            {intPart}.
+            <span className="text-muted-foreground text-sm">{decPart}</span>
+          </span>
+        );
+      })() },
+    { title: 'Decimals', data: 4 },
+    { title: 'Policy ID', data: format_long_string(finbyte_token_details?.policy_id ?? '') },
+    { title: 'Asset Name', data: finbyte_token_details?.asset_name },
+    { title: 'Fingerprint', data: format_long_string(finbyte_token_details?.fingerprint ?? '') },
+    { title: 'Mint Hash', data: format_long_string(finbyte_token_details?.initial_mint_tx_hash ?? '') }
+  ]
 
-  const total_coins = 1_000_000_000;
-  const mainnet_token_alloc = [
-    { title: 'Locked/Vest', data: 550_000_000 }, // cnftools should be holding this
-    { title: 'Platform Rewards', data: 300_000_000 }, // core rewards
-    { title: 'Extra Rewards', data: 200_000_000 }, // staking/giveaways
-    { title: 'Team Funds', data: 50_000_000 }, // r&d/services
-  ];
-  /** @note do donut chart for mainnet_token_alloc */
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,89 +73,110 @@ export default function Home() {
             <Sidebar />
           </div>
 
-          <div className="col-span-1 md:col-span-4 lg:col-span-4">
-            <h1 className="text-lg font-semibold text-muted-foreground">
+          <div className="col-span-1 md:col-span-4 lg:col-span-4 scroll-smooth">
+            <h1 className="text-xl font-medium">
               Welcome to the $tFIN hub 
             </h1>
+            
+            <div className="flex flex-wrap gap-4 justify-center mt-4">
+              {token_details.map((item, index) => (
+                <div key={index} onClick={() => copy_to_clipboard(item.data as string)} className="hover:-translate-y-0.5 duration-300 cursor-copy py-2 px-4 bg-secondary rounded-xl">
+                  <h1 className="font-semibold text-sm text-muted-foreground">
+                    {item.title}
+                  </h1>
 
-            <h1 className="font-semibold opacity-60 mt-2">
-              About
-            </h1>
-            <p>
-              We have been working on the Finbyte Network for nearly two years, and we feel
-              that we're finally ready to launch our testnet token, tFIN.<br />
-              <br />
-              By launching first on the preprod network on Cardano, we can thoroughly test
-              everything needed before releasing the real token on the Cardano mainnet.<br />
-              <br />
-              <span className="font-semibold opacity-90">
-                To participate, please ensure your wallet is connected to the "Pre-Production testnet"
-                in your wallet settings.
-              </span>
-            </p>
+                  <p className="text-lg">
+                    {item.data}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div id="about" className="mt-6">
+              <h1 className="text-xl font-semibold">
+                About Finbyte
+              </h1>
 
-            <h1 className="font-semibold opacity-60 mt-4">
-              Get Started
-            </h1>
+              <p>
+                Finbyte is a decentralized social platform built on the Cardano blockchain,
+                designed to reward meaningful engagement and empower users to support
+                communities, creators, and projects they believe in. After nearly two
+                years of development, we're proud to introduce the Finbyte Network to
+                the world, starting with the launch of our testnet token, tFIN.
+              </p>
 
-            <div>
-              <ol className="list-decimal list-inside space-y-1">
-                <li>
-                  Make sure you select "Preprod Testnet" for the environment and enter your address.
-                </li>
-                <li>
-                  Get tADA from the{' '}
-                  <Link
-                    className="dark:text-blue-400 text-blue-500"
-                    target="_blank"
-                    href="https://docs.cardano.org/cardano-testnets/tools/faucet"
-                  >
-                    Cardano Faucet
-                  </Link>.
-                </li>
-              </ol>
+              <h1 className="text-xl font-semibold mt-6">
+                Testnet Launch: Try tFIN on Cardano Preprod
+              </h1>
+
+              <p>
+                We're beginning our rollout on the Cardano Pre-Production testnet.
+                This allows us to safely test all aspects of Finbyte's token economy,
+                wallet integrations, and community tools before going live on mainnet
+                with our real token, $FIN.
+              </p>
+
+              <div className="p-4 border-l bg-secondary rounded-r-xl my-10">
+                <h1 className="font-semibold">How to join:</h1>
+
+                <div className="my-2 text-sm pl-4">
+                  <ol className="list-disc list-outside space-y-1">
+                    <li>
+                      <p>
+                        Make sure your wallet (e.g. Eternl, Nami, Lace) is connected to the
+                        Pre-Production Testnet under your wallet's network settings.
+                      </p>
+                    </li>
+                    <li>
+                      <p>
+                        Request testnet tokens by replying <Link className="text-blue-500 dark:text-blue-400" href={'https://x.com/AdaFinbyte/status/1930767927717880275'} target="_blank">to this tweet </Link>
+                        with your testnet wallet address or <Link className="text-blue-500 dark:text-blue-400" href={'/'}>creating a new #Request post</Link> with
+                        your testnet wallet connected.
+                      </p>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+
+              <h1 className="text-xl font-semibold mt-6">
+                A New Kind of Social Network
+              </h1>
+
+              <p>
+                Finbyte is not just a social media platform, it's a community-powered network.
+                Our goal is to build a space where your voice, support, and contributions carry
+                real value. On Finbyte, engagement is currency. You can:
+              </p>
+
+              <div className="mt-2">
+                <ol className="list-disc list-inside space-y-1">
+                  <li><span className="font-semibold">Earn tokens</span> by liking, posting, commenting, or participating in verified Cardano initiatives.</li>
+                  <li><span className="font-semibold">Support other communities or creators</span> by tipping or donating tokens, helping them grow their presence.</li>
+                  <li><span className="font-semibold">Stake your tokens</span> to earn passive rewards and unlock additional benefits over time.</li>
+                  <li><span className="font-semibold">Participate in governance</span> and help shape the future of Finbyte.</li>
+                </ol>
+              </div>
+
+              <h1 className="text-xl font-semibold mt-6">
+                Why Own $FIN?
+              </h1>
+
+              <p>
+                While you can earn $FIN through engagement, there are powerful reasons to hold and buy the token too:
+              </p>
+
+              <div className="mt-2">
+                <ol className="list-disc list-inside space-y-1">
+                  <li><span className="font-semibold">Access exclusive features</span> and tools on the platform (priority feeds, advanced analytics, creator boosts).</li>
+                  <li><span className="font-semibold">SParticipate in project funding</span> or unlock badges and support roles within other communities.</li>
+                  <li><span className="font-semibold">Earn staking rewards</span> by locking up your $FIN in the protocol.</li>
+                  <li><span className="font-semibold">Support the broader Cardano ecosystem</span> by empowering verified projects directly through your Finbyte activity.</li>
+                </ol>
+              </div>
+              
+              <p>Every transaction on Finbyte fuels a circular economy where value stays with the community, not with centralized platforms.</p>
             </div>
 
-            <hr className="dark:border-slate-700 my-4" />
-
-            <h1 className="font-semibold opacity-60 mt-4">
-              Get $tFIN
-            </h1>
-
-            <p>
-              Here, we should have an option, while we're in preprod, to allow the user
-              to get a bunch of tokens from a faucet like function so they can start
-              engaging with the platform using $tFIN.
-            </p>
-
-            <h1 className="font-semibold opacity-60 mt-4">
-              $tFIN Token Details
-            </h1>
-
-            <p>
-              Here, we'll use Blockfrost to get the on-chain information for $tFIN
-            </p>
-
-            <h1 className="font-semibold opacity-60 mt-4">
-              Status
-            </h1>
-
-            <p>
-              Here, we should list everything regarding our testnet token.
-              This should include our network status (if we're still using preprop or moving to mainnet),
-              the total wallets which hold the token, all the links to our smart contracts/vesting services,
-              probably more I'm forgetting right now but this is going to be updated soon.
-            </p>
-
-            <h1 className="font-semibold opacity-60 mt-4">
-              Plans for $tFIN
-            </h1>
-
-            <div className="mt-2">
-              <ol className="list-disc list-inside space-y-1 text-sm">
-                <li></li>
-              </ol>
-            </div>
+            <FinPieChart />
           </div>
 
           <div className="hidden lg:col-span-2 lg:block">
@@ -161,9 +201,29 @@ export default function Home() {
                       <Link
                         className="dark:text-blue-400 text-blue-500"
                         target="_blank"
-                        href=""
+                        href="https://preprod.cardanoscan.io/token/37524129746446a5a55da896fe5379508244ea85e4c140156badbdc67446494e?tab=minttransactions"
                       >
-                        Cardanoscan
+                        Preprod Cardanoscan
+                      </Link>.
+                    </li>
+
+                    <li>
+                      View {' '}
+                      <Link
+                        className="dark:text-blue-400 text-blue-500"
+                        href="#about"
+                      >
+                        Token Details
+                      </Link>.
+                    </li>
+
+                    <li>
+                      View {' '}
+                      <Link
+                        className="dark:text-blue-400 text-blue-500"
+                        href="#distribution"
+                      >
+                        Distribution Plans
                       </Link>.
                     </li>
                   </ol>
