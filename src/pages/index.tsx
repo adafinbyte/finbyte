@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button"
 import { fetch_user_data } from "@/utils/api/account/fetch"
 import { fetch_finbyte_general_stats } from "@/utils/api/misc"
 import { fetch_all_feed_posts } from "@/utils/api/posts/fetch"
-import { capitalize_first_letter } from "@/utils/common"
-import { finbyte_topics } from "@/utils/consts"
+import { create_post } from "@/utils/api/posts/push"
+import { supabase } from "@/utils/api/secrets"
+import { capitalize_first_letter, get_timestamp } from "@/utils/common"
+import { databases, finbyte_topics } from "@/utils/consts"
 import { format_atomic } from "@/utils/format"
-import { finbyte_general_stats, full_post_data, platform_user_details } from "@/utils/interfaces"
+import { create_feed_comment, finbyte_general_stats, forum_post_data, full_post_data, platform_user_details } from "@/utils/interfaces"
 import curated_tokens from "@/verified/tokens"
 import { useWallet } from "@meshsdk/react"
 import { useEffect, useState } from "react"
@@ -46,7 +48,7 @@ export default function Home() {
     }
 
     set_refreshing_state(false);
-  };  
+  };
 
   const get_stats = async () => {
     const finbyte_stats = await fetch_finbyte_general_stats();

@@ -184,7 +184,7 @@ export default function Home() {
                   <div className="max-h-96 pt-4">
                     <div className="flex flex-col gap-2">
                       {tfin_requests && tfin_requests.map((item, index) => (
-                        <div key={index} className="w-full flex flex-col gap-2 bg-secondary rounded-lg p-2 px-4">
+                        <div key={index} className={`w-full flex flex-col gap-2 bg-secondary rounded-lg p-2 px-4 ${address === item.address ? 'border dark:border-slate-500' : ''}`}>
                           <div className="flex gap-2 items-center">
                             <FormatAddress address={item.address} large_size />
 
