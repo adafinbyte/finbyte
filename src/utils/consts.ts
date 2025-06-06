@@ -16,11 +16,16 @@ export const databases = {
   finbyte_chat:    "Finbyte Chat",
   community_posts: "Community Posts",
 
-  communities: 'Communities'
+  communities: 'Communities',
+
+  tfin_requests: 'tFIN Requests'
 };
 
 export const moderation_addresses = [
-  "addr1qx38ntczmlkdnyqm78acef790jrqr9ehjysy25trrxvhae89d6290nczn0y4ycyasla28sqqrtpytv3vuu0uqj4yu37q92rudl",
+  //founder mainnet
+  "addr1qx38ntczmlkdnyqm78acef790jrqr9ehjysy25trrxvhae89d6290nczn0y4ycyasla28sqqrtpytv3vuu0uqj4yu37q92rudl", 
+  //token preprod
+  "addr_test1vpvrn385djduu0g7a5d7ms4lzjl32askwqvwtvqx4vfrdzqxzkwz3", 
 ];
 
 export const thirdparty_logos = {

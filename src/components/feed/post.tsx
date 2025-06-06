@@ -20,12 +20,14 @@ import FeedComment from "./comment";
 import { Transaction } from "@meshsdk/core";
 import { bookmarked_post, follow_user, mute_user } from "@/utils/api/account/push";
 import SharePostModal from "../modals/share-post";
+import { TipInput } from "../tip-input";
 
 interface custom_props {
   feed_post: full_post_data;
   get_posts: () => Promise<void>;
   get_user_details: () => Promise<void>;
   user_details: platform_user_details | null;
+  user_tfin_balance: number;
 }
 
 export type Option = {
@@ -67,7 +69,7 @@ export const generate_options = ({
   });
 };
 
-const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, user_details }) => {
+const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, user_details, user_tfin_balance }) => {
   const { address, connected, wallet } = useWallet();
   const [show_comments, set_show_comments] = useState(false);
   const [show_tip_post, set_show_tip_post] = useState(false);
@@ -118,7 +120,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
     }
   };
 
-  const handle_tip_post = async (address: string) => {
+  const handle_tip_post = async (tfin_to_send: string) => {
     if (!chosen_tip_asset) {
       toast.error('An asset has not been chosen.');
       return;
@@ -132,7 +134,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
     const tx = new Transaction({ initiator: wallet });
 
     const send_asset = tx.sendAssets(
-      { address: address },
+      { address: feed_post.post.author },
       [
         {
           unit: chosen_tip_asset,
@@ -141,8 +143,6 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
       ]
     );
 
-    const send_token = async () => {
-    }
   }
 
   const handle_like_post = async (post_type: post_type, post_id: number, likers: string[]) => {
@@ -391,8 +391,30 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
         )}
 
         {show_tip_post &&
-          <div className="p-4 bg-secondary rounded-lg mt-4">
-            <h1>WIP</h1>
+          <div className="p-4 bg-secondary rounded-lg mt-4 flex flex-col w-full gap-2">
+            <div className="flex gap-2">
+              <div className="w-full flex flex-col gap-2">
+                <h1 className="font-semibold text-xs">Your $tFIN Balance</h1>
+                <div>
+                  {(() => {
+                    const supply = user_tfin_balance ?? 0;
+                    const [intPart, decPart] = supply.toLocaleString(undefined, { minimumFractionDigits: 4 }).split('.');
+                    return (
+                      <span>
+                        ƒ{intPart}.
+                        <span className="text-muted-foreground text-sm">{decPart}</span>
+                      </span>
+                    );
+                  })()}
+                </div>
+              </div>
+
+              <div className="w-full flex flex-col w-full gap-1">
+                <h1 className="font-semibold text-xs">Tip Amount in $tFIN</h1>
+                <TipInput onValueChange={set_chosen_tip_amount} balance={user_tfin_balance} on_submit={handle_tip_post}/>
+                {chosen_tip_amount ?? 0}
+              </div>
+            </div>
           </div>
         }
 

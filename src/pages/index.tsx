@@ -8,6 +8,7 @@ import { fetch_finbyte_general_stats } from "@/utils/api/misc"
 import { fetch_all_feed_posts } from "@/utils/api/posts/fetch"
 import { capitalize_first_letter } from "@/utils/common"
 import { finbyte_topics } from "@/utils/consts"
+import { format_atomic } from "@/utils/format"
 import { finbyte_general_stats, full_post_data, platform_user_details } from "@/utils/interfaces"
 import curated_tokens from "@/verified/tokens"
 import { useWallet } from "@meshsdk/react"
@@ -15,12 +16,13 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export default function Home() {
-  const { address, connected } = useWallet();
+  const { address, connected, wallet } = useWallet();
   const [all_feed_posts, set_all_feed_posts] = useState<full_post_data[] | null>(null);
   const [finbyte_stats, set_finbyte_stats] = useState<finbyte_general_stats | null>(null);
   const [connected_user_details, set_connected_user_details] = useState<platform_user_details | null>(null);
   const [refreshing_state, set_refreshing_state] = useState(false);
   const [selected_topic, set_selected_topic] = useState<string | null>(null);
+  const [tfin_balance, set_tfin_balance] = useState(0);
 
   const [post_offset, set_post_offset] = useState<number>(0);
   const POSTS_PER_PAGE = 100;
@@ -68,6 +70,13 @@ export default function Home() {
       await get_stats();
       set_connected_user_details(user_details.data);
     }
+
+    const balnce = await wallet.getBalance();
+    const owned_tfin = balnce.find(a => a.unit.includes('37524129746446a5a55da896fe5379508244ea85e4c140156badbdc6'));
+    if (owned_tfin) {
+      const format_tfin = format_atomic(4, Number(owned_tfin.quantity));
+      set_tfin_balance(Number(format_tfin));
+    }
   }
 
   useEffect(() => {
@@ -112,6 +121,7 @@ export default function Home() {
               get_user_details={get_user_details}
               selected_topic={selected_topic}
               user_details={connected_user_details}
+              user_tfin_balance={tfin_balance}
             />
           </div>
 

@@ -63,7 +63,6 @@ export const check_user_on_login = async (address: string): Promise<check_user_o
   return { data: false };
 };
 
-
 interface create_notification_return { error?: string; done?: boolean; }
 export const create_notification = async (
   action: notification_action,
