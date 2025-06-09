@@ -4,6 +4,9 @@ import { platform_user_details } from "@/utils/interfaces";
 import { copy_to_clipboard } from "@/utils/common";
 import { BookmarkPlus, UserMinus, Users } from "lucide-react";
 import FormatAddress from "../format-address";
+import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
+import Link from "next/link";
 
 interface custom_props {
   user_details: platform_user_details;
@@ -17,70 +20,70 @@ const ProfileFinbyteStats: FC <custom_props> = ({
   const finbyte_user_stats = [
     { title: 'Total Posts', data: user_details.total_posts },
     { title: 'Finbyte Kudos', data: user_details.total_kudos },
-    { title: 'Supporting Community', data: community_badge },
+    { title: 'Community', data: community_badge },
   ];
 
   return (
     <Card className="p-4">
       <div className="flex gap-2 items-center pb-2">
         <img src="/finbyte.png" className="size-4" />
-        <h1 className="font-semibold text-sm text-muted-foreground">Finbyte Stats</h1>
+        <h1 className="font-semibold text-sm">Finbyte Stats</h1>
       </div>
 
-      <div className="flex flex-wrap gap-4 items-start justify-center">
+      <div className="flex flex-wrap gap-2 items-start justify-center">
         {finbyte_user_stats.map((item, index) => (
-          <div key={index} onClick={() => copy_to_clipboard(item.data as string)} className="cursor-copy hover:-translate-y-0.5 duration-300 px-4 py-2 flex flex-col min-w-28 bg-secondary rounded-xl">
-            <h1 className="text-muted-foreground text-xs text-center">
-              {item.title}
-            </h1>
-
-            <p className="text-lg font-semibold text-center">
-              {item.data}
-            </p>
+          <div key={index} className="text-xs border border-slate-500 dark:border-slate-400 px-2 py-0.5 rounded-lg">
+            {item.title}: {item.data}
           </div>
         ))}
       </div>
 
       <div className="flex gap-2 items-center pb-2 mt-6">
-        <Users className="size-4 text-muted-foreground" />
-        <h1 className="font-semibold text-sm text-muted-foreground">Following Users: {user_details.following?.length ?? 0}</h1>
+        <Users className="size-4" />
+        <h1 className="font-semibold text-sm">Following Users: {user_details.following?.length ?? 0}</h1>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {user_details.following?.map((user, index) => (
-          <div key={index}>
-            <FormatAddress address={user} />
-          </div>
-        ))}
-      </div>
+      <ScrollArea>
+        <div className="flex flex-col gap-2 max-h-64 p-2">
+          {user_details.following?.map((user, index) => (
+            <div key={index} className="flex justify-between items-center w-full p-1 rounded-lg border dark:border-slate-800">
+              <h1 className="font-semibold pl-2">
+                <span className="text-xs text-muted-foreground font-thin">
+                  {user.substring(0, 10) + '...'}
+                </span>
+                {user.substring(user.length - 10)}
+              </h1>
+
+              <Button size='sm' variant='destructive'>
+                Unfollow
+              </Button>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
 
       <div className="flex gap-2 items-center pb-2 mt-6">
-        <BookmarkPlus className="size-4 text-muted-foreground" />
-        <h1 className="font-semibold text-sm text-muted-foreground">Bookmarked Posts: {user_details.bookmarked_posts?.length ?? 0}</h1>
+        <BookmarkPlus className="size-4" />
+        <h1 className="font-semibold text-sm">Bookmarked Posts: {user_details.bookmarked_posts?.length ?? 0}</h1>
       </div>
 
-      <div className="flex flex-col gap-2">
-        {user_details.bookmarked_posts?.map((post, index) => (
-          <div key={index}>
-            {post}
-          </div>
-        ))}
-      </div>
+      <ScrollArea>
+        <div className="flex flex-col gap-2 max-h-64 p-2">
+          {user_details.bookmarked_posts?.map((post, index) => (
+            <div key={index} className="flex justify-between items-center w-full p-1 rounded-lg border dark:border-slate-800">
+              <h1 className="font-semibold pl-2">
+                Post ID: {post}
+              </h1>
 
-
-      {/** @todo move this to settings */}
-      <div className="flex gap-2 items-center pb-2 mt-4">
-        <UserMinus className="size-4 text-muted-foreground" />
-        <h1 className="font-semibold text-sm text-muted-foreground">Muted Users: {user_details.muted?.length ?? 0}</h1>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {user_details.muted?.map((user, index) => (
-          <div key={index}>
-            <FormatAddress address={user} />
-          </div>
-        ))}
-      </div>
+              <Link href={'/#' + post}>
+                <Button size='sm'>
+                  View
+                </Button>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
 
     </Card>
   )

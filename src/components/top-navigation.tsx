@@ -10,13 +10,22 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useDarkMode } from "@/hooks/use-dark-mode"
 import { useWallet } from "@meshsdk/react"
 import WalletLoginModal from "./modals/wallet-login"
+import { FINBYTE_WALLET_NAME } from "@/utils/consts"
+import { useRouter } from "next/router"
 
 export default function TopNavigation() {
+  const router = useRouter();
   const { isDark, toggleTheme } = useDarkMode();
   const { connected, disconnect } = useWallet();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [wallet_login_open, set_wallet_login_open] = useState(false);
+
+  const handle_disconnect_wallet = async () => {
+    router.push('/');
+    disconnect();
+    localStorage.removeItem(FINBYTE_WALLET_NAME);
+  }
 
   return (
     <header className="fixed top-0 z-50 w-full border-b dark:border-slate-800 bg-background/80 backdrop-blur-sm">
@@ -73,7 +82,7 @@ export default function TopNavigation() {
                   </Link>
 
                   {connected ?
-                    <Button onClick={disconnect} variant='secondary' className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+                    <Button onClick={handle_disconnect_wallet} variant='secondary' className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
                       Disconnect
                     </Button>
                     :
@@ -122,7 +131,7 @@ export default function TopNavigation() {
             {isDark ? <Sun/> : <Moon/>}
           </Button>
           {connected ?
-            <Button onClick={disconnect} variant="ghost" size="icon">
+            <Button onClick={handle_disconnect_wallet} variant="ghost" size="icon">
               <Unplug className="h-5 w-5" />
               <span className="sr-only">Disconnect</span>
             </Button>

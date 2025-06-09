@@ -8,7 +8,7 @@ interface custom_props extends HTMLAttributes<SVGElement> {
   name: string;
   link?: string;
   disabled?: boolean;
-  only_icon: boolean;
+  only_icon?: boolean;
 }
 
 const SocialIcon: FC <custom_props> = ({

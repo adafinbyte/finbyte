@@ -3,6 +3,12 @@ export const cardano_logo = "https://cdn4.iconfinder.com/data/icons/crypto-curre
 export const ADA_UNIT = 1000000;
 export const ADAHANDLE_POLICY = 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a';
 
+export const FINBYTE_WALLET_NAME = 'finbyte_wallet';
+
+export const FINBYTE_POLICTID  = "37524129746446a5a55da896fe5379508244ea85e4c140156badbdc6";
+export const FINBYTE_ASSETNAME = "7446494e";
+export const FINBYTE_UNIT = FINBYTE_POLICTID + FINBYTE_ASSETNAME;
+
 export const finbyte_topics = ["general", "requests", "chatterbox", "meme", "spam"];
 
 export const databases = {

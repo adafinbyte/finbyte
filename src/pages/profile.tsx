@@ -47,11 +47,6 @@ export default function Profile() {
     }
   }, [connected, address]);
 
-  const bookmarked_posts = connected_user_details?.bookmarked_posts;
-  const following_users = connected_user_details?.following;
-  const muted_users = connected_user_details?.muted;
-  const badges = connected_user_details?.badges;
-
   const get_bookmarked_posts = async () => { }
 
   return (connected && address) ? (
@@ -66,49 +61,44 @@ export default function Profile() {
           <div className="col-span-1 md:col-span-4 lg:col-span-4">
             <div className="flex flex-col gap-4">
               <div className="flex gap-2 items-center">
-                <Avatar className="size-12 rounded-xl">
+                <Avatar className="size-14 rounded-xl">
                   <UserAvatar address={address} />
                   <AvatarFallback>{address.charAt(0)}</AvatarFallback>
                 </Avatar>
 
-                <div className="flex flex-col">
-                  <FormatAddress large_size address={connected_user_details?.ada_handle ?? ''}/>
-                  <FormatAddress large_size address={address}/>
-                </div>
-              </div>
-
-              <div className="flex justify-center items-center gap-4">
-                {connected_user_details?.badges && connected_user_details?.badges.map((badge, index) => (
-                  <div className="min-w-16 text-center text-xs border border-muted-foreground p-1 rounded-lg">
-                    {capitalize_first_letter(badge)}
+                <div className="flex flex-col gap-0.5">
+                  <FormatAddress large_size address={address} />
+                  <div className="flex items-center gap-2">
+                    {connected_user_details?.badges && connected_user_details?.badges.map((badge, index) => (
+                      <div key={index} className="text-center text-xs border border-muted-foreground px-2 py-0.5 rounded-lg">
+                        {capitalize_first_letter(badge)}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
             </div>
 
             <hr className="dark:border-slate-800 my-6 w-4/5 mx-auto" />
 
-            {moderation_addresses.includes(address) && (
-              <ProfileAdminPanel/>
-            )}
+            <div className="grid lg:grid-cols-2 gap-4">
+              {connected_user_details ?
+                <ProfileFinbyteStats
+                  user_details={connected_user_details}
+                />
+                :
+                <LoadingDots />
+              }
 
-            {connected_user_details ?
-              <ProfileFinbyteStats
-                user_details={connected_user_details}
-              />
-              :
-              <LoadingDots/>
-            }
+            </div>
           </div>
 
           <div className="hidden lg:col-span-2 lg:block">
-            <ProfileWalletInfo/>
           </div>
         </div>
 
         <div className="lg:hidden pt-4">
           <div className="sticky top-20 space-y-2">
-            <ProfileWalletInfo />
 
           </div>
         </div>

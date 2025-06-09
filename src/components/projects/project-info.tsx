@@ -12,7 +12,7 @@ import { project_community_data } from "@/utils/interfaces";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import UserAvatar from "../user-avatar";
 import { Card } from "../ui/card";
-import { FileWarning, MessageCircleWarning } from "lucide-react";
+import { FileWarning, HeartCrack, HeartHandshake, MessageCircleWarning } from "lucide-react";
 
 interface custom_props {
   token_details: curated_token;
@@ -40,8 +40,6 @@ const ProjectsInformation: FC <custom_props> = ({
     { title: "on Epoch", data: poolpm_fp_data.epoch ?? 0 },
   ] : [];
   const token_stats = [...base_stats, ...additional_stats];
-
-  const ready_and_built = false;
 
   const attempt_like_unlike_community = async () => {
     const like_community = await like_unlike_community(address, token_details.slug_id);
@@ -72,7 +70,7 @@ const ProjectsInformation: FC <custom_props> = ({
         Core Details
       </h1>
 
-      <div className="flex flex-wrap gap-2 items-center justify-center">
+      <div className="flex flex-wrap gap-2 items-center justify-center md:w-3/4 md:mx-auto">
         {token_stats.map((item, index) => (
           <div key={index} onClick={() => copy_to_clipboard(item.data as string)} className="cursor-copy hover:-translate-y-0.5 duration-300 px-4 py-2 flex flex-col min-w-28 bg-secondary rounded-xl">
             <h1 className="text-muted-foreground text-xs text-center">
@@ -91,27 +89,25 @@ const ProjectsInformation: FC <custom_props> = ({
       </h1>
 
       <div className="grid md:grid-cols-2 gap-2 items-start">
-        <Card className="px-4 py-2 text-center">
-          <div className="text-sm text-left font-semibold text-muted-foreground flex justify-between items-center">
-            Community Likers
+        <Card className="p-4 text-center">
+          <div className="font-semibold flex gap-2">
+            Community Likers:
             <span>
               {community_data?.community_likers?.length.toLocaleString() ?? 0}
             </span>
+
+            <Button variant='secondary' size='icon' className="scale-[90%] ml-auto" disabled={!connected} onClick={attempt_like_unlike_community}>
+              {community_data?.community_likers?.includes(address) ? <HeartCrack /> : <HeartHandshake />}
+            </Button>
           </div>
 
           <div className="flex flex-wrap -space-x-2 p-2">
             {community_data?.community_likers?.map((liker, index) => (
-              <Avatar key={index} className="size-10" title={`${liker.substring(0, 10) + "..." + liker.substring(liker.length - 10)}`}>
+              <Avatar key={index} className="size-10 border-2 dark:border-slate-800" title={`${liker.substring(0, 10) + "..." + liker.substring(liker.length - 10)}`}>
                 <UserAvatar address={liker} />
                 <AvatarFallback>{liker.charAt(0)}</AvatarFallback>
               </Avatar>
             ))}
-          </div>
-
-          <div className="flex justify-end pt-4">
-            <Button size='sm' variant='secondary' disabled={!connected} onClick={attempt_like_unlike_community}>
-              {community_data?.community_likers?.includes(address) ? 'Unlike' : 'Like'}
-            </Button>
           </div>
         </Card>
 

@@ -252,7 +252,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
   if (hidden_post) {
 
     return (
-      <div className="w-full bg-secondary p-4 flex flex-col text-center">
+      <div id={feed_post.post.id.toString()} className="w-full bg-secondary p-4 flex flex-col text-center">
         <div>
           <h1 className="text-muted-foreground text-sm">
             This post has been hidden.
@@ -280,7 +280,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
     )
   } else {
     return (
-      <div className="p-4 relative">
+      <div id={feed_post.post.id.toString()} className="p-4 relative">
         <div className="flex gap-3 relative">
           <Avatar>
             <UserAvatar address={feed_post.post.author} />
