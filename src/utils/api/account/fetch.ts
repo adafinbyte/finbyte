@@ -33,6 +33,7 @@ export const fetch_user_data = async (author: string): Promise<fetch_user_data_r
       total_kudos += (row.post_likers?.length ?? 0) * 2;
       total_kudos += (row.tip_tx_hashes?.length ?? 0) * 3;
     }
+
   });
 
   if (forumPostIds.size > 0) {
@@ -57,6 +58,10 @@ export const fetch_user_data = async (author: string): Promise<fetch_user_data_r
   const { data: ad, error: ade } = await supabase
     .from(databases.accounts).select('*').eq('address', author).single();
   if (ade) { return { error: ade.message } }
+  if (ad) {
+    total_kudos += (ad.bookmarked_posts?.length ?? 0);
+    total_kudos += (ad.following?.length ?? 0);
+  }
 
   const platform_details: platform_user_details = {
     id: ad.id,

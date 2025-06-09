@@ -32,6 +32,7 @@ const curated_tokens: curated_token[] = [
     },
     finbyte: {
       collection: [
+        {title: '$tFIN', image: '/finbyte.png', url: 'https://finbyte.network/tFIN', description: 'View details about $tFIN, the testnet token for the Finbyte Network.' },
         {title: '[PreProd] Cardanoscan', image: 'https://strica.io/_nuxt/img/cardanoscan-logo.c8891c5.png', url: 'https://preprod.cardanoscan.io/token/37524129746446a5a55da896fe5379508244ea85e4c140156badbdc67446494e', description: 'Feature rich blockchain explorer and analytics platform for Cardano.'},
         {title: 'Finbyte Network', image: '/finbyte.png', url: 'https://finbyte.network/', description: 'Finbyte, The Future of Social; Built on Cardano. Finbyte is a web3-native community platform tailored for the Cardano ecosystem.' },
       ]

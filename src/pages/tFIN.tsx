@@ -1,7 +1,9 @@
 import FinPieChart from "@/components/fin-piechart"
 import FormatAddress from "@/components/format-address"
 import MobileNavigation from "@/components/mobile-navigation"
+import TfinQuickLinks from "@/components/right-sidebar/tfin-quick-links"
 import Sidebar from "@/components/sidebar"
+import SocialIcon from "@/components/social-icons"
 import TopNavigation from "@/components/top-navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -13,7 +15,9 @@ import { copy_to_clipboard } from "@/utils/common"
 import { moderation_addresses } from "@/utils/consts"
 import { format_atomic, format_long_string, format_unix } from "@/utils/format"
 import { platform_user_details, tfin_requests_data } from "@/utils/interfaces"
+import finbyte_constributors from "@/verified/contributors"
 import { useWallet } from "@meshsdk/react"
+import { Plus } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -124,6 +128,8 @@ export default function Home() {
               ))}
             </div>
 
+            <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800" />
+
             <div id="about" className="mt-6">
               <h1 className="text-xl font-semibold">
                 About Finbyte
@@ -204,26 +210,17 @@ export default function Home() {
                                   Not Fulfilled
                                 </Button>
                               }
-                              {moderation_addresses.includes(address) && (
-                                <Button size='sm'>
-                                  Marked Fulfilled
-                                </Button>
-                              )}
                             </div>
                           </div>
 
                         </div>
                       ))}
-
-                      {tfin_requests?.length === 0 && (
-                        <div>
-                          No requests found.
-                        </div>
-                      )}
                     </div>
                   </div>
                 </ScrollArea>
               </div>
+
+              <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800"/>
 
               <h1 className="text-xl font-semibold mt-6 lg:mt-12">
                 A New Kind of Social Network
@@ -264,115 +261,75 @@ export default function Home() {
               <p>Every transaction on Finbyte fuels a circular economy where value stays with the community, not with centralized platforms.</p>
             </div>
 
+            <div className="mt-6"/>
+            <h1 className="text-xl font-semibold">
+              Meet The Contributors & Team
+            </h1>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full mt-2">
+              {finbyte_constributors.map((user, index) => (
+                <div key={index} className="w-full p-4 bg-secondary rounded-xl">
+                  <img src={user.image} className="mx-auto rounded-lg"/>
+
+                  <h1 className="text-sm text-muted-foreground text-center mt-2">
+                    {user.name}
+                  </h1>
+
+                  <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
+                    {user.roles.map((item) => (
+                      <div key={item} className="text-xs font-medium px-2 p-1 rounded-lg border dark:border-slate-700">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
+                    {Object.entries(user.links).map(([key, value]) => (
+                      <SocialIcon key={key} only_icon={false} name={key} link={value}/>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <div className="w-full h-full p-4 bg-secondary rounded-xl flex flex-col justify-center">
+                <Plus className="w-24 mx-auto rounded-lg" />
+
+                <div className="text-sm text-muted-foreground text-center mt-2">
+                  <span className="text-primary font-semibold text-base">This could be you!</span>
+                  <br/>
+                  Get in touch now to learn how.
+                </div>
+
+                <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
+                  <div className="text-xs font-medium px-2 p-1 rounded-lg border dark:border-slate-700">
+                    Contributor
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
+                  <SocialIcon only_icon={false} name={'discord'} link={'https://discord.gg/EVawcspwyp'} />
+                  <SocialIcon only_icon={false} name={'x'} link={'https://www.x.com/adaFinbyte'} />
+                  <SocialIcon only_icon={false} name={'website'} link={'https://finbyte.network/'} />
+                </div>
+              </div>
+            </div>
+
+            <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800" />
+
             <div id="distribution" />
             <FinPieChart />
           </div>
 
           <div className="hidden lg:col-span-2 lg:block">
             <div className="sticky top-20 space-y-4">
-              <Card className="p-4">
-                <h1 className="text-muted-foreground font-semibold text-sm">Quick Links</h1>
-                <div className="mt-2">
-                  <ol className="list-disc list-inside space-y-1 text-sm">
-                    <li>
-                      Get tADA from the{' '}
-                      <Link
-                        className="dark:text-blue-400 text-blue-500"
-                        target="_blank"
-                        href="https://docs.cardano.org/cardano-testnets/tools/faucet"
-                      >
-                        Cardano Faucet
-                      </Link>.
-                    </li>
-
-                    <li>
-                      View on{' '}
-                      <Link
-                        className="dark:text-blue-400 text-blue-500"
-                        target="_blank"
-                        href="https://preprod.cardanoscan.io/token/37524129746446a5a55da896fe5379508244ea85e4c140156badbdc67446494e?tab=minttransactions"
-                      >
-                        Preprod Cardanoscan
-                      </Link>.
-                    </li>
-
-                    <li>
-                      View {' '}
-                      <Link
-                        className="dark:text-blue-400 text-blue-500"
-                        href="#about"
-                      >
-                        Token Details
-                      </Link>.
-                    </li>
-
-                    <li>
-                      View {' '}
-                      <Link
-                        className="dark:text-blue-400 text-blue-500"
-                        href="#distribution"
-                      >
-                        Distribution Plans
-                      </Link>.
-                    </li>
-                  </ol>
-                </div>
-
-              </Card>
+              <TfinQuickLinks/>
             </div>
           </div>
         </div>
 
         <div className="lg:hidden pt-4">
           <div className="sticky top-20 space-y-4">
-            <Card className="p-4">
-              <h1 className="text-muted-foreground font-semibold text-sm">Quick Links</h1>
-              <div className="mt-2">
-                <ol className="list-disc list-inside space-y-1 text-sm">
-                  <li>
-                    Get tADA from the{' '}
-                    <Link
-                      className="dark:text-blue-400 text-blue-500"
-                      target="_blank"
-                      href="https://docs.cardano.org/cardano-testnets/tools/faucet"
-                    >
-                      Cardano Faucet
-                    </Link>.
-                  </li>
-
-                  <li>
-                    View on{' '}
-                    <Link
-                      className="dark:text-blue-400 text-blue-500"
-                      target="_blank"
-                      href="https://preprod.cardanoscan.io/token/37524129746446a5a55da896fe5379508244ea85e4c140156badbdc67446494e?tab=minttransactions"
-                    >
-                      Preprod Cardanoscan
-                    </Link>.
-                  </li>
-
-                  <li>
-                    View {' '}
-                    <Link
-                      className="dark:text-blue-400 text-blue-500"
-                      href="#about"
-                    >
-                      Token Details
-                    </Link>.
-                  </li>
-
-                  <li>
-                    View {' '}
-                    <Link
-                      className="dark:text-blue-400 text-blue-500"
-                      href="#distribution"
-                    >
-                      Distribution Plans
-                    </Link>.
-                  </li>
-                </ol>
-              </div>
-            </Card>
+            <TfinQuickLinks />
           </div>
         </div>
       </div>
