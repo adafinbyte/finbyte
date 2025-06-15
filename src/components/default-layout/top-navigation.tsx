@@ -66,11 +66,11 @@ export default function TopNavigation() {
                     <span>Home</span>
                   </Link>
                   <Link
-                    href="/explore"
+                    href="/communities"
                     className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >
                     <Search className="h-5 w-5" />
-                    <span>Explore</span>
+                    <span>Communities</span>
                   </Link>
 
                   <Link
