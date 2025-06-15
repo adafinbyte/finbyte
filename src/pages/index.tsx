@@ -1,7 +1,7 @@
 import FinbyteFeed from "@/components/feed"
-import MobileNavigation from "@/components/mobile-navigation"
-import Sidebar from "@/components/sidebar"
-import TopNavigation from "@/components/top-navigation"
+import MobileNavigation from "@/components/default-layout/mobile-navigation"
+import Sidebar from "@/components/default-layout/sidebar"
+import TopNavigation from "@/components/default-layout/top-navigation"
 import { Button } from "@/components/ui/button"
 import { fetch_user_data } from "@/utils/api/account/fetch"
 import { fetch_finbyte_general_stats } from "@/utils/api/misc"
@@ -9,29 +9,31 @@ import { fetch_all_feed_posts } from "@/utils/api/posts/fetch"
 import { create_post } from "@/utils/api/posts/push"
 import { supabase } from "@/utils/api/secrets"
 import { capitalize_first_letter, get_timestamp } from "@/utils/common"
-import { databases, finbyte_topics } from "@/utils/consts"
+import { databases, FINBYTE_POLICTID, finbyte_topics } from "@/utils/consts"
 import { format_atomic } from "@/utils/format"
 import { create_feed_comment, finbyte_general_stats, forum_post_data, full_post_data, platform_user_details } from "@/utils/interfaces"
 import curated_tokens from "@/verified/tokens"
 import { useWallet } from "@meshsdk/react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import DefaultLayout from "@/components/default-layout"
+import { PlatformQuickLinks, PlatformStats, PlatformTopics } from "@/components/default-layout/right-sidebar"
+import Head from "next/head"
 
 export default function Home() {
-  const { address, connected, wallet } = useWallet();
+  const { address, connected } = useWallet();
+
   const [all_feed_posts, set_all_feed_posts] = useState<full_post_data[] | null>(null);
   const [finbyte_stats, set_finbyte_stats] = useState<finbyte_general_stats | null>(null);
   const [connected_user_details, set_connected_user_details] = useState<platform_user_details | null>(null);
+
   const [refreshing_state, set_refreshing_state] = useState(false);
   const [selected_topic, set_selected_topic] = useState<string | null>(null);
-  const [tfin_balance, set_tfin_balance] = useState(0);
-
   const [post_offset, set_post_offset] = useState<number>(0);
-  const POSTS_PER_PAGE = 100;
 
   const get_posts = async (append: boolean = false) => {
     set_refreshing_state(true);
-
+    const POSTS_PER_PAGE = 100;
     const offset = append ? post_offset : 0;
     const posts = await fetch_all_feed_posts(POSTS_PER_PAGE, offset);
 
@@ -72,24 +74,18 @@ export default function Home() {
       await get_stats();
       set_connected_user_details(user_details.data);
     }
-
-    const balnce = await wallet.getBalance();
-    const owned_tfin = balnce.find(a => a.unit.includes('37524129746446a5a55da896fe5379508244ea85e4c140156badbdc6'));
-    if (owned_tfin) {
-      const format_tfin = format_atomic(4, Number(owned_tfin.quantity));
-      set_tfin_balance(Number(format_tfin));
-    }
   }
 
   useEffect(() => {
-    get_posts();
-    get_stats();
-
-    /** @note connecting doesnt instantly get the address, wait until we have it */
     if (connected && address) {
       get_user_details();
+    } else {
+      set_connected_user_details(null);
     }
-  }, [connected]);
+
+    get_posts();
+    get_stats();
+  }, [connected, address]);
 
   interface stat_item { title: string; data: string | number; }
   const stat_items: stat_item[] = [
@@ -97,7 +93,6 @@ export default function Home() {
     { title: 'Feed Posts', data: finbyte_stats?.forum_posts ?? 0 },
     { title: 'Unique Users', data: finbyte_stats?.unique_users ?? 0 },
     { title: 'Interactions', data: finbyte_stats?.interactions ?? 0 },
-    { title: 'Curated Projects', data: curated_tokens.length },
   ];
 
   const topic_counts: Record<string, number> = {};
@@ -106,103 +101,30 @@ export default function Home() {
     topic_counts[topic] = (topic_counts[topic] || 0) + 1;
   });
 
+  const right_sidebar_contents = (
+    <>
+      <PlatformStats stat_items={stat_items} />
+      <PlatformTopics set_topic={set_selected_topic} topic={selected_topic} topic_counts={topic_counts} />
+      <PlatformQuickLinks/>
+    </>
+  )
+
   return (
-    <div className="min-h-screen bg-background">
-      <TopNavigation />
-      <div className="container mx-auto px-4 pt-16 pb-20 md:pb-4 md:pt-20">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-5 lg:grid-cols-8">
-          <div className="hidden md:col-span-1 md:block lg:col-span-2 lg:w-[90%]">
-            <Sidebar />
-          </div>
+    <>
+      <Head>
+        <title>Finbyte - The future of social; Built on Cardano.</title>
+      </Head>
 
-          <div className="col-span-1 md:col-span-4 lg:col-span-4">
-            <FinbyteFeed
-              all_posts={all_feed_posts}
-              refreshing_state={refreshing_state}
-              get_posts={get_posts}
-              get_user_details={get_user_details}
-              selected_topic={selected_topic}
-              user_details={connected_user_details}
-              user_tfin_balance={tfin_balance}
-            />
-          </div>
-
-          <div className="hidden lg:col-span-2 lg:block">
-            <div className="sticky top-20 space-y-4">
-              <div className="rounded-xl border dark:border-slate-800 bg-card p-4 shadow">
-                <h2 className="mb-4 font-semibold">Finbyte Stats</h2>
-                <div className="space-y-4">
-                  {stat_items.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div>
-                          <p className="text-sm font-medium">{item.title}</p>
-                          <p className="text-xs text-muted-foreground">{item.data}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="rounded-xl border dark:border-slate-800 bg-card p-4 shadow">
-                <h2 className="mb-4 font-semibold">Topics</h2>
-                <div className="space-y-3">
-                  <Button onClick={() => set_selected_topic(null)} variant={selected_topic === null ? 'secondary' : 'ghost'} className="w-full justify-start">
-                    Latest Posts
-                  </Button>
-
-                  {finbyte_topics.map((topic) => (
-                    <Button key={topic} onClick={() => set_selected_topic(topic)} variant={selected_topic === topic ? 'secondary' : 'ghost'} className="w-full justify-start">
-                      #{capitalize_first_letter(topic)}
-                      <div className="ml-auto">
-                        {topic_counts[topic] ?? 0} posts
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="lg:hidden pt-4">
-          <div className="sticky top-20 space-y-4">
-            <div className="rounded-xl border dark:border-slate-800 bg-card p-4 shadow">
-              <h2 className="mb-4 font-semibold">Finbyte Stats</h2>
-              <div className="space-y-4">
-                {stat_items.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div>
-                        <p className="text-sm font-medium">{item.title}</p>
-                        <p className="text-xs text-muted-foreground">{item.data}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-xl border dark:border-slate-800 bg-card p-4 shadow">
-              <h2 className="mb-4 font-semibold">Topics</h2>
-              <div className="space-y-3">
-                <Button onClick={() => set_selected_topic(null)} variant={selected_topic === null ? 'secondary' : 'ghost'} className="w-full justify-start">
-                  Latest Posts
-                </Button>
-
-                {finbyte_topics.map((topic) => (
-                  <Button key={topic} onClick={() => set_selected_topic(topic)} variant={selected_topic === topic ? 'secondary' : 'ghost'} className="w-full justify-start">
-                    #{capitalize_first_letter(topic)}
-                    <div className="ml-auto">
-                      {topic_counts[topic] ?? 0} posts
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <MobileNavigation />
-    </div>
+      <DefaultLayout right_sidebar={right_sidebar_contents}>
+        <FinbyteFeed
+          all_posts={all_feed_posts}
+          refreshing_state={refreshing_state}
+          get_posts={get_posts}
+          get_user_details={get_user_details}
+          selected_topic={selected_topic}
+          user_details={connected_user_details}
+        />
+      </DefaultLayout>
+    </>
   )
 }

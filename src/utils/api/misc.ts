@@ -1,7 +1,7 @@
 import { get_timestamp } from "../common";
 import { databases } from "../consts";
 import { finbyte_general_stats } from "../interfaces";
-import { notification_action } from "../types";
+import { notification } from "../types";
 import { supabase } from "./secrets";
 
 interface fetch_finbyte_general_stats_return { error?: string; data?: finbyte_general_stats }
@@ -28,7 +28,7 @@ export const check_user_on_login = async (address: string): Promise<check_user_o
   }
 
   if (eu) {
-    const noti = await create_notification('user_logged_in', null, address);
+    const noti = await create_notification('user:login', null, address);
     if (noti.error) { return { error: noti.error } }
     return { data: true };
   }
@@ -57,7 +57,7 @@ export const check_user_on_login = async (address: string): Promise<check_user_o
     return { error: "Error creating new user: " + nue.message };
   }
 
-  const noti = await create_notification('new_user', null, address);
+  const noti = await create_notification('user:new', null, address);
   if (noti.error) { return { error: noti.error } }
 
   return { data: false };
@@ -65,7 +65,7 @@ export const check_user_on_login = async (address: string): Promise<check_user_o
 
 interface create_notification_return { error?: string; done?: boolean; }
 export const create_notification = async (
-  action: notification_action,
+  action: notification,
   post_id: number | null,
   address: string,
 ): Promise<create_notification_return> => {

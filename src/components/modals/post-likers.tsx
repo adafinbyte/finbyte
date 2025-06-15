@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 
 import { check_user_on_login } from "@/utils/api/misc"
 import { capitalize_first_letter } from "@/utils/common"
-import { get_cardano_wallets, WalletInformation } from "@/utils/get-cardano-wallets"
+import { get_cardano_wallets, WalletInformation } from "@/utils/cardano/get-cardano-wallets"
 import { post_type } from "@/utils/types"
 import FormatAddress from "../format-address"
 import { ScrollArea } from "../ui/scroll-area"

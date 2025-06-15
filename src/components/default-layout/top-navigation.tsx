@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useDarkMode } from "@/hooks/use-dark-mode"
 import { useWallet } from "@meshsdk/react"
-import WalletLoginModal from "./modals/wallet-login"
+import WalletLoginModal from "../modals/wallet-login"
 import { FINBYTE_WALLET_NAME } from "@/utils/consts"
 import { useRouter } from "next/router"
 

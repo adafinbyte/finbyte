@@ -103,22 +103,18 @@ const CreateFeedPost: FC <custom_props> = ({
 
             <div className="mt-4 flex items-center justify-between">
               <div className="flex gap-2">
-                <Button onClick={() => set_create_post_input('')} variant="outline" size="sm" className="text-xs">
+                <Button title="Clear Post" onClick={() => set_create_post_input('')} variant="outline" size="sm" className="text-xs">
                   <Eraser />
                 </Button>
 
-                <Button onClick={() => set_previewing_created_post(!previewing_created_post)} variant="outline" size="sm" className="text-xs">
+                <Button title="Preview Post" onClick={() => set_previewing_created_post(!previewing_created_post)} variant="outline" size="sm" className="text-xs">
                   {previewing_created_post ? <PenLine /> : <Glasses />}
-                </Button>
-
-                <Button title="Finbyte Markdown Help" variant="outline" size="sm" className="text-xs">
-                  <HelpCircle />
                 </Button>
 
                 {post_type === 'feed_post' && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="text-xs">
+                      <Button title="Topic Select" variant="outline" size="sm" className="text-xs">
                         #{chosen_topic}
                       </Button>
                     </DropdownMenuTrigger>

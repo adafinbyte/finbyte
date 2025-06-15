@@ -1,11 +1,11 @@
 import Link from "next/link"
-import { Bell, Bookmark, Home, MessageSquare, PlugZap, Search, Settings, Unplug, User } from "lucide-react"
+import { Bell, Bookmark, Home, MessageSquare, PlugZap, Search, Settings, Unplug, User, Users } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { useWallet } from "@meshsdk/react"
-import WalletLoginModal from "./modals/wallet-login";
+import WalletLoginModal from "../modals/wallet-login";
 import { useState } from "react";
-import WalletSidebar from "./wallet-sidebar";
+import WalletSidebar from "../wallet-sidebar";
 import { useRouter } from "next/router";
 import { FINBYTE_WALLET_NAME } from "@/utils/consts";
 
@@ -23,26 +23,26 @@ export default function Sidebar() {
   return (
     <div className="sticky top-20 space-y-4">
       <nav className="flex flex-col gap-1">
-        <h1 className="font-bold uppercase text-xs tracking-wide text-muted-foreground mb-2">
+        <h1 className="font-bold uppercase text-[10px] tracking-wide text-muted-foreground mb-2">
           Platform
         </h1>
 
         <Link href="/">
-          <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
+          <Button variant={router.pathname === '/' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
             <Home className="h-5 w-5" />
             <span>Home</span>
           </Button>
         </Link>
 
-        <Link href="/explore">
-          <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
-            <Search className="h-5 w-5" />
-            <span>Explore</span>
+        <Link href="/communities">
+          <Button variant={router.pathname === '/communities' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+            <Users className="h-5 w-5" />
+            <span>Communities</span>
           </Button>
         </Link>
 
         <Link href="/tFIN">
-          <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
+          <Button variant={router.pathname === '/tFIN' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
             <img src='/finbyte.png' className="h-5 w-5" />
             <span>$tFIN</span>
           </Button>
@@ -50,14 +50,14 @@ export default function Sidebar() {
 
         <hr className="w-4/5 mx-auto dark:border-slate-800 my-4" />
 
-        <h1 className="font-bold uppercase text-xs tracking-wide text-muted-foreground my-2">
+        <h1 className="font-bold uppercase text-[10px] tracking-wide text-muted-foreground my-2">
           Wallet
         </h1>
 
         {(connected && address) ?
           <>
             <Link href="/profile">
-              <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
+              <Button variant={router.pathname === '/profile' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
                 <User className="h-5 w-5" />
                 <span>Profile</span>
               </Button>
@@ -69,7 +69,7 @@ export default function Sidebar() {
             </Button>
 
             <Link href="/settings">
-              <Button variant="ghost" className="w-full justify-start gap-2 rounded-full">
+              <Button variant={router.pathname === '/settings' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
                 <Settings className="h-5 w-5" />
                 <span>Settings</span>
               </Button>

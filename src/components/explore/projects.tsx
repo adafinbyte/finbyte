@@ -26,24 +26,24 @@ const ExploreProjects: FC = () => {
   return (
     <div>
       <div className="flex w-full justify-between items-center">
-        <h2 className="text-lg font-semibold mb-2 text-muted-foreground">Explore Projects</h2>
+        <h2 className="text-lg font-semibold mb-2">Explore Tokens</h2>
         <Button onClick={() => set_hide_all(!hide_all)} size="sm" className="scale-[80%]" variant='secondary'>
-          {hide_all ? 'Show Projects' : 'Hide Projects'}
+          {hide_all ? 'Show Tokens' : 'Hide Tokens'}
         </Button>
       </div>
 
       {/** @todo search input here */}
 
       {hide_all ?
-        <div className="bg-secondary rounded-lg opacity-60 p-2">
+        <div className="bg-secondary rounded-lg p-2">
           <div className="flex justify-center w-full">
-            <h1 className="text-sm font-semibold">Projects Hidden</h1>
+            <h1 className="text-sm text-muted-foreground font-semibold">Tokens Hidden</h1>
           </div>
         </div>
         :
         <div className="grid w-full gap-y-4">
           {paginated_tokens.map((token, index) => (
-            <div key={start + index} className="hover:-translate-y-0.5 duration-300 bg-secondary p-4 rounded-xl flex justify-between items-center gap-4 lg:gap-8">
+            <div key={start + index} className="hover:-translate-y-0.5 duration-300 bg-secondary/20 backdrop-blur-lg p-4 rounded-xl flex justify-between items-center gap-4 lg:gap-8">
               <div className="flex flex-col gap-2 w-full">
                 <div className="flex gap-4 items-center">
                   <div className="min-w-16 text-center text-xs border border-muted-foreground p-1 rounded-lg">
@@ -81,6 +81,7 @@ const ExploreProjects: FC = () => {
               variant="outline"
               onClick={() => set_page((prev) => Math.max(prev - 1, 0))}
               disabled={page === 0}
+              size='sm'
             >
               Back
             </Button>
@@ -93,6 +94,7 @@ const ExploreProjects: FC = () => {
               variant="outline"
               onClick={() => set_page((prev) => Math.min(prev + 1, total_pages - 1))}
               disabled={page >= total_pages - 1}
+              size='sm'
             >
               Next
             </Button>

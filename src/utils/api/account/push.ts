@@ -23,7 +23,7 @@ export const bookmarked_post = async (
   if (error) {
     return { error: error.message }
   } else {
-    const noti = await create_notification('bookmarked_post', null, address);
+    const noti = await create_notification('post:bookmarked', null, address);
     if (noti.error) { return { error: noti.error } }
     return { done: true };
     //noti
@@ -51,10 +51,9 @@ export const mute_user = async (
   if (error) {
     return { error: error.message }
   } else {
-    const noti = await create_notification('muted_user', null, address);
+    const noti = await create_notification('user:mute/unmute', null, address);
     if (noti.error) { return { error: noti.error } }
     return { done: true }
-    //noti
   }
 };
 
@@ -79,7 +78,7 @@ export const follow_user = async (
   if (error) {
     return { error: error.message }
   } else {
-    const noti = await create_notification('followed_user', null, address);
+    const noti = await create_notification('user:follow/unfollow', null, address);
     if (noti.error) { return { error: noti.error } }
     return { done: true }
     //noti

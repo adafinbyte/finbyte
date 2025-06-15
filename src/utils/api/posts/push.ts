@@ -27,7 +27,7 @@ export const create_post = async (
   if (error) {
     return { error: error.message }
   } else {
-    const noti = await create_notification(post_type === 'feed_post' ? 'new_post' : 'new_comment', null, create_data.author);
+    const noti = await create_notification(post_type === 'feed_post' ? 'post:new' : 'comment:new', null, create_data.author);
     if (noti.error) { return { error: noti.error } }
     return { created: true};
   }
@@ -54,10 +54,9 @@ export const mark_post_as_spam = async (
   if (error) {
     return { error: error.message }
   } else {
-    const noti = await create_notification('marked_spam_post', null, address);
+    const noti = await create_notification('post:spam', null, address);
     if (noti.error) { return { error: noti.error } }
     return { marked: true }
-    //noti
   }
 };
 
@@ -84,9 +83,35 @@ export const like_unlike_post = async (
   if (error) {
     return { error: error.message }
   } else {
-    const noti = await create_notification('like/unlike', post_id, address);
+    const noti = await create_notification(post_type === 'feed_post' ? 'post:like/unlike' : 'comment:like/unlike', post_id, address);
     if (noti.error) { return { error: noti.error } }
     return { done: true }
-    //noti
+  }
+};
+
+interface tipped_post_return { error?: string; done?: boolean }
+export const tipped_post = async (
+  post_id: number,
+  post_type: post_type,
+  tip_hashes: string[],
+  address: string,
+): Promise<tipped_post_return> => {
+  const db =
+    post_type === 'feed_post' ?
+    databases.forum_posts : post_type === 'feed_comment' ?
+    databases.forum_comments : databases.community_posts;
+
+  const { error } = await supabase
+    .from(db)
+    .update({ tip_tx_hashes: tip_hashes.length ? tip_hashes : [] })
+    .eq('id', post_id)
+    .single();
+
+  if (error) {
+    return { error: error.message }
+  } else {
+    const noti = await create_notification('post:tip', post_id, address);
+    if (noti.error) { return { error: noti.error } }
+    return { done: true }
   }
 };
