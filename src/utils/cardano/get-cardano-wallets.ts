@@ -16,17 +16,22 @@ interface get_cardano_wallets_return {
 /** @todo stop using 3rd party for images */
 const predefined_wallets: Omit<WalletInformation, 'is_installed'>[] = [
   {
+    name: 'begin',
+    url: 'https://begin.is/',
+    img: 'https://play-lh.googleusercontent.com/X3MDLub2TEq8-zVVWfx5if8X7vZtQ7kz2QwV8BMCbPLMk-blvJ_kSw3R4ehI1X4S-ERG',
+  },
+  {
     name: 'eternl',
     url: 'https://eternl.io',
     img: 'https://fluidtokens.com/assets/images/dapps/eternl.png',
   },
   {
-    name: 'Lace',
+    name: 'lace',
     url: '',
     img: 'https://fluidtokens.com/assets/images/dapps/lace.svg'
   },
   {
-    name: 'Vespr',
+    name: 'vespr',
     url: 'https://vespr.xyz/',
     img: 'https://cdn.prod.website-files.com/614c99cf4f23700c8aa3752a/6778546056a2e86e20a557cb_VESPR%20WALLET.png',
   },

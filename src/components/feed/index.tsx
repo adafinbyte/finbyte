@@ -26,11 +26,10 @@ interface custom_props {
   get_user_details: () => Promise<void>;
   selected_topic: string | null;
   user_details: platform_user_details | null;
-  user_tfin_balance: number;
 }
 
 const FinbyteFeed: FC <custom_props> = ({
-  all_posts, refreshing_state, get_posts, get_user_details, selected_topic, user_details, user_tfin_balance
+  all_posts, refreshing_state, get_posts, get_user_details, selected_topic, user_details
 }) => {
   const [current_tab, set_current_tab] = useState("all");
 
@@ -76,7 +75,13 @@ const FinbyteFeed: FC <custom_props> = ({
                   return 0;
                 })
                 .map((post) => (
-                  <FeedPost key={post.post.id} feed_post={post} get_posts={get_posts} get_user_details={get_user_details} user_details={user_details} user_tfin_balance={user_tfin_balance}/>
+                  <FeedPost
+                    key={post.post.id}
+                    feed_post={post}
+                    get_posts={get_posts}
+                    get_user_details={get_user_details}
+                    user_details={user_details}
+                  />
                 ))
             }
           </div>

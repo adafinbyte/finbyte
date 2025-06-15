@@ -1,12 +1,12 @@
 
 import FormatAddress from "@/components/format-address"
 import { LoadingDots } from "@/components/loading-dots"
-import MobileNavigation from "@/components/mobile-navigation"
+import MobileNavigation from "@/components/default-layout/mobile-navigation"
 import ProfileAdminPanel from "@/components/profile/admin-panel"
 import ProfileFinbyteStats from "@/components/profile/finbyte-stats"
 import ProfileWalletInfo from "@/components/profile/wallet-info"
-import Sidebar from "@/components/sidebar"
-import TopNavigation from "@/components/top-navigation"
+import Sidebar from "@/components/default-layout/sidebar"
+import TopNavigation from "@/components/default-layout/top-navigation"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card } from "@/components/ui/card"
 import UserAvatar from "@/components/user-avatar"
@@ -19,6 +19,7 @@ import { BookmarkPlus, UserMinus, Users } from "lucide-react"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import DefaultLayout from "@/components/default-layout"
 
 export default function Profile() {
   const { address, connected } = useWallet();
@@ -49,67 +50,42 @@ export default function Profile() {
 
   const get_bookmarked_posts = async () => { }
 
-  return (connected && address) ? (
-    <div className="min-h-screen bg-background">
-      <TopNavigation />
-      <div className="container mx-auto px-4 pt-16 pb-20 md:pb-4 md:pt-20">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-5 lg:grid-cols-8">
-          <div className="hidden md:col-span-1 md:block lg:col-span-2 lg:w-[90%]">
-            <Sidebar />
-          </div>
+  const right_sidebar_contents = (
+    <>
+    </>
+  );
 
-          <div className="col-span-1 md:col-span-4 lg:col-span-4">
-            <div className="flex flex-col gap-4">
-              <div className="flex gap-2 items-center">
-                <Avatar className="size-14 rounded-xl">
-                  <UserAvatar address={address} />
-                  <AvatarFallback>{address.charAt(0)}</AvatarFallback>
-                </Avatar>
+  return (
+    <>
+      <DefaultLayout right_sidebar={right_sidebar_contents}>
+        <div className="flex flex-col gap-4 pb-4">
+          <div className="flex gap-2 items-center">
+            <Avatar className="size-14 rounded-xl">
+              <UserAvatar address={address} />
+              <AvatarFallback>{address.charAt(0)}</AvatarFallback>
+            </Avatar>
 
-                <div className="flex flex-col gap-0.5">
-                  <FormatAddress large_size address={address} />
-                  <div className="flex items-center gap-2">
-                    {connected_user_details?.badges && connected_user_details?.badges.map((badge, index) => (
-                      <div key={index} className="text-center text-xs border border-muted-foreground px-2 py-0.5 rounded-lg">
-                        {capitalize_first_letter(badge)}
-                      </div>
-                    ))}
+            <div className="flex flex-col gap-0.5">
+              <FormatAddress large_size address={address} />
+              <div className="flex items-center gap-2">
+                {connected_user_details?.badges && connected_user_details?.badges.map((badge, index) => (
+                  <div key={index} className="text-center text-xs border border-muted-foreground px-2 py-0.5 rounded-lg">
+                    {capitalize_first_letter(badge)}
                   </div>
-                </div>
+                ))}
               </div>
             </div>
-
-            <hr className="dark:border-slate-800 my-6 w-4/5 mx-auto" />
-
-            <div className="grid lg:grid-cols-2 gap-4">
-              {connected_user_details ?
-                <ProfileFinbyteStats
-                  user_details={connected_user_details}
-                />
-                :
-                <LoadingDots />
-              }
-
-            </div>
-          </div>
-
-          <div className="hidden lg:col-span-2 lg:block">
           </div>
         </div>
 
-        <div className="lg:hidden pt-4">
-          <div className="sticky top-20 space-y-2">
-
-          </div>
-        </div>
-      </div>
-      <MobileNavigation />
-    </div>
-  ) : (
-    <div>
-      <h1>
-        Connect your wallet!
-      </h1>
-    </div>
+        {connected_user_details ?
+          <ProfileFinbyteStats
+            user_details={connected_user_details}
+          />
+          :
+          <LoadingDots />
+        }
+      </DefaultLayout>
+    </>
   )
 }

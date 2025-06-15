@@ -1,8 +1,11 @@
 import { useWallet } from "@meshsdk/react";
 import { FC, useEffect, useState } from "react";
 import { Card } from "./ui/card";
-import { Check } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { format_atomic } from "@/utils/format";
+import FormatAddress from "./format-address";
+import { Button } from "./ui/button";
+import { copy_to_clipboard } from "@/utils/common";
 
 
 const WalletSidebar: FC = () => {
@@ -74,40 +77,36 @@ const WalletSidebar: FC = () => {
           Wallet Status: <span className="text-green-500 dark:text-green-400">Connected</span>
         </h1>
 
-        <div className="flex flex-col items-start mt-2 text-sm">
-          <h1 className="text-xs ">
+        <div className="flex flex-col items-start my-2 text-sm">
+          <div className="flex justify-between w-full gap-2 items-center">
+            <FormatAddress address={address} />
+            <Button size='icon' className="scale-[75%]" variant='ghost' onClick={() => copy_to_clipboard(address)}>
+              <Copy/>
+            </Button>
+          </div>
+
+          <h1 className="text-xs mt-2">
             Wallet Network ID
           </h1>
 
-          <div className="flex gap-2 items-center w-full p-2">
-            <h1 className="w-1/3">
-              {wallet_details?.network_id}
-            </h1>
+          <h1>
+            {wallet_details?.network_id === 0 ? 'Preprod' : wallet_details?.network_id === 1 ? 'Mainnet' : 'Testnet'}
+          </h1>
 
-            {wallet_details?.network_id === 0 && (
-              <div className="flex gap-4 items-center ml-auto border dark:border-green-500 border-primary-400 py-0.5 rounded-lg px-4">
-                <h1 className="text-xs">
-                  Ready for $tFIN
-                </h1>
-                <Check className="text-green-500 dark:text-green-400 size-4" />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {wallet_details?.network_id === 0 && (
-          <div className="flex flex-col items-start mt-2 text-sm">
-            <h1 className="text-xs ">
-              Wallet Balances
-            </h1>
-
-            {wallet_balances.map((item, index) => (
-              <h1 key={index}>
-                {item.title}{item.data}
+          {wallet_details?.network_id === 0 && (
+            <>
+              <h1 className="text-xs mt-2">
+                Wallet Balances
               </h1>
-            ))}
-          </div>
-        )}
+
+              {wallet_balances.map((item, index) => (
+                <h1 key={index}>
+                  {item.title}{item.data}
+                </h1>
+              ))}
+            </>
+          )}
+        </div>
       </Card>
     </div>
   ) : (

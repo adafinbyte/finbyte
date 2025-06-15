@@ -10,7 +10,7 @@ import { Label } from "./ui/label"
 import { format_atomic } from "@/utils/format"
 
 interface custom_props {
-  onValueChange: (value: number | null) => void;
+  onValueChange: (value: number) => void;
   balance: number;
   on_submit: (value: string) => Promise<void>;
 }
@@ -20,12 +20,12 @@ export function TipInput({ onValueChange, balance, on_submit }: custom_props) {
   const [error, setError] = useState<string | null>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
+    const value = e.target.value;
 
     if (/^-?\d*\.?\d*$/.test(value)) {
       const parts = value.split(".");
       if (parts.length === 2 && parts[1].length > 4) {
-        return; // more than 4 decimal places, do not update
+        return;
       }
 
       const parsed = parseFloat(value);
@@ -34,35 +34,37 @@ export function TipInput({ onValueChange, balance, on_submit }: custom_props) {
         setError(`Amount cannot exceed your balance of ${format_tfin}`);
         return;
       }
-  
+
       setInputValue(value);
       setError(null);
-    }
-  }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+      if (!isNaN(parsed)) {
+        onValueChange(parsed);
+      } else {
+        onValueChange(0);
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     if (!inputValue) {
-      onValueChange(null)
-      return
+      onValueChange(0);
+      return;
     }
 
-    const numValue = Number.parseFloat(inputValue)
+    const numValue = Number.parseFloat(inputValue);
 
     if (isNaN(numValue)) {
-      setError("Please enter a valid number")
-      return
+      setError("Please enter a valid number");
+      return;
     }
 
-    onValueChange(numValue)
-  }
-
-  const handleClear = () => {
-    setInputValue("")
-    setError(null)
-    onValueChange(null)
-  }
+    onValueChange(numValue);
+    await on_submit(inputValue);
+    setInputValue('');
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -77,8 +79,9 @@ export function TipInput({ onValueChange, balance, on_submit }: custom_props) {
             placeholder="0.0000"
             className="flex-1"
           />
-          <Button type="button" variant="outline" onClick={handleClear}>
-            Clear
+
+          <Button type="submit" variant="outline">
+            Tip
           </Button>
         </div>
       </div>
@@ -88,10 +91,6 @@ export function TipInput({ onValueChange, balance, on_submit }: custom_props) {
           {error}
         </div>
       )}
-
-      <Button type="submit" className="w-full">
-        Format Number
-      </Button>
     </form>
   )
 }

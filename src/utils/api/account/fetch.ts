@@ -17,7 +17,7 @@ export const fetch_user_data = async (author: string): Promise<fetch_user_data_r
 
   data?.forEach((row: any) => {
     if (row.db === databases.forum_posts) {
-      forum_posts.push({ ...row, type: 'forum_post', id: row.post_id });
+      forum_posts.push({ ...row, type: 'post', id: row.post_id });
       timestamps.push(row.post_timestamp);
       total_kudos += 1;
       total_kudos += (row.post_likers?.length ?? 0) * 2;
@@ -27,13 +27,12 @@ export const fetch_user_data = async (author: string): Promise<fetch_user_data_r
     }
 
     else if (row.db === databases.forum_comments) {
-      forum_comments.push({ ...row, type: 'forum_comment' });
+      forum_comments.push({ ...row, type: 'comment' });
       timestamps.push(row.comment_timestamp);
       total_kudos += 1;
       total_kudos += (row.post_likers?.length ?? 0) * 2;
       total_kudos += (row.tip_tx_hashes?.length ?? 0) * 3;
     }
-
   });
 
   if (forumPostIds.size > 0) {
@@ -72,8 +71,6 @@ export const fetch_user_data = async (author: string): Promise<fetch_user_data_r
     first_timestamp: Number(first_timestamp),
     address: ad.address,
     ada_handle: ad.ada_handle,
-    f_timestamp: ad.f_timestamp,
-    l_timestamp: ad.l_timestamp,
     badges: ad.badges,
     community_badge: ad.community_badge,
     following: ad.following,

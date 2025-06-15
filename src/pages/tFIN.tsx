@@ -1,26 +1,22 @@
 import FinPieChart from "@/components/fin-piechart"
 import FormatAddress from "@/components/format-address"
-import MobileNavigation from "@/components/mobile-navigation"
-import TfinQuickLinks from "@/components/right-sidebar/tfin-quick-links"
-import Sidebar from "@/components/sidebar"
 import SocialIcon from "@/components/social-icons"
-import TopNavigation from "@/components/top-navigation"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { fetch_user_data } from "@/utils/api/account/fetch"
 import { asset_address, bf_specific_asset, get_asset_addresses, get_specific_asset } from "@/utils/api/external/blockfrost"
 import { get_tfin_requests, send_request_tfin } from "@/utils/api/tFIN"
 import { copy_to_clipboard } from "@/utils/common"
-import { moderation_addresses } from "@/utils/consts"
 import { format_atomic, format_long_string, format_unix } from "@/utils/format"
-import { platform_user_details, tfin_requests_data } from "@/utils/interfaces"
+import { tfin_requests_data } from "@/utils/interfaces"
 import finbyte_constributors from "@/verified/contributors"
 import { useWallet } from "@meshsdk/react"
 import { Plus } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import DefaultLayout from "@/components/default-layout"
+import { PlatformQuickLinks } from "@/components/default-layout/right-sidebar"
+import Head from "next/head"
 
 export default function Home() {
   const { address, connected } = useWallet();
@@ -98,242 +94,230 @@ export default function Home() {
     { title: 'Mint Hash', data: format_long_string(finbyte_token_details?.initial_mint_tx_hash ?? '') },
     { title: '$tFIN Requests', data: tfin_requests?.length ?? 0 },
   ]
-
+  const right_sidebar_contents = (
+    <>
+      <PlatformQuickLinks/>
+    </>
+  )
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopNavigation />
-      <div className="container mx-auto px-4 pt-16 pb-20 md:pb-4 md:pt-20">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-5 lg:grid-cols-8">
-          <div className="hidden md:col-span-1 md:block lg:col-span-2 lg:w-[90%]">
-            <Sidebar />
+    <>
+      <Head>
+        <title>$tFIN - Finbyte</title>
+      </Head>
+
+      <DefaultLayout right_sidebar={right_sidebar_contents}>
+        <div className="scroll-smooth">
+          <h1 className="text-xl font-medium">
+            Welcome to the $tFIN hub
+          </h1>
+
+          <div className="flex flex-wrap gap-4 justify-center mt-4">
+            {token_details.map((item, index) => (
+              <div key={index} onClick={() => copy_to_clipboard(item.data as string)} className="hover:-translate-y-0.5 duration-300 cursor-copy py-2 px-4 bg-secondary rounded-xl">
+                <h1 className="font-semibold text-sm text-muted-foreground">
+                  {item.title}
+                </h1>
+
+                <p className="text-lg">
+                  {item.data}
+                </p>
+              </div>
+            ))}
           </div>
 
-          <div className="col-span-1 md:col-span-4 lg:col-span-4 scroll-smooth">
-            <h1 className="text-xl font-medium">
-              Welcome to the $tFIN hub 
-            </h1>
+          <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800" />
 
-            <div className="flex flex-wrap gap-4 justify-center mt-4">
-              {token_details.map((item, index) => (
-                <div key={index} onClick={() => copy_to_clipboard(item.data as string)} className="hover:-translate-y-0.5 duration-300 cursor-copy py-2 px-4 bg-secondary rounded-xl">
-                  <h1 className="font-semibold text-sm text-muted-foreground">
-                    {item.title}
-                  </h1>
-
-                  <p className="text-lg">
-                    {item.data}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800" />
-
-            <div id="about" className="mt-6">
-              <h1 className="text-xl font-semibold">
-                About Finbyte
-              </h1>
-
-              <p>
-                Finbyte is a decentralized social platform built on the Cardano blockchain,
-                designed to reward meaningful engagement and empower users to support
-                communities, creators, and projects they believe in. After nearly two
-                years of development, we're proud to introduce the Finbyte Network to
-                the world, starting with the launch of our testnet token, tFIN.
-              </p>
-
-              <h1 className="text-xl font-semibold mt-6">
-                Testnet Launch: Try tFIN on Cardano Preprod
-              </h1>
-
-              <p>
-                We're beginning our rollout on the Cardano Pre-Production testnet.
-                This allows us to safely test all aspects of Finbyte's token economy,
-                wallet integrations, and community tools before going live on mainnet
-                with our real token, $FIN.
-              </p>
-
-              <div className="p-4 border-l bg-secondary rounded-r-xl my-10">
-                <h1 className="font-semibold">How to join:</h1>
-
-                <div className="my-2 text-sm pl-4">
-                  <ol className="list-disc list-outside space-y-1">
-                    <li>
-                      <p>
-                        Make sure your wallet (e.g. Eternl, Nami, Lace) is connected to the
-                        Pre-Production Testnet under your wallet's network settings.
-                      </p>
-                    </li>
-                    <li>
-                      <p>
-                        Request tokens by clicking the Request $tFIN button below.
-                        You can view the status of all the requests below.
-                      </p>
-                    </li>
-                  </ol>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <div className="flex justify-between items-center gap-2">
-                  <h1 className="font-semibold">
-                    $tFIN Requests
-                  </h1>
-
-                  <Button size='sm' variant='secondary' onClick={handle_request_tfin} disabled={tfin_requests?.some(a => a.address === address) || !connected}>
-                    Request $tFIN
-                  </Button>
-                </div>
-
-                <ScrollArea>
-                  <div className="max-h-96 pt-4">
-                    <div className="flex flex-col gap-2">
-                      {tfin_requests && tfin_requests.map((item, index) => (
-                        <div key={index} className={`w-full flex flex-col gap-2 bg-secondary rounded-lg p-2 px-4 ${address === item.address ? 'border dark:border-slate-500' : ''}`}>
-                          <div className="flex gap-2 items-center">
-                            <FormatAddress address={item.address} large_size />
-
-                            <h1>
-                              {format_unix(item.requested_timestamp).time_ago}
-                            </h1>
-
-                            <div className="ml-auto flex gap-2">
-                              {item.tx_hash ?
-                                <Link target="_blank" href={item.tx_hash}>
-                                  <Button size={'sm'}>
-                                    View Transaction
-                                  </Button>
-                                </Link>
-                                :
-                                <Button size={'sm'} variant='destructive' disabled>
-                                  Not Fulfilled
-                                </Button>
-                              }
-                            </div>
-                          </div>
-
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </ScrollArea>
-              </div>
-
-              <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800"/>
-
-              <h1 className="text-xl font-semibold mt-6 lg:mt-12">
-                A New Kind of Social Network
-              </h1>
-
-              <p>
-                Finbyte is not just a social media platform, it's a community-powered network.
-                Our goal is to build a space where your voice, support, and contributions carry
-                real value. On Finbyte, engagement is currency. You can:
-              </p>
-
-              <div className="mt-2">
-                <ol className="list-disc list-inside space-y-1">
-                  <li><span className="font-semibold">Earn tokens</span> by liking, posting, commenting, or participating in verified Cardano initiatives.</li>
-                  <li><span className="font-semibold">Support other communities or creators</span> by tipping or donating tokens, helping them grow their presence.</li>
-                  <li><span className="font-semibold">Stake your tokens</span> to earn passive rewards and unlock additional benefits over time.</li>
-                  <li><span className="font-semibold">Participate in governance</span> and help shape the future of Finbyte.</li>
-                </ol>
-              </div>
-
-              <h1 className="text-xl font-semibold mt-6">
-                Why Own $FIN?
-              </h1>
-
-              <p>
-                While you can earn $FIN through engagement, there are powerful reasons to hold and buy the token too:
-              </p>
-
-              <div className="mt-2">
-                <ol className="list-disc list-inside space-y-1">
-                  <li><span className="font-semibold">Access exclusive features</span> and tools on the platform (priority feeds, advanced analytics, creator boosts).</li>
-                  <li><span className="font-semibold">Participate in project funding</span> or unlock badges and support roles within other communities.</li>
-                  <li><span className="font-semibold">Earn staking rewards</span> by locking up your $FIN in the protocol.</li>
-                  <li><span className="font-semibold">Support the broader Cardano ecosystem</span> by empowering verified projects directly through your Finbyte activity.</li>
-                </ol>
-              </div>
-              
-              <p>Every transaction on Finbyte fuels a circular economy where value stays with the community, not with centralized platforms.</p>
-            </div>
-
-            <div className="mt-6"/>
+          <div id="about" className="mt-6">
             <h1 className="text-xl font-semibold">
-              Meet The Contributors & Team
+              About Finbyte
             </h1>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full mt-2">
-              {finbyte_constributors.map((user, index) => (
-                <div key={index} className="w-full p-4 bg-secondary rounded-xl">
-                  <img src={user.image} className="mx-auto rounded-lg"/>
+            <p>
+              Finbyte is a decentralized social platform built on the Cardano blockchain,
+              designed to reward meaningful engagement and empower users to support
+              communities, creators, and projects they believe in. After nearly two
+              years of development, we're proud to introduce the Finbyte Network to
+              the world, starting with the launch of our testnet token, tFIN.
+            </p>
 
-                  <h1 className="text-sm text-muted-foreground text-center mt-2">
-                    {user.name}
-                  </h1>
+            <h1 className="text-xl font-semibold mt-6">
+              Testnet Launch: Try tFIN on Cardano Preprod
+            </h1>
 
-                  <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
-                    {user.roles.map((item) => (
-                      <div key={item} className="text-xs font-medium px-2 p-1 rounded-lg border dark:border-slate-700">
-                        {item}
+            <p>
+              We're beginning our rollout on the Cardano Pre-Production testnet.
+              This allows us to safely test all aspects of Finbyte's token economy,
+              wallet integrations, and community tools before going live on mainnet
+              with our real token, $FIN.
+            </p>
+
+            <div className="p-4 border-l bg-secondary rounded-r-xl my-10">
+              <h1 className="font-semibold">How to join:</h1>
+
+              <div className="my-2 text-sm pl-4">
+                <ol className="list-disc list-outside space-y-1">
+                  <li>
+                    <p>
+                      Make sure your wallet (e.g. Eternl, Nami, Lace) is connected to the
+                      Pre-Production Testnet under your wallet's network settings.
+                    </p>
+                  </li>
+                  <li>
+                    <p>
+                      Request tokens by clicking the Request $tFIN button below.
+                      You can view the status of all the requests below.
+                    </p>
+                  </li>
+                </ol>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <div className="flex justify-between items-center gap-2">
+                <h1 className="font-semibold">
+                  $tFIN Requests
+                </h1>
+
+                <Button size='sm' variant='secondary' onClick={handle_request_tfin} disabled={tfin_requests?.some(a => a.address === address) || !connected}>
+                  Request $tFIN
+                </Button>
+              </div>
+
+              <ScrollArea>
+                <div className="max-h-96 pt-4">
+                  <div className="flex flex-col gap-2">
+                    {tfin_requests && tfin_requests.map((item, index) => (
+                      <div key={index} className={`w-full flex flex-col gap-2 bg-secondary rounded-lg p-2 px-4 ${address === item.address ? 'border dark:border-slate-500' : ''}`}>
+                        <div className="flex gap-2 items-center">
+                          <FormatAddress address={item.address} large_size />
+
+                          <h1>
+                            {format_unix(item.requested_timestamp).time_ago}
+                          </h1>
+
+                          <div className="ml-auto flex gap-2">
+                            {item.tx_hash ?
+                              <Link target="_blank" href={item.tx_hash}>
+                                <Button size={'sm'}>
+                                  View Transaction
+                                </Button>
+                              </Link>
+                              :
+                              <Button size={'sm'} variant='destructive' disabled>
+                                Not Fulfilled
+                              </Button>
+                            }
+                          </div>
+                        </div>
+
                       </div>
                     ))}
                   </div>
-
-                  <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
-                    {Object.entries(user.links).map(([key, value]) => (
-                      <SocialIcon key={key} only_icon={false} name={key} link={value}/>
-                    ))}
-                  </div>
                 </div>
-              ))}
-
-              <div className="w-full h-full p-4 bg-secondary rounded-xl flex flex-col justify-center">
-                <Plus className="w-24 mx-auto rounded-lg" />
-
-                <div className="text-sm text-muted-foreground text-center mt-2">
-                  <span className="text-primary font-semibold text-base">This could be you!</span>
-                  <br/>
-                  Get in touch now to learn how.
-                </div>
-
-                <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
-                  <div className="text-xs font-medium px-2 p-1 rounded-lg border dark:border-slate-700">
-                    Contributor
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
-                  <SocialIcon only_icon={false} name={'discord'} link={'https://discord.gg/EVawcspwyp'} />
-                  <SocialIcon only_icon={false} name={'x'} link={'https://www.x.com/adaFinbyte'} />
-                  <SocialIcon only_icon={false} name={'website'} link={'https://finbyte.network/'} />
-                </div>
-              </div>
+              </ScrollArea>
             </div>
 
             <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800" />
 
-            <div id="distribution" />
-            <FinPieChart />
+            <h1 className="text-xl font-semibold mt-6 lg:mt-12">
+              A New Kind of Social Network
+            </h1>
+
+            <p>
+              Finbyte is not just a social media platform, it's a community-powered network.
+              Our goal is to build a space where your voice, support, and contributions carry
+              real value. On Finbyte, engagement is currency. You can:
+            </p>
+
+            <div className="mt-2">
+              <ol className="list-disc list-inside space-y-1">
+                <li><span className="font-semibold">Earn tokens</span> by liking, posting, commenting, or participating in verified Cardano initiatives.</li>
+                <li><span className="font-semibold">Support other communities or creators</span> by tipping or donating tokens, helping them grow their presence.</li>
+                <li><span className="font-semibold">Stake your tokens</span> to earn passive rewards and unlock additional benefits over time.</li>
+                <li><span className="font-semibold">Participate in governance</span> and help shape the future of Finbyte.</li>
+              </ol>
+            </div>
+
+            <h1 className="text-xl font-semibold mt-6">
+              Why Own $FIN?
+            </h1>
+
+            <p>
+              While you can earn $FIN through engagement, there are powerful reasons to hold and buy the token too:
+            </p>
+
+            <div className="mt-2">
+              <ol className="list-disc list-inside space-y-1">
+                <li><span className="font-semibold">Access exclusive features</span> and tools on the platform (priority feeds, advanced analytics, creator boosts).</li>
+                <li><span className="font-semibold">Participate in project funding</span> or unlock badges and support roles within other communities.</li>
+                <li><span className="font-semibold">Earn staking rewards</span> by locking up your $FIN in the protocol.</li>
+                <li><span className="font-semibold">Support the broader Cardano ecosystem</span> by empowering verified projects directly through your Finbyte activity.</li>
+              </ol>
+            </div>
+
+            <p>Every transaction on Finbyte fuels a circular economy where value stays with the community, not with centralized platforms.</p>
           </div>
 
-          <div className="hidden lg:col-span-2 lg:block">
-            <div className="sticky top-20 space-y-4">
-              <TfinQuickLinks/>
+          <div className="mt-6" />
+          <h1 className="text-xl font-semibold">
+            Meet The Contributors & Team
+          </h1>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full mt-2">
+            {finbyte_constributors.map((user, index) => (
+              <div key={index} className="w-full p-4 bg-secondary rounded-xl">
+                <img src={user.image} className="mx-auto rounded-lg" />
+
+                <h1 className="text-sm text-muted-foreground text-center mt-2">
+                  {user.name}
+                </h1>
+
+                <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
+                  {user.roles.map((item) => (
+                    <div key={item} className="text-xs font-medium px-2 p-1 rounded-lg border dark:border-slate-700">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
+                  {Object.entries(user.links).map(([key, value]) => (
+                    <SocialIcon key={key} only_icon={false} name={key} link={value} />
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div className="w-full h-full p-4 bg-secondary rounded-xl flex flex-col justify-center">
+              <Plus className="w-24 mx-auto rounded-lg" />
+
+              <div className="text-sm text-muted-foreground text-center mt-2">
+                <span className="text-primary font-semibold text-base">This could be you!</span>
+                <br />
+                Get in touch now to learn how.
+              </div>
+
+              <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
+                <div className="text-xs font-medium px-2 p-1 rounded-lg border dark:border-slate-700">
+                  Contributor
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-1 items-center justify-center mt-2">
+                <SocialIcon only_icon={false} name={'discord'} link={'https://discord.gg/EVawcspwyp'} />
+                <SocialIcon only_icon={false} name={'x'} link={'https://www.x.com/adaFinbyte'} />
+                <SocialIcon only_icon={false} name={'website'} link={'https://finbyte.network/'} />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="lg:hidden pt-4">
-          <div className="sticky top-20 space-y-4">
-            <TfinQuickLinks />
-          </div>
+          <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800" />
+
+          <div id="distribution" />
+          <FinPieChart />
         </div>
-      </div>
-      <MobileNavigation />
-    </div>
+      </DefaultLayout>
+    </>
   )
 }

@@ -11,10 +11,13 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 
 import { check_user_on_login } from "@/utils/api/misc"
 import { capitalize_first_letter } from "@/utils/common"
-import { get_cardano_wallets, WalletInformation } from "@/utils/get-cardano-wallets"
-import { saveAs } from "file-saver";
+import { get_cardano_wallets, WalletInformation } from "@/utils/cardano/get-cardano-wallets"
 import { blockfrost_key } from "@/utils/api/secrets"
 import { FINBYTE_WALLET_NAME } from "@/utils/consts"
+
+/** @note either implement this ourselves or use ts package */
+/**@ts-ignore */
+import { saveAs } from "file-saver";
 
 interface custom_props {
   open: boolean;

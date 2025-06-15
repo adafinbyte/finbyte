@@ -36,6 +36,7 @@ export const fetch_all_feed_posts = async (
           updated_post: row.updated_post,
           post_likers: row.post_likers,
           request_type: null,
+          tip_tx_hashes: row.tip_tx_hashes,
         },
         comments: [],
         author_details: null, // This will be enriched elsewhere

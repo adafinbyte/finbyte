@@ -22,7 +22,7 @@ const FormatAddress: FC <custom_props> = ({
             'opacity-60 font-normal'
           )}
           >
-            {address.substring(0, 5) + "..."}
+            {address.substring(0, 7) + "..."}
           </span>
 
           <span className={cn(

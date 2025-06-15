@@ -18,8 +18,9 @@ export interface forum_post_data {
   updated_timestamp: number | null;
   updated_post:      string | null;
 
+  tip_tx_hashes: string[] | null;
   post_likers: string[] | null;
-  type?: 'forum_post';
+  type?: 'post';
 }
 
 export interface comment_post_data {
@@ -34,7 +35,7 @@ export interface comment_post_data {
   updated_post:      string | null;
 
   post_likers: string[] | null;
-  type?: 'forum_comment';
+  type?: 'comment';
 }
 
 export interface community_post_data {
@@ -50,8 +51,8 @@ export interface community_post_data {
 }
 
 export interface platform_user_details {
-  id:        number;
-  forum_posts:    forum_post_data[];
+  id: number;
+  forum_posts: forum_post_data[];
   forum_comments: comment_post_data[];
   total_posts: number;
   total_kudos: number;
@@ -60,13 +61,10 @@ export interface platform_user_details {
   address:    string;
   ada_handle: string | null;
 
-  f_timestamp: number;
-  l_timestamp: number | null;
-
-  badges:          string[] | null;
-  community_badge: string | null;
-  following:       string[] | null;
-  muted:           string[];
+  community_badge:  string | null;
+  badges:           string[] | null;
+  following:        string[] | null;
+  muted:            string[];
   bookmarked_posts: number[] | null;
 }
 
