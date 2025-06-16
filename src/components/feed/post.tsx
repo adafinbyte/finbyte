@@ -288,7 +288,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
               <Button
                 variant="ghost" size="sm"
                 className="h-8 gap-1 px-2 text-muted-foreground"
-                onClick={() => set_post_ui(prev => ({ ...prev, show_comments: true }))}
+                onClick={() => set_post_ui(prev => ({ ...prev, show_comments: !prev.show_comments }))}
               >
                 <MessageCircle
                   className={`h-4 w-4 ${feed_post.comments.some(a => a.author === address)

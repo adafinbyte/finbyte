@@ -20,6 +20,9 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import DefaultLayout from "@/components/default-layout"
+import { ProjectDiscover, ProjectLinks } from "@/components/default-layout/right-sidebar"
+import Head from "next/head"
 
 export default function Home() {
   const { address, connected } = useWallet();
@@ -46,7 +49,7 @@ export default function Home() {
   const get_user_details = async () => {
     const user_details = await fetch_user_data(address);
     if (user_details.error) {
-      toast.error(user_details.error);
+      toast.error('Failed to get User Details.', { description: user_details.error });
       return;
     }
     if (user_details.data) {
@@ -104,26 +107,32 @@ export default function Home() {
     }
   }, [connected, found_token]);
 
-  return found_token ? (
-    <div className="min-h-screen bg-background">
-      <TopNavigation />
-      <div className="container mx-auto px-4 pt-16 pb-20 md:pb-4 md:pt-20">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-5 lg:grid-cols-8">
-          <div className="hidden md:col-span-1 md:block lg:col-span-2 lg:w-[90%]">
-            <Sidebar />
-          </div>
+  const right_sidebar_contents = (
+    <>
+      <ProjectDiscover token={found_token}/>
+      <ProjectLinks token={found_token}/>
+    </>
+  )
 
-          <div className="col-span-1 md:col-span-4 lg:col-span-4">
+  return (
+    <>
+      <Head>
+        <title>{found_token?.name ?? 'Token Page'} - Finbyte</title>
+      </Head>
+
+      <DefaultLayout right_sidebar={right_sidebar_contents}>
+        {found_token ? (
+          <>
             <div className="flex w-full gap-4 items-center justify-between">
               <h1 className="font-semibold text-lg">
                 <span className="text-base text-muted-foreground">Welcome to the</span><br />
                 {found_token.name} Community Page
               </h1>
 
-              <img src={found_token.images.logo} className="size-10 mx-4"/>
+              <img src={found_token.images.logo} className="size-10 mx-4" />
             </div>
 
-            <hr className="dark:border-slate-700 my-2"/>
+            <hr className="dark:border-slate-700 my-2" />
 
             <Card>
               <CardHeader className="p-4 pb-4">
@@ -160,66 +169,11 @@ export default function Home() {
                 )}
               </CardContent>
             </Card>
-          </div>
-
-          <div className="hidden lg:col-span-2 lg:block">
-            <div className="sticky top-20 space-y-2">
-              <h1 className="font-semibold text-sm opacity-80">Discover more from {found_token.name}</h1>
-              {found_token.finbyte?.collection?.map((item, index) => (
-                <Link key={index} href={item.url} target="_blank" className="py-2 px-4 hover:-translate-y-0.5 duration-300 bg-secondary rounded-xl flex w-full justify-between gap-4">
-                  <div className="flex flex-col gap-1">
-                    <h1 className="font-semibold text-sm">
-                      {item.title}
-                    </h1>
-                    <p className="text-xs">
-                      {item.description}
-                    </p>
-                  </div>
-                  <img src={item.image} className="size-10 my-auto"/>
-                </Link>
-              ))}
-
-              <h1 className="font-semibold text-sm opacity-80 pt-2">Follow {found_token.name}</h1>
-              <div className="flex flex-wrap gap-1">
-                {Object.entries(found_token.links).map(([key, value], index) => (
-                  <SocialIcon key={index} name={key} link={value} only_icon={false} />
-                ))}
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <div className="lg:hidden pt-4">
-          <div className="sticky top-20 space-y-2">
-            <h1 className="font-semibold text-sm opacity-80">Discover more from {found_token.name}</h1>
-            {found_token.finbyte?.collection?.map((item, index) => (
-              <Link key={index} href={item.url} target="_blank" className="py-2 px-4 hover:-translate-y-0.5 duration-300 bg-secondary rounded-xl flex w-full justify-between gap-4">
-                <div className="flex flex-col gap-1">
-                  <h1 className="font-semibold text-sm">
-                    {item.title}
-                  </h1>
-                  <p className="text-xs">
-                    {item.description}
-                  </p>
-                </div>
-                <img src={item.image} className="size-10 my-auto" />
-              </Link>
-            ))}
-
-            <h1 className="font-semibold text-sm opacity-80 pt-2">Follow {found_token.name}</h1>
-            <div className="flex flex-wrap gap-1">
-              {Object.entries(found_token.links).map(([key, value], index) => (
-                <SocialIcon key={index} name={key} link={value} only_icon={false} />
-              ))}
-            </div>
-
-          </div>
-        </div>
-      </div>
-      <MobileNavigation />
-    </div>
-  ) : (
-    <LoadingDots/>
+          </>
+        ) : (
+          <LoadingDots />
+        )}
+      </DefaultLayout>
+    </>
   )
 }

@@ -54,7 +54,7 @@ const ProjectsInformation: FC <custom_props> = ({
 
   return (
     <div className="p-4">
-      <h1 className="text-sm text-muted-foreground font-semibold mb-2">
+      <h1 className="text-sm font-semibold mb-2">
         About {token_details.name}
       </h1>
 
@@ -66,13 +66,13 @@ const ProjectsInformation: FC <custom_props> = ({
        * @note we will have to update this if we want to include nft projects as
        * this is just getting the token information
        **/}
-      <h1 className="text-sm text-muted-foreground font-semibold mt-4 mb-2">
+      <h1 className="text-sm font-semibold mt-4 mb-2">
         Core Details
       </h1>
 
       <div className="flex flex-wrap gap-2 items-center justify-center md:w-3/4 md:mx-auto">
         {token_stats.map((item, index) => (
-          <div key={index} onClick={() => copy_to_clipboard(item.data as string)} className="cursor-copy hover:-translate-y-0.5 duration-300 px-4 py-2 flex flex-col min-w-28 bg-secondary rounded-xl">
+          <div key={index} onClick={() => copy_to_clipboard(item.data as string)} className="cursor-copy hover:-translate-y-0.5 duration-300 px-4 py-2 flex flex-col min-w-28 bg-secondary/40 backdrop-blur-lg rounded-xl">
             <h1 className="text-muted-foreground text-xs text-center">
               {item.title}
             </h1>
@@ -84,26 +84,26 @@ const ProjectsInformation: FC <custom_props> = ({
         ))}
       </div>
 
-      <h1 className="text-sm text-muted-foreground font-semibold mt-4 mb-2">
+      <h1 className="text-sm font-semibold mt-4 mb-2">
         On Finbyte
       </h1>
 
       <div className="grid md:grid-cols-2 gap-2 items-start">
         <Card className="p-4 text-center">
-          <div className="font-semibold flex gap-2">
+          <div className="font-semibold flex gap-2 items-center">
             Community Likers:
             <span>
               {community_data?.community_likers?.length.toLocaleString() ?? 0}
             </span>
 
-            <Button variant='secondary' size='icon' className="scale-[90%] ml-auto" disabled={!connected} onClick={attempt_like_unlike_community}>
+            <Button variant='secondary' size='icon' className="scale-[80%] ml-auto" disabled={!connected} onClick={attempt_like_unlike_community}>
               {community_data?.community_likers?.includes(address) ? <HeartCrack /> : <HeartHandshake />}
             </Button>
           </div>
 
-          <div className="flex flex-wrap -space-x-2 p-2">
+          <div className="flex flex-wrap -space-x-2 p-2 mt-2">
             {community_data?.community_likers?.map((liker, index) => (
-              <Avatar key={index} className="size-10 border-2 dark:border-slate-800" title={`${liker.substring(0, 10) + "..." + liker.substring(liker.length - 10)}`}>
+              <Avatar key={index} className="size-8 border-2 dark:border-slate-800" title={`${liker.substring(0, 10) + "..." + liker.substring(liker.length - 10)}`}>
                 <UserAvatar address={liker} />
                 <AvatarFallback>{liker.charAt(0)}</AvatarFallback>
               </Avatar>
@@ -112,13 +112,13 @@ const ProjectsInformation: FC <custom_props> = ({
         </Card>
 
         <Card className="px-4 py-2 flex flex-col gap-2">
-          <h1 className="text-sm text-left font-semibold text-muted-foreground">Engage with ${token_details.token_details.ticker}</h1>
+          <h1 className="text-sm text-left font-semibold">Engage with ${token_details.token_details.ticker}</h1>
 
           <Button variant="outline" size="sm" onClick={change_tab}>
             Community Feed
           </Button>
 
-          <h1 className="mt-2 text-sm text-left font-semibold text-muted-foreground">Support ${token_details.token_details.ticker}</h1>
+          <h1 className="mt-2 text-sm text-left font-semibold">Support ${token_details.token_details.ticker}</h1>
 
           <Button variant="outline" disabled>
             Represent Community

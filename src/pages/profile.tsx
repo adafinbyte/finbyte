@@ -20,6 +20,7 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import DefaultLayout from "@/components/default-layout"
+import Head from "next/head"
 
 export default function Profile() {
   const { address, connected } = useWallet();
@@ -31,7 +32,7 @@ export default function Profile() {
   const get_user_details = async () => {
     const user_details = await fetch_user_data(address);
     if (user_details.error) {
-      toast.error(user_details.error);
+      toast.error('Failed to get User Details.', { description: user_details.error });
       return;
     }
     if (user_details.data) {
@@ -57,6 +58,10 @@ export default function Profile() {
 
   return (
     <>
+      <Head>
+        <title>Profile - Finbyte</title>
+      </Head>
+
       <DefaultLayout right_sidebar={right_sidebar_contents}>
         <div className="flex flex-col gap-4 pb-4">
           <div className="flex gap-2 items-center">
