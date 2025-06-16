@@ -107,6 +107,7 @@ const WalletLoginModal: FC<custom_props> = ({
   };
 
   const handle_file_upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    localStorage.removeItem(FINBYTE_WALLET_NAME);
     const file = e.target.files?.[0];
     if (!file) return;
 
