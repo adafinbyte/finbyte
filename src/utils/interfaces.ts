@@ -72,7 +72,6 @@ export interface finbyte_general_stats {
   forum_posts: number;
   forum_comments: number;
   community_posts: number;
-  finbyte_chats: number;
   total_posts: number;
   likes_given: number;
   unique_users: number;

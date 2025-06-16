@@ -4,6 +4,8 @@ import { finbyte_topics } from "@/utils/consts";
 import { capitalize_first_letter } from "@/utils/common";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { curated_token } from "@/verified/interfaces";
+import SocialIcon from "../social-icons";
 
 interface stat_item { title: string; data: string | number; }
 interface platform_stats_props {
@@ -90,3 +92,42 @@ export const PlatformQuickLinks: FC = ({
     </Card>
   )
 }
+
+interface project_discover_props {
+  token: curated_token | null;
+}
+export const ProjectDiscover: FC <project_discover_props> = ({
+  token
+}) => token && (
+  <div className="flex flex-col gap-1">
+    <h1 className="font-semibold text-sm">Discover more from {token.name}</h1>
+    {token.finbyte?.collection?.map((item, index) => (
+      <Link key={index} href={item.url} target="_blank" className="my-2">
+        <Card className="bg-secondary/20 backdrop-blur-lg p-4 flex gap-4 items-center hover:-translate-y-0.5 duration-300">
+          <div className="flex flex-col gap-1">
+            <h1 className="font-semibold text-sm">
+              {item.title}
+            </h1>
+            <p className="text-xs">
+              {item.description}
+            </p>
+          </div>
+          <img src={item.image} className="size-10 my-auto" />
+        </Card>
+      </Link>
+    ))}
+  </div>
+)
+
+export const ProjectLinks: FC<project_discover_props> = ({
+  token
+}) => token && (
+  <div>
+    <h1 className="font-semibold text-sm mb-2">Follow {token.name}</h1>
+    <div className="flex flex-wrap gap-2" >
+      {Object.entries(token.links).map(([key, value], index) => (
+        <SocialIcon key={index} name={key} link={value} only_icon={false} />
+      ))}
+    </div>
+  </div>
+)
