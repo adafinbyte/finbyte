@@ -30,11 +30,11 @@ export default function MobileNavigation() {
         </Link>
 
         <Link
-          href="/explore"
+          href="/communities"
           className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground"
         >
           <Search className="h-5 w-5" />
-          <span className="text-xs">Explore</span>
+          <span className="text-xs">Communities</span>
         </Link>
 
         <Link
