@@ -1,5 +1,4 @@
 import { FC } from "react";
-import { LoadingDots } from "../loading-dots";
 import { curated_token } from "@/verified/interfaces";
 import { pool_pm_fingerprint } from "@/utils/api/external/pool-pm";
 import { format_long_string, format_unix } from "@/utils/format";
@@ -12,18 +11,20 @@ import { project_community_data } from "@/utils/interfaces";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import UserAvatar from "../user-avatar";
 import { Card } from "../ui/card";
-import { FileWarning, HeartCrack, HeartHandshake, MessageCircleWarning } from "lucide-react";
+import { HeartCrack, HeartHandshake } from "lucide-react";
 
 interface custom_props {
   token_details: curated_token;
   poolpm_fp_data: pool_pm_fingerprint | null;
   community_data: project_community_data | null;
+  transactions_count: number;
   get_community_data: () => Promise<void>;
   change_tab: () => void;
 }
 
 const ProjectsInformation: FC <custom_props> = ({
-  token_details, poolpm_fp_data, community_data, get_community_data, change_tab
+  token_details, poolpm_fp_data, community_data, transactions_count,
+  get_community_data, change_tab
 }) => {
   const { address, connected } = useWallet();
 
@@ -32,6 +33,7 @@ const ProjectsInformation: FC <custom_props> = ({
     { title: "Ticker", data: "$" + token_details.token_details.ticker },
     { title: "Supply", data: token_details.token_details.supply.toLocaleString() },
     { title: "Decimals", data: token_details.token_details.decimals },
+    { title: "Transactions", data: transactions_count.toLocaleString() },
     { title: "Policy", data: token_details.token_details.policy },
     { title: "Fingerprint", data: token_details.token_details.fingerprint },
   ];

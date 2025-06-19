@@ -1,19 +1,19 @@
 import { FC } from "react";
 import { Card } from "../ui/card";
-import { platform_user_details } from "@/utils/interfaces";
-import { copy_to_clipboard } from "@/utils/common";
-import { BookmarkPlus, UserMinus, Users } from "lucide-react";
+import { full_post_data, platform_user_details } from "@/utils/interfaces"
+import { BookmarkPlus, Users } from "lucide-react";
 import FormatAddress from "../format-address";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
-import Link from "next/link";
+import FinbyteMarkdown from "../finbyte-md";
 
 interface custom_props {
   user_details: platform_user_details;
+  bookmarked_posts: full_post_data[];
 }
 
 const ProfileFinbyteStats: FC <custom_props> = ({
-  user_details
+  user_details, bookmarked_posts
 }) => {
   const community_badge = user_details.community_badge ?? 'Not Set';
 
@@ -68,19 +68,15 @@ const ProfileFinbyteStats: FC <custom_props> = ({
       </div>
 
       <ScrollArea>
-        <div className="flex flex-col gap-2 max-h-64 p-2">
-          {user_details.bookmarked_posts?.map((post, index) => (
-            <div key={index} className="flex justify-between items-center w-full p-1 rounded-lg border dark:border-slate-800">
-              <h1 className="font-semibold pl-2">
-                Post ID: {post}
-              </h1>
+        <div className="flex flex-col gap-2 max-h-98 p-2">
+          {bookmarked_posts.map((post, index) => (
+            <Card key={index} className="p-4 bg-secondary/20 text-sm backdrop-blur-lg">
+              <FormatAddress address={post.post.author}/>
 
-              <Link href={'/#' + post}>
-                <Button size='sm'>
-                  View
-                </Button>
-              </Link>
-            </div>
+              <FinbyteMarkdown>
+                {post.post.post}
+              </FinbyteMarkdown>
+            </Card>
           ))}
         </div>
       </ScrollArea>

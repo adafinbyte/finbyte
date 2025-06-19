@@ -4,10 +4,7 @@ import { useWallet } from "@meshsdk/react";
 import { ADA_UNIT, ADAHANDLE_POLICY } from "@/utils/consts";
 import { format_atomic } from "@/utils/format";
 
-
-const ProfileWalletInfo: FC = ({
-
-}) => {
+const ProfileWalletInfo: FC = () => {
   const { address, connected, wallet } = useWallet();
 
   useEffect(() => {

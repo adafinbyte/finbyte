@@ -1,29 +1,60 @@
-import { Dispatch, FC, SetStateAction } from "react"
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react"
 import { Card } from "../ui/card";
 import { finbyte_topics } from "@/utils/consts";
-import { capitalize_first_letter } from "@/utils/common";
+import { capitalize_first_letter, shuffle_array } from "@/utils/common";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { curated_token } from "@/verified/interfaces";
 import SocialIcon from "../social-icons";
+import { Avatar } from "@radix-ui/react-avatar";
+import { AvatarFallback, AvatarImage } from "../ui/avatar";
+import curated_tokens from "@/verified/tokens";
+import { Shuffle } from "lucide-react";
+import { finbyte_general_stats } from "@/utils/interfaces";
+import { fetch_finbyte_general_stats } from "@/utils/api/misc";
+import { toast } from "sonner";
 
-interface stat_item { title: string; data: string | number; }
-interface platform_stats_props {
-  stat_items: stat_item[];
+export const PlatformStats: FC = () => {
+  const [finbyte_stats, set_finbyte_stats] = useState<finbyte_general_stats | null>(null);
+
+  const get_stats = async () => {
+    const finbyte_stats = await fetch_finbyte_general_stats();
+    if (finbyte_stats?.error) {
+      toast.error('Failed to get Finbyte statistics.', { description: finbyte_stats.error });
+      return;
+    }
+    if (finbyte_stats?.data) {
+      set_finbyte_stats(finbyte_stats.data);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    get_stats();
+  }, []);
+
+  interface stat_item { title: string; data: string | number; }
+  const stat_items: stat_item[] = [
+    { title: 'Total Posts', data: finbyte_stats?.total_posts ?? 0 },
+    { title: 'Feed Posts', data: finbyte_stats?.forum_posts ?? 0 },
+    { title: 'Feed Comments', data: finbyte_stats?.forum_comments ?? 0 },
+    { title: 'Community Posts', data: finbyte_stats?.community_posts ?? 0 },
+    { title: 'Unique Users', data: finbyte_stats?.unique_users ?? 0 },
+    { title: 'Interactions', data: finbyte_stats?.interactions ?? 0 },
+  ];
+
+  return (
+    <Card className="bg-secondary/20 backdrop-blur-lg space-y-2 p-4">
+      <h1 className="font-semibold text-sm">Platform Stats</h1>
+      {stat_items.map((item, index) => (
+        <div key={index}>
+          <h1 className="text-xs font-semibold text-muted-foreground">{item.title}</h1>
+          <p className="text-base">{item.data}</p>
+        </div>
+      ))}
+    </Card>
+  )
 }
-export const PlatformStats: FC <platform_stats_props> = ({
-  stat_items
-}) => (
-  <Card className="space-y-2 p-4">
-    <h1 className="font-semibold text-sm">Platform Stats</h1>
-    {stat_items.map((item, index) => (
-      <div key={index}>
-        <h1 className="text-xs font-semibold text-muted-foreground">{item.title}</h1>
-        <p className="text-base">{item.data}</p>
-      </div>
-    ))}
-  </Card>
-)
 
 interface platform_topics_props {
   set_topic: Dispatch<SetStateAction<string | null>>;
@@ -34,7 +65,7 @@ export const PlatformTopics: FC <platform_topics_props> = ({
   set_topic, topic, topic_counts
 }) => {
   return (
-    <Card className="space-y-2 p-4">
+    <Card className="bg-secondary/20 backdrop-blur-lg space-y-2 p-4">
       <h1 className="font-semibold text-sm">Feed Topics</h1>
       <div className="space-y-2">
         <Button
@@ -73,7 +104,7 @@ export const PlatformQuickLinks: FC = ({
   ];
 
   return (
-    <Card className="space-y-2 p-4">
+    <Card className="bg-secondary/20 backdrop-blur-lg space-y-2 p-4">
       <h1 className="font-semibold text-sm">Quick Links</h1>
       <ol className="list-disc list-inside space-y-1 text-sm">
         {quick_links.map((link, index) => (
@@ -131,3 +162,35 @@ export const ProjectLinks: FC<project_discover_props> = ({
     </div>
   </div>
 )
+
+export const CuratedTokens: FC = () => {
+  const [randomised_tokens, set_randomised_tokens] = useState(
+    () => shuffle_array(curated_tokens).slice(0, 10)
+  );
+
+  const randomise = () => {
+    set_randomised_tokens(shuffle_array(curated_tokens).slice(0, 10));
+  };
+
+  return (
+    <Card className="bg-secondary/20 backdrop-blur-lg p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="font-semibold text-sm">Discover Tokens</h1>
+        <Button variant='ghost' size='icon' className="scale-[90%]" onClick={randomise}>
+          <Shuffle/>
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-2 items-center justify-center">
+        {randomised_tokens.map((token, index) => (
+          <Link key={index} href={'/projects/' + token.slug_id} className="hover:-translate-y-0.5 duration-300">
+            <Avatar title={token.name}>
+              <AvatarImage className="size-10 rounded-xl" src={token.images.logo} />
+              <AvatarFallback>{token.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+          </Link>
+        ))}
+      </div>
+    </Card>
+  )
+}

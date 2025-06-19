@@ -4,12 +4,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
 import { like_unlike_post } from "@/utils/api/posts/push";
-import { get_timestamp } from "@/utils/common";
 import { format_unix } from "@/utils/format";
 import { community_post_data } from "@/utils/interfaces";
 import { post_type } from "@/utils/types";
 import { useWallet } from "@meshsdk/react";
-import { HandCoins, Heart, Share2 } from "lucide-react";
+import { HandCoins, Heart } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
 

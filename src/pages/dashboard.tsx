@@ -17,7 +17,7 @@ import { useWallet } from "@meshsdk/react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import DefaultLayout from "@/components/default-layout"
-import { PlatformQuickLinks, PlatformStats, PlatformTopics } from "@/components/default-layout/right-sidebar"
+import { CuratedTokens, PlatformQuickLinks, PlatformStats, PlatformTopics } from "@/components/default-layout/right-sidebar"
 import Head from "next/head"
 import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
@@ -85,6 +85,7 @@ export default function Home() {
   const right_sidebar_contents = (
     <>
       <PlatformQuickLinks />
+      <CuratedTokens />
     </>
   )
 

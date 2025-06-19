@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
-import { Bell, Home, Plus, Search, Settings, User } from "lucide-react"
+import { Home, Plus, Search, Settings, User } from "lucide-react"
 import { useWallet } from "@meshsdk/react"
 
 export default function MobileNavigation() {
