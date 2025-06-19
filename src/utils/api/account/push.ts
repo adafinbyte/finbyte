@@ -1,6 +1,7 @@
 import { databases } from "@/utils/consts";
 import { supabase } from "../secrets";
 import { create_notification } from "../misc";
+import { account_kudos_action } from "@/utils/types";
 
 interface bookmarked_post_return { error?: string; done?: boolean }
 export const bookmarked_post = async (
@@ -81,6 +82,22 @@ export const follow_user = async (
     const noti = await create_notification('user:follow/unfollow', null, address);
     if (noti.error) { return { error: noti.error } }
     return { done: true }
-    //noti
   }
+};
+
+/** type safe helper to call rpc */
+export const adjust_account_kudos = async ({
+  user_addr,
+  author_addr,
+  action_type,
+}: {
+  user_addr: string;
+  author_addr: string | null;
+  action_type: account_kudos_action;
+}) => {
+  return supabase.rpc('adjust_kudos', {
+    user_addr,
+    author_addr,
+    action_type,
+  });
 };

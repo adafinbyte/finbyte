@@ -103,7 +103,7 @@ export const ProjectDiscover: FC <project_discover_props> = ({
     <h1 className="font-semibold text-sm">Discover more from {token.name}</h1>
     {token.finbyte?.collection?.map((item, index) => (
       <Link key={index} href={item.url} target="_blank" className="my-2">
-        <Card className="bg-secondary/20 backdrop-blur-lg p-4 flex gap-4 items-center hover:-translate-y-0.5 duration-300">
+        <Card className="bg-secondary/20 backdrop-blur-lg p-4 flex justify-between gap-4 items-center hover:-translate-y-0.5 duration-300">
           <div className="flex flex-col gap-1">
             <h1 className="font-semibold text-sm">
               {item.title}

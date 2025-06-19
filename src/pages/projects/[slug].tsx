@@ -104,6 +104,8 @@ export default function Home() {
     /** @note connecting doesnt instantly get the address, wait until we have it */
     if (connected && address) {
       get_user_details();
+    } else {
+      set_connected_user_details(null);
     }
   }, [connected, found_token]);
 

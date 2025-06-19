@@ -18,7 +18,7 @@ const predefined_wallets: Omit<WalletInformation, 'is_installed'>[] = [
   {
     name: 'begin',
     url: 'https://begin.is/',
-    img: 'https://play-lh.googleusercontent.com/X3MDLub2TEq8-zVVWfx5if8X7vZtQ7kz2QwV8BMCbPLMk-blvJ_kSw3R4ehI1X4S-ERG',
+    img: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/21/ee/ef/21eeef00-115a-ce49-6a1b-40ba99004478/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/512x512bb.jpg',
   },
   {
     name: 'eternl',
@@ -27,7 +27,7 @@ const predefined_wallets: Omit<WalletInformation, 'is_installed'>[] = [
   },
   {
     name: 'lace',
-    url: '',
+    url: 'https://www.lace.io/',
     img: 'https://fluidtokens.com/assets/images/dapps/lace.svg'
   },
   {

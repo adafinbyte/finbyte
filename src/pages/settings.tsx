@@ -46,7 +46,8 @@ export default function Profile() {
       get_user_details();
     }
     if (!connected) {
-      router.push('/')
+      set_connected_user_details(null);
+      router.push('/');
     }
   }, [connected, address]);
 

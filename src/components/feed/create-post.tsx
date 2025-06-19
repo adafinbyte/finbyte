@@ -17,12 +17,13 @@ import { finbyte_topics } from "@/utils/consts";
 interface custom_props {
   post_type: post_type;
   post_id: number | undefined;
+  post_author: string | undefined;
   on_create: () => Promise<void>;
   token_slug: string | undefined;
 }
 
 const CreateFeedPost: FC <custom_props> = ({
-  post_type, post_id, on_create, token_slug
+  post_type, post_id, post_author, on_create, token_slug
 }) => {
   const { address, connected } = useWallet();
   const [chosen_topic, set_chosen_topic] = useState("General");
@@ -37,9 +38,12 @@ const CreateFeedPost: FC <custom_props> = ({
 
     const post_timestamp = get_timestamp();
 
-    const handle_post_creation = async (post_data: create_feed_post | create_feed_comment | create_community_post) => {
+    const handle_post_creation = async (
+      post_data: create_feed_post | create_feed_comment | create_community_post,
+      author_address: string | undefined
+    ) => {
       try {
-        const post_creation = await create_post(post_data, post_type);
+        const post_creation = await create_post(post_data, post_type, author_address);
         if (post_creation.error) {
           toast.error(post_creation.error);
           return;
@@ -60,7 +64,7 @@ const CreateFeedPost: FC <custom_props> = ({
         token_slug,
         post_timestamp
       }
-      await handle_post_creation(post_data);
+      await handle_post_creation(post_data, undefined);
     }
     if (post_type === 'feed_post') {
       const post_data: create_feed_post = {
@@ -69,7 +73,7 @@ const CreateFeedPost: FC <custom_props> = ({
         post: create_post_input,
         post_timestamp,
       };
-      await handle_post_creation(post_data);
+      await handle_post_creation(post_data, post_author);
     } else if (post_type === 'feed_comment' && post_id) {
       const post_data: create_feed_comment = {
         author: address,
@@ -77,7 +81,7 @@ const CreateFeedPost: FC <custom_props> = ({
         comment_timestamp: post_timestamp,
         post_id,
       };
-      await handle_post_creation(post_data);
+      await handle_post_creation(post_data, undefined);
     }
   };
 

@@ -49,7 +49,7 @@ export const check_user_on_login = async (address: string): Promise<check_user_o
 
   const { error: nue } = await supabase
     .from(databases.accounts)
-    .insert({ address: address, badges: badges })
+    .insert({ address: address, badges: badges, f_timestamp: get_timestamp() })
     .select()
     .single();
 
@@ -85,3 +85,8 @@ export const create_notification = async (
   if (error) { return { error: error.message } }
   return { done: true }
 };
+
+/**
+ * @todo
+ * delete post
+ */
