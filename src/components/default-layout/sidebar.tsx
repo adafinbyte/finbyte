@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Bell, Bookmark, Home, MessageSquare, PlugZap, Search, Settings, Unplug, User, Users } from "lucide-react"
+import { Home, PlugZap, Settings, Unplug, User, Users } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { useWallet } from "@meshsdk/react"

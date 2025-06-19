@@ -116,6 +116,47 @@ const curated_tokens: curated_token[] = [
     },
   },
   {
+    slug_id: 'catsky',
+    name: 'Catsky AI',
+    hex: '434154534b59',
+    description: `
+      Catsky AI is what happens when you combine Cat Memes, Artificial Intelligence, and Cardano to building innovative AI enabled tools and services.
+    `,
+    category: 'AI',
+    token_details: {
+      ticker: 'CATSKY',
+      policy: '9b426921a21f54600711da0be1a12b026703a9bd8eb9848d08c9d921',
+      fingerprint: 'asset18zpauqujk3cu9cypneh8t7l46wmrwa5klmslnm',
+      supply: 999999999997,
+      decimals: 0,
+    },
+    images: {
+      logo: "https://pbs.twimg.com/profile_images/1889133863382712320/WfhhLK9T_400x400.jpg",
+      header: "https://pbs.twimg.com/profile_banners/1651627976759341056/1689021631/1500x500"
+    },
+    links: {
+      discord:  "https://discord.gg/JTH8WZfnM3",
+      x: "https://x.com/Catskycrypto",
+      website:  "https://catsky.io/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'Purfessor Catsky: Your AI Guide to Cardano!',
+          image: 'https://chat.catsky.io/_next/image?url=%2Fprofessor.png&w=384&q=75',
+          url: 'https://chat.catsky.io/',
+          description: 'Purfessor Catsky is an AI-powered learning assistant designed to make understanding the Cardano blockchain easy and engaging. This interactive tool combines advanced AI technology with a user-friendly interface to provide clear, concise explanations tailored to both beginners and advanced users.'
+        },
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.b5200ecdc38ecb2e5fb138ecb5ac74f93d95890253126302f1e9c27527798333?rankBy=mcap&order=desc&minLiq=10000&minHolders=100&mcapCustomFilters=true',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
+  },
+  {
     slug_id: 'sugr',
     name: 'Sugar Bush',
     hex: '53554741522042555348',
@@ -159,41 +200,160 @@ const curated_tokens: curated_token[] = [
     },
   },
   {
-    slug_id: 'catsky',
-    name: 'Catsky AI',
-    hex: '434154534b59',
+    slug_id: 'starch',
+    name: 'Starch',
+    hex: '53746172636820546f6b656e',
     description: `
-      Catsky AI is what happens when you combine Cat Memes, Artificial Intelligence, and Cardano to building innovative AI enabled tools and services.
+      First minable native token on Cardano. Mine STRCH, to get tokens and support Starch Pool.
     `,
-    category: 'AI',
+    category: 'Layer 2',
     token_details: {
-      ticker: 'CATSKY',
-      policy: '9b426921a21f54600711da0be1a12b026703a9bd8eb9848d08c9d921',
-      fingerprint: 'asset18zpauqujk3cu9cypneh8t7l46wmrwa5klmslnm',
-      supply: 999999999997,
+      ticker: 'STRCH',
+      policy: '3d77d63dfa6033be98021417e08e3368cc80e67f8d7afa196aaa0b39',
+      fingerprint: 'asset1klefxla6wpfx4a924hctj7s6yc9ypy26n0lzxv',
+      supply: 43000000000000,
       decimals: 0,
     },
     images: {
-      logo: "https://pbs.twimg.com/profile_images/1889133863382712320/WfhhLK9T_400x400.jpg",
-      header: "https://pbs.twimg.com/profile_banners/1651627976759341056/1689021631/1500x500"
+      logo: "https://coin-images.coingecko.com/coins/images/34545/large/STRCHlogo.png?1705340645",
+      header: "https://pbs.twimg.com/profile_banners/1893290120499077120/1740230690/1500x500"
     },
     links: {
-      discord:  "https://discord.gg/JTH8WZfnM3",
-      x: "https://x.com/Catskycrypto",
-      website:  "https://catsky.io/",
+      discord: "https://discord.com/invite/j2pxQPMF9H",
+      x: "https://twitter.com/StratumOakmont",
+      website:  "https://starch.one/",
     },
     finbyte: {
       collection: [
         {
-          title: 'Purfessor Catsky: Your AI Guide to Cardano!',
-          image: 'https://chat.catsky.io/_next/image?url=%2Fprofessor.png&w=384&q=75',
-          url: 'https://chat.catsky.io/',
-          description: 'Purfessor Catsky is an AI-powered learning assistant designed to make understanding the Cardano blockchain easy and engaging. This interactive tool combines advanced AI technology with a user-friendly interface to provide clear, concise explanations tailored to both beginners and advanced users.'
+          title: 'Mint $STRCH Miner',
+          image: 'https://coin-images.coingecko.com/coins/images/34545/large/STRCHlogo.png?1705340645',
+          url: 'https://starch.one/mint',
+          description: 'Start mining $STRCH today by minting your very own miner.'
         },
         {
           title: 'View on TapTools',
           image: thirdparty_logos.taptools,
-          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.b5200ecdc38ecb2e5fb138ecb5ac74f93d95890253126302f1e9c27527798333?rankBy=mcap&order=desc&minLiq=10000&minHolders=100&mcapCustomFilters=true',
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.30a69428cbd214c5b1dd051e3e3a862f9eac76378358736498d1797c69904a01',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
+  },
+  {
+    slug_id: 'strike',
+    name: 'Strike Finance',
+    hex: '535452494b45',
+    description: `
+      The Derivatives Protocol that Cardano Deserves.
+      An open-source, user-friendly derivatives protocol.
+    `,
+    category: 'Derivatives',
+    token_details: {
+      ticker: 'STRIKE',
+      policy: 'f13ac4d66b3ee19a6aa0f2a22298737bd907cc95121662fc971b5275',
+      fingerprint: 'asset1tdalpjgjmt2vrhq9fvwzxqgqcq8ydr7e7e0eta',
+      supply: 25000000,
+      decimals: 6,
+    },
+    images: {
+      logo: "https://pbs.twimg.com/profile_images/1896810403008745472/ln9biDwj_400x400.jpg",
+      header: "https://pbs.twimg.com/profile_banners/1796407872877940737/1741025894/1500x500"
+    },
+    links: {
+      discord: "https://discord.com/invite/SjH4NDeEGq",
+      x: "https://x.com/strikecardano",
+      website: "https://app.strikefinance.org/",
+      github: 'https://github.com/orgs/strike-finance/repositories'
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'Stake $STRIKE',
+          image: 'https://pbs.twimg.com/profile_images/1896810403008745472/ln9biDwj_400x400.jpg',
+          url: 'https://beta.strikefinance.org/staking',
+          description: 'By staking STRIKE tokens you will be able to earn revenue generated by the platform. 100% of the revenue will be distributed to stakers. Rewards are given out every 3 epoch and you must be staked the entire time to receieve rewards.'
+        },
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/strike',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
+  },
+  {
+    slug_id: 'chad',
+    name: 'Charles the Chad',
+    hex: '436861726c6573207468652043686164',
+    description: `
+      Born from the relentless mockery of Charles Hoskinson, Charles the Chad rose as the ultimate avenger.
+    `,
+    category: 'Meme',
+    token_details: {
+      ticker: 'CHAD',
+      policy: '97075bf380e65f3c63fb733267adbb7d42eec574428a754d2abca55b',
+      fingerprint: 'asset1dmqr7kzjw07c4n5c00df0e30nf8l38n4awxwhv',
+      supply: 1000000000,
+      decimals: 0,
+    },
+    images: {
+      logo: "https://pbs.twimg.com/profile_images/1861339837577523200/bT56HlQH_400x400.jpg",
+      header: "https://pbs.twimg.com/profile_banners/1656641036226121732/1732612974/1500x500"
+    },
+    links: {
+      discord: "https://discord.gg/BCpFUz9Xhs",
+      x: "https://x.com/charles_thechad",
+      website: "https://charlesthechad.com/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'Chadswap',
+          image: 'https://pbs.twimg.com/profile_images/1903026989088509956/-AJ0I9l7_400x400.jpg',
+          url: 'https://chadswap.com/',
+          description: 'Trade tokens effortlessly with ChadSwap, the most seamless, secure, and intuitive trading experience around.'
+        },
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/d8eb52caf3289a2880288b23141ce3d2a7025dcf76f26fd5659add06.7b22d6b425593f22941a8d850a35187051be4acfafa9059ea8a301e6fe42880c',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
+  },
+  {
+    slug_id: 'nuvola',
+    name: 'Nuvola Digital',
+    hex: '4e564c',
+    description: `
+      Nuvola Digital is a DePIN aggregator, allowing access to revenue share models to the public.
+    `,
+    category: 'DePIN',
+    token_details: {
+      ticker: 'CHAD',
+      policy: '5b26e685cc5c9ad630bde3e3cd48c694436671f3d25df53777ca60ef',
+      fingerprint: 'asset1jle4pt4cg8264ypx4u45vt99haa6ty3t7naxer',
+      supply: 21000000,
+      decimals: 6,
+    },
+    images: {
+      logo: "https://pbs.twimg.com/profile_images/1773720958273998849/WFzPqr1I_400x400.jpg",
+      header: "https://pbs.twimg.com/profile_banners/1766705384616566784/1711723468/1500x500"
+    },
+    links: {
+      discord: "https://discord.gg/nuvola",
+      x: "https://twitter.com/NuvolaDigital",
+      website: "https://www.nuvoladigital.io/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/nvl',
           description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
         },
       ],

@@ -2,8 +2,7 @@ import { FC } from "react";
 import { Card } from "../ui/card";
 import { platform_user_details } from "@/utils/interfaces";
 import { copy_to_clipboard } from "@/utils/common";
-import { BookmarkPlus, UserMinus, Users } from "lucide-react";
-import FormatAddress from "../format-address";
+import { UserMinus } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface custom_props {

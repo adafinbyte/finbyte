@@ -2,10 +2,9 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Bell, Home, Menu, MessageSquare, Moon, PlugZap, Search, Sun, Unplug, User, X } from "lucide-react"
+import { Home, Menu, Moon, PlugZap, Search, Sun, Unplug } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useDarkMode } from "@/hooks/use-dark-mode"
 import { useWallet } from "@meshsdk/react"
@@ -37,6 +36,24 @@ export default function TopNavigation() {
             </div>
             <span className="hidden md:inline-block text-lg">Finbyte</span>
           </Link>
+        </div>
+
+        <div className="ml-auto flex items-center gap-2">
+          <Button onClick={toggleTheme} variant="ghost" size="icon">
+            {isDark ? <Sun/> : <Moon/>}
+          </Button>
+
+          {connected ?
+            <Button onClick={handle_disconnect_wallet} variant="ghost" size="icon">
+              <Unplug className="h-5 w-5" />
+              <span className="sr-only">Disconnect</span>
+            </Button>
+            :
+            <Button onClick={() => set_wallet_login_open(true)} variant="ghost" size="icon">
+              <PlugZap className="h-5 w-5" />
+              <span className="sr-only">Connect</span>
+            </Button>
+          }
 
           <Sheet>
             <SheetTrigger asChild>
@@ -49,7 +66,7 @@ export default function TopNavigation() {
               <div className="flex flex-col gap-4 py-6">
                 <Link href="/" className="flex items-center gap-2 font-semibold">
                   <div className="h-8 w-8 rounded-full text-center text-lg font-bold leading-8 text-primary-foreground">
-                    <img src='/finbyte.png'/>
+                    <img src='/finbyte.png' />
                   </div>
                   <span>Finbyte</span>
                 </Link>
@@ -94,53 +111,6 @@ export default function TopNavigation() {
               </div>
             </SheetContent>
           </Sheet>
-        </div>
-
-        {
-          /**
-           * 
-        <div className="hidden flex-1 items-center justify-center md:flex">
-          <div className="relative w-full max-w-md">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search Finbyte..."
-              className="w-full rounded-full bg-muted pl-8 md:w-[300px] lg:w-[600px]"
-            />
-          </div>
-        </div>
-           */
-        }
-
-        <div className="ml-auto flex items-center gap-2">
-          <Link href={'/explore'}>
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsSearchOpen(!isSearchOpen)}>
-              <Search className="h-5 w-5" />
-            </Button>
-          </Link>
-
-          {
-            /**
-          <Button variant="ghost" size="icon">
-            <img src='/fintern.jpg' className="h-6 w-6 rounded-full" />
-          </Button>
-             * 
-             */
-          }
-          <Button onClick={toggleTheme} variant="ghost" size="icon">
-            {isDark ? <Sun/> : <Moon/>}
-          </Button>
-          {connected ?
-            <Button onClick={handle_disconnect_wallet} variant="ghost" size="icon">
-              <Unplug className="h-5 w-5" />
-              <span className="sr-only">Disconnect</span>
-            </Button>
-            :
-            <Button onClick={() => set_wallet_login_open(true)} variant="ghost" size="icon">
-              <PlugZap className="h-5 w-5" />
-              <span className="sr-only">Connect</span>
-            </Button>
-          }
         </div>
       </div>
 

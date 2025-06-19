@@ -1,32 +1,26 @@
 
 import FormatAddress from "@/components/format-address"
 import { LoadingDots } from "@/components/loading-dots"
-import MobileNavigation from "@/components/default-layout/mobile-navigation"
-import ProfileAdminPanel from "@/components/profile/admin-panel"
 import ProfileFinbyteStats from "@/components/profile/finbyte-stats"
-import ProfileWalletInfo from "@/components/profile/wallet-info"
-import Sidebar from "@/components/default-layout/sidebar"
-import TopNavigation from "@/components/default-layout/top-navigation"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Card } from "@/components/ui/card"
 import UserAvatar from "@/components/user-avatar"
 import { fetch_user_data } from "@/utils/api/account/fetch"
-import { capitalize_first_letter, copy_to_clipboard } from "@/utils/common"
-import { moderation_addresses } from "@/utils/consts"
-import { platform_user_details } from "@/utils/interfaces"
+import { capitalize_first_letter } from "@/utils/common"
+import { full_post_data, platform_user_details } from "@/utils/interfaces"
 import { useWallet } from "@meshsdk/react"
-import { BookmarkPlus, UserMinus, Users } from "lucide-react"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import DefaultLayout from "@/components/default-layout"
 import Head from "next/head"
+import { fetch_single_feed_post } from "@/utils/api/posts/fetch"
 
 export default function Profile() {
   const { address, connected } = useWallet();
   const router = useRouter();
 
   const [connected_user_details, set_connected_user_details] = useState<platform_user_details | null>(null);
+  const [bookmarked_posts_data, set_bookmarked_posts_data] = useState<full_post_data[]>([]);
 
   const get_user_details = async () => {
     const user_details = await fetch_user_data(address);
@@ -42,14 +36,30 @@ export default function Profile() {
   useEffect(() => {
     if (connected && address) {
       get_user_details();
+      get_bookmarked_posts();
     }
     if (!connected) {
       set_connected_user_details(null);
+      set_bookmarked_posts_data([]);
       router.push('/');
     }
   }, [connected, address]);
 
-  const get_bookmarked_posts = async () => { }
+  const get_bookmarked_posts = async () => {
+    if (!connected_user_details?.bookmarked_posts) { return; }
+
+    const fetches = await Promise.all(
+      connected_user_details.bookmarked_posts.map(post_id =>
+        fetch_single_feed_post(post_id)
+      )
+    );
+
+    const successful_posts = fetches
+      .filter(result => result.data)
+      .map(result => result.data as full_post_data);
+
+    set_bookmarked_posts_data(successful_posts);
+  }
 
   const right_sidebar_contents = (
     <>
@@ -86,6 +96,7 @@ export default function Profile() {
         {connected_user_details ?
           <ProfileFinbyteStats
             user_details={connected_user_details}
+            bookmarked_posts={bookmarked_posts_data}
           />
           :
           <LoadingDots />

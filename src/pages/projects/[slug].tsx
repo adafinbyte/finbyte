@@ -1,11 +1,7 @@
 
 import { LoadingDots } from "@/components/loading-dots"
-import MobileNavigation from "@/components/default-layout/mobile-navigation"
 import ProjectsCommunityFeed from "@/components/projects/community-board/community-feed"
 import ProjectsInformation from "@/components/projects/project-info"
-import Sidebar from "@/components/default-layout/sidebar"
-import SocialIcon from "@/components/social-icons"
-import TopNavigation from "@/components/default-layout/top-navigation"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { fetch_user_data } from "@/utils/api/account/fetch"
@@ -16,13 +12,13 @@ import { community_post_data, platform_user_details, project_community_data } fr
 import { curated_token } from "@/verified/interfaces"
 import curated_tokens from "@/verified/tokens"
 import { useWallet } from "@meshsdk/react"
-import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import DefaultLayout from "@/components/default-layout"
 import { ProjectDiscover, ProjectLinks } from "@/components/default-layout/right-sidebar"
 import Head from "next/head"
+import { fetch_transaction_count_for_asset } from "@/utils/api/external/cardanoscan"
 
 export default function Home() {
   const { address, connected } = useWallet();
@@ -35,6 +31,7 @@ export default function Home() {
   const [community_data, set_community_data] = useState<project_community_data | null>(null);
   const [community_posts, set_community_posts] = useState<community_post_data[] | null>(null);
   const [poolpm_fp_data, set_poolpm_fp_data] = useState<pool_pm_fingerprint | null>(null);
+  const [token_transactions_count, set_token_transactions_count] = useState<number>(0);
 
   useEffect(() => {
     const slug_id = router.asPath.split('/').pop();
@@ -93,12 +90,29 @@ export default function Home() {
     set_refreshing_state(false);
   }
 
+  const get_tx_count = async () => {
+    if (!found_token) { return; }
+    if (!found_token.token_details.policy) { return; }
+    /** @note Finbyte is a preprod token so it will return 0 on the api */
+    if (found_token.name === 'Finbyte') { return; }
+
+    const transaction_count = await fetch_transaction_count_for_asset(found_token.token_details.policy);
+    if (transaction_count.error) {
+      toast.error(transaction_count.error);
+      return;
+    }
+    if (transaction_count.data) {
+      set_token_transactions_count(transaction_count.data);
+    }
+  }
+
   useEffect(() => {
     get_pool_pm_details();
 
     if (found_token) {
       get_community_data();
       get_community_posts();
+      get_tx_count();
     }
 
     /** @note connecting doesnt instantly get the address, wait until we have it */
@@ -158,6 +172,7 @@ export default function Home() {
                     community_data={community_data}
                     get_community_data={get_community_data}
                     change_tab={() => set_current_tab('community_feed')}
+                    transactions_count={token_transactions_count}
                   />
                 )}
 

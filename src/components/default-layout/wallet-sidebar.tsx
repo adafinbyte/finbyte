@@ -1,7 +1,7 @@
 import { useWallet } from "@meshsdk/react";
 import { FC, useEffect, useState } from "react";
 import { Card } from "../ui/card";
-import { Check, Copy } from "lucide-react";
+import { Copy } from "lucide-react";
 import { format_atomic } from "@/utils/format";
 import FormatAddress from "../format-address";
 import { Button } from "../ui/button";

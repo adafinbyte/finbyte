@@ -1,14 +1,14 @@
-import { comment_post_data, full_post_data, platform_user_details } from "@/utils/interfaces";
+import { full_post_data, platform_user_details } from "@/utils/interfaces";
 import { FC, useEffect, useState } from "react";
 import UserAvatar from "../user-avatar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import FormatAddress from "../format-address";
-import { format_long_string, format_unix } from "@/utils/format";
+import { format_unix } from "@/utils/format";
 import { Button } from "../ui/button";
 import { BookmarkPlus, HandCoins, Heart, MessageCircle, MoreHorizontal, Share2 } from "lucide-react";
 import FinbyteMarkdown from "../finbyte-md";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { capitalize_first_letter, copy_to_clipboard, get_timestamp } from "@/utils/common";
+import { capitalize_first_letter, copy_to_clipboard } from "@/utils/common";
 import CreateFeedPost from "./create-post";
 import { useWallet } from "@meshsdk/react";
 import { moderation_addresses } from "@/utils/consts";
@@ -19,7 +19,6 @@ import PostLikersModal from "../modals/post-likers";
 import FeedComment from "./comment";
 import { bookmarked_post, follow_user, mute_user } from "@/utils/api/account/push";
 import SharePostModal from "../modals/share-post";
-import { useRouter } from "next/router";
 
 interface custom_props {
   feed_post: full_post_data;
@@ -69,6 +68,7 @@ export const generate_options = ({
 
 const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, user_details }) => {
   const { address, connected } = useWallet();
+  const is_spam = feed_post.post.topic === 'spam';
 
   const [post_ui, set_post_ui] = useState({
     show_comments: false,
@@ -79,8 +79,6 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
 
   useEffect(() => {
     if (!feed_post || !user_details) return;
-
-    const is_spam = feed_post.post.topic === 'spam';
     const is_muted = user_details.muted.includes(feed_post.post.author);
     const should_hide = is_spam || is_muted;
 
@@ -205,13 +203,19 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
     });
   };
 
-  if (post_ui.hidden_post) {
+  if (post_ui.hidden_post || is_spam) {
     return (
       <div id={feed_post.post.id.toString()} className="w-full bg-secondary/20 backdrop-blur-lg p-4 flex flex-col text-center">
         <div>
           <h1 className="text-muted-foreground text-sm">
-            This post has been hidden.
+            This post is hidden.
           </h1>
+
+          {is_spam && (
+            <h1 className="text-muted-foreground text-sm">
+              This post has been marked as spam.
+            </h1>
+          )}
 
           {user_details?.muted?.includes(feed_post.post.author) && (
             <h1 className="text-muted-foreground text-sm">
