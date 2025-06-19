@@ -27,7 +27,6 @@ export default function Profile() {
   const router = useRouter();
 
   const [connected_user_details, set_connected_user_details] = useState<platform_user_details | null>(null);
-  const [refreshing_state, set_refreshing_state] = useState(false);
 
   const get_user_details = async () => {
     const user_details = await fetch_user_data(address);
@@ -45,7 +44,8 @@ export default function Profile() {
       get_user_details();
     }
     if (!connected) {
-      router.push('/')
+      set_connected_user_details(null);
+      router.push('/');
     }
   }, [connected, address]);
 

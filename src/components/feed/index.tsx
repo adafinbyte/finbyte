@@ -37,7 +37,7 @@ const FinbyteFeed: FC <custom_props> = ({
 
   return (
     <div className="space-y-4">
-      <CreateFeedPost post_type='feed_post' post_id={undefined} on_create={get_posts} token_slug={undefined}/>
+      <CreateFeedPost post_type='feed_post' post_id={undefined} post_author={undefined} on_create={get_posts} token_slug={undefined}/>
 
       <Card className="overflow-hidden">
         <CardHeader className="p-4 pb-2">

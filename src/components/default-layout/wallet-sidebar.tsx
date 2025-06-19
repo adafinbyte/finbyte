@@ -1,10 +1,10 @@
 import { useWallet } from "@meshsdk/react";
 import { FC, useEffect, useState } from "react";
-import { Card } from "./ui/card";
+import { Card } from "../ui/card";
 import { Check, Copy } from "lucide-react";
 import { format_atomic } from "@/utils/format";
-import FormatAddress from "./format-address";
-import { Button } from "./ui/button";
+import FormatAddress from "../format-address";
+import { Button } from "../ui/button";
 import { copy_to_clipboard } from "@/utils/common";
 
 
@@ -13,7 +13,10 @@ const WalletSidebar: FC = () => {
 
   interface connected_wallet {
     network_id: number;
-    balances: number[];
+    lovelace: number;
+    preprod_balance: {
+      tfin: number;
+    }
   }
 
   const [wallet_details, set_wallet_details] = useState<connected_wallet | null>(null);
@@ -24,22 +27,25 @@ const WalletSidebar: FC = () => {
     const network_id = await wallet.getNetworkId();
     const lovelaces = await wallet.getLovelace();
     const format_lovelace = format_atomic(6, Number(lovelaces));
-    const balnce = await wallet.getBalance();
-    const owned_tfin = balnce.find(a => a.unit.includes('37524129746446a5a55da896fe5379508244ea85e4c140156badbdc6'));
+    const balance = await wallet.getBalance();
+    const owned_tfin = balance.find(a => a.unit.includes('37524129746446a5a55da896fe5379508244ea85e4c140156badbdc6'));
     const format_tfin = format_atomic(4, Number(owned_tfin?.quantity));
 
     const data: connected_wallet = {
       network_id,
-      balances: [Number(format_lovelace), Number(format_tfin) ]
+      lovelace: Number(format_lovelace),
+      preprod_balance: {
+        tfin: Number(format_tfin),
+      },
     }
     set_wallet_details(data);
   }
 
-  const wallet_balances = [
-    { 
-      title: '$tFIN: ƒ',
-      data: wallet_details?.balances[1] ? (() => {
-        const supply = wallet_details.balances[1];
+  const preprod_wallet_balances = [
+    {
+      title: '$tFIN: tƒ',
+      data: wallet_details?.preprod_balance.tfin ? (() => {
+        const supply = wallet_details.preprod_balance.tfin;
         const [intPart, decPart] = supply.toLocaleString(undefined, { minimumFractionDigits: 4 }).split('.');
         return (
           <span>
@@ -48,11 +54,26 @@ const WalletSidebar: FC = () => {
           </span>
         );
       })() : 0
-     },
+    },
     {
       title: '$tADA: t₳',
-      data: wallet_details?.balances[0] ? (() => {
-        const supply = wallet_details.balances[0];
+      data: wallet_details?.lovelace ? (() => {
+        const supply = wallet_details.lovelace;
+        const [intPart, decPart] = supply.toLocaleString(undefined, { minimumFractionDigits: 6 }).split('.');
+        return (
+          <span>
+            {intPart}.
+            <span className="text-muted-foreground text-sm">{decPart}</span>
+          </span>
+        );
+      })() : 0,
+    },
+  ];
+  const mainnet_wallet_balances = [
+    {
+      title: '$ADA: ₳',
+      data: wallet_details?.lovelace ? (() => {
+        const supply = wallet_details.lovelace;
         const [intPart, decPart] = supply.toLocaleString(undefined, { minimumFractionDigits: 6 }).split('.');
         return (
           <span>
@@ -67,6 +88,8 @@ const WalletSidebar: FC = () => {
   useEffect(() => {
     if (connected && address) {
       get_connected_wallet_details();
+    } else {
+      set_wallet_details(null);
     }
   }, [connected, address]);
 
@@ -86,25 +109,31 @@ const WalletSidebar: FC = () => {
           </div>
 
           <h1 className="text-xs mt-2">
-            Wallet Network ID
+            Network ID
           </h1>
 
           <h1>
             {wallet_details?.network_id === 0 ? 'Preprod' : wallet_details?.network_id === 1 ? 'Mainnet' : 'Testnet'}
           </h1>
 
-          {wallet_details?.network_id === 0 && (
-            <>
-              <h1 className="text-xs mt-2">
-                Wallet Balances
-              </h1>
+          <h1 className="text-xs mt-2">
+            Wallet Balances
+          </h1>
 
-              {wallet_balances.map((item, index) => (
-                <h1 key={index}>
-                  {item.title}{item.data}
-                </h1>
-              ))}
-            </>
+          {wallet_details?.network_id === 0 && (
+            preprod_wallet_balances.map((item, index) => (
+              <h1 key={index}>
+                {item.title}{item.data}
+              </h1>
+            ))
+          )}
+
+          {wallet_details?.network_id === 1 && (
+            mainnet_wallet_balances.map((item, index) => (
+              <h1 key={index}>
+                {item.title}{item.data}
+              </h1>
+            ))
           )}
         </div>
       </Card>

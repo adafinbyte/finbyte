@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useWallet } from "@meshsdk/react"
 import WalletLoginModal from "../modals/wallet-login";
 import { useState } from "react";
-import WalletSidebar from "../wallet-sidebar";
+import WalletSidebar from "./wallet-sidebar";
 import { useRouter } from "next/router";
 import { FINBYTE_WALLET_NAME } from "@/utils/consts";
 

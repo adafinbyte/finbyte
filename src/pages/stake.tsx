@@ -10,7 +10,7 @@ import { applyParamsToScript, PlutusScript, BlockfrostProvider, MeshTxBuilder, A
 import { Button } from "@/components/ui/button"
 import blueprint from "../../contracts/plutus.json";
 import { blockfrost_key } from "@/utils/api/secrets"
-import { FINBYTE_UNIT } from "@/utils/consts"
+import { TFINBYTE_UNIT } from "@/utils/consts"
 import { format_atomic, format_long_string } from "@/utils/format"
 import { copy_to_clipboard, get_timestamp } from "@/utils/common"
 import { Copy } from "lucide-react"
@@ -19,6 +19,7 @@ import { Copy } from "lucide-react"
 export default function Stake() {
   const { address, connected, wallet } = useWallet();
   const router = useRouter();
+  const provider = new BlockfrostProvider(blockfrost_key);
 
   interface stake_info {
     assets: Asset[];
@@ -31,7 +32,9 @@ export default function Stake() {
   }
   const [current_tfin_stakes, set_current_tfin_stakes] = useState<stake_info[] | null>(null);
 
+  /** @note this is here for testing purposes */
   const rewardFunderVKH = "da4ff11b9c5603bbdfcb98d461160e68094ce64cd9c0b81b93bff80a";
+
   const SCRIPT_CBOR = applyParamsToScript(
     blueprint.validators[0].compiledCode,
     [rewardFunderVKH]
@@ -65,9 +68,10 @@ export default function Stake() {
   }
 
   const create_stake = async () => {
+    /** @todo if user has staked, unstake all then create new stake */
     const stakeAmount = "100000"; // 10 tFIN
     const stakedAssets: Asset[] = [
-      { unit: FINBYTE_UNIT, quantity: stakeAmount },
+      { unit: TFINBYTE_UNIT, quantity: stakeAmount },
     ];
 
     const utxos = await wallet.getUtxos();
@@ -122,7 +126,6 @@ export default function Stake() {
         }
       }
 
-      // ✅ NEW datum shape check (1 field)
       if (
         datum &&
         datum.constructor === 0 &&
@@ -131,7 +134,7 @@ export default function Stake() {
       ) {
         const staker = datum.fields[0]?.bytes ?? "";
         const stake_amount = output.amount.find(
-          (a) => a.unit === FINBYTE_UNIT
+          (a) => a.unit === TFINBYTE_UNIT
         )?.quantity ?? "0";
 
         // Fetch the transaction details to get the timestamp
@@ -168,7 +171,53 @@ export default function Stake() {
 
     set_current_tfin_stakes(current_stakes);
   };
-  
+
+  const unstake = async (stake: stake_info) => {
+    if (!connected || !address) {
+      toast.error("Please connect wallet");
+      return;
+    }
+
+    try {
+      const signerHash = deserializeAddress(address).pubKeyHash;
+      const scriptAddr = serializePlutusScript(STAKING_VALIDATOR, undefined, 0).address;
+      const utxos = await provider.fetchAddressUTxOs(scriptAddr);
+      const stakedUtxo = utxos.find(
+        (u) => u.input.txHash === stake.txHash && u.input.outputIndex === stake.outputIndex
+      );
+
+      if (!stakedUtxo) {
+        toast.error("Staked UTXO not found");
+        return;
+      }
+
+      const datum = mConStr0([signerHash]);
+      const txBuilder = getTxBuilder();
+      await txBuilder
+        .spendingPlutusScriptV2()
+        .txIn(
+          stakedUtxo.input.txHash,
+          stakedUtxo.input.outputIndex,
+          stakedUtxo.output.amount,
+          scriptAddr
+        )
+        .txOutInlineDatumValue(datum)
+        .txInRedeemerValue({ data: "UpdateStakedAmount" })
+        .changeAddress(address)
+        .complete();
+
+      const unsignedTx = txBuilder.txHex;
+      const signedTx = await wallet.signTx(unsignedTx);
+      const txHash = await wallet.submitTx(signedTx);
+
+      toast.success(`Unstaked at: ${txHash}`);
+      setTimeout(() => fetch_current_tfin_stakes(), 5000); // Refresh stakes
+    } catch (error) {
+      console.error("Unstake error:", error);
+      toast.error(`Unstake failed`);
+    }
+  };
+
   useEffect(() => {
     if (!connected) {
       router.push('/')

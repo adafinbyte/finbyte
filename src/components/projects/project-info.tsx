@@ -28,7 +28,7 @@ const ProjectsInformation: FC <custom_props> = ({
   const { address, connected } = useWallet();
 
   const base_stats = [
-    { title: "Name Hex", data: token_details.hex },
+    { title: "Asset Name", data: token_details.hex },
     { title: "Ticker", data: "$" + token_details.token_details.ticker },
     { title: "Supply", data: token_details.token_details.supply.toLocaleString() },
     { title: "Decimals", data: token_details.token_details.decimals },
@@ -78,7 +78,11 @@ const ProjectsInformation: FC <custom_props> = ({
             </h1>
 
             <p className="text-lg font-semibold text-center">
-              {(item.data?.toString().length === 0) ? 'Not Found' : format_long_string(item.data as string)}
+              {(item.data?.toString().length === 0) ? 'Not Found'
+                : item.title === 'Supply'
+                ? item.data
+                : format_long_string(item.data as string)
+              }
             </p>
           </div>
         ))}

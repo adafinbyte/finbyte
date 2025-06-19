@@ -106,7 +106,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
     const like_action = await like_unlike_post(
       like_data,
       post_id,
-      get_timestamp(),
+      post_type === 'feed_comment' ? feed_post.post.author : undefined,
       address,
       post_type,
       is_liking ? "like" : "unlike"
@@ -341,7 +341,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
 
         {post_ui.show_comments && (
           <div className="p-4 bg-secondary rounded-lg mt-4">
-            <CreateFeedPost post_type="feed_comment" post_id={feed_post.post.id} on_create={get_posts} token_slug={undefined}/>
+            <CreateFeedPost post_type="feed_comment" post_id={feed_post.post.id} on_create={get_posts} token_slug={undefined} post_author={feed_post.post.author}/>
 
             <div className="w-full flex justify-end mt-4">
               <span className="text-xs text-muted-foreground">Comments: {feed_post.comments.length}</span>

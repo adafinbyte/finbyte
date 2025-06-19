@@ -2,6 +2,12 @@ import { databases } from "@/utils/consts";
 import { supabase } from "../secrets";
 import { comment_post_data, forum_post_data, platform_user_details } from "@/utils/interfaces";
 
+/**
+ * @note
+ * Here, we calculate the kudos while the data is being fetched
+ * but we have slowly moved this to an sql function.
+ * https://github.com/JJD3V/gitbox/blob/main/sql/finbyte-kudos.sql
+ */
 interface fetch_user_data_return { error?: string; data?: platform_user_details}
 export const fetch_user_data = async (author: string): Promise<fetch_user_data_return> => {
   let forum_posts: forum_post_data[] = [];
@@ -29,6 +35,14 @@ export const fetch_user_data = async (author: string): Promise<fetch_user_data_r
     else if (row.db === databases.forum_comments) {
       forum_comments.push({ ...row, type: 'comment' });
       timestamps.push(row.comment_timestamp);
+      total_kudos += 1;
+      total_kudos += (row.post_likers?.length ?? 0) * 2;
+      total_kudos += (row.tip_tx_hashes?.length ?? 0) * 3;
+    }
+
+    else if (row.db === databases.community_posts) {
+      forum_comments.push({ ...row, type: 'community_post' });
+      timestamps.push(row.post_timestamp);
       total_kudos += 1;
       total_kudos += (row.post_likers?.length ?? 0) * 2;
       total_kudos += (row.tip_tx_hashes?.length ?? 0) * 3;

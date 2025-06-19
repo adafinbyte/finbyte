@@ -42,7 +42,7 @@ const CommunityFeedPost: FC <custom_props> = ({
     const like_action = await like_unlike_post(
       like_data,
       post_id,
-      get_timestamp(),
+      post_type === 'feed_comment' ? post.author : undefined,
       address,
       post_type,
       is_liking ? "like" : "unlike"
