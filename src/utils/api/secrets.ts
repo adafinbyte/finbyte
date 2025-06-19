@@ -11,3 +11,6 @@ export const blockfrost_key = process.env.NEXT_PUBLIC_BLOCKFROST_KEY_PREPROD || 
 
 /** @discord */
 export const discord_webhook_ping = process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_PING || '';
+
+/** @cardanoscan */
+export const cardanscan_key = process.env.NEXT_PUBLIC_CARDANOSCAN || '';
