@@ -164,6 +164,9 @@ export const ProjectLinks: FC<project_discover_props> = ({
 )
 
 export const CuratedTokens: FC = () => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const [randomised_tokens, set_randomised_tokens] = useState(
     () => shuffle_array(curated_tokens).slice(0, 10)
   );
@@ -171,6 +174,8 @@ export const CuratedTokens: FC = () => {
   const randomise = () => {
     set_randomised_tokens(shuffle_array(curated_tokens).slice(0, 10));
   };
+
+  if (!mounted) return null;
 
   return (
     <Card className="bg-secondary/20 backdrop-blur-lg p-4">
