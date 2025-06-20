@@ -41,6 +41,13 @@ export default function Sidebar() {
           </Button>
         </Link>
 
+        <Link href="/dashboard">
+          <Button variant={router.pathname === '/dashboard' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+            <img src='/finbyte.png' className="h-5 w-5" />
+            <span>Dashboard</span>
+          </Button>
+        </Link>
+
         <Link href="/tFIN">
           <Button variant={router.pathname === '/tFIN' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
             <img src='/finbyte.png' className="h-5 w-5" />

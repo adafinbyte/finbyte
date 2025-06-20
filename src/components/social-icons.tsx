@@ -7,12 +7,11 @@ import { Button } from "./ui/button";
 interface custom_props extends HTMLAttributes<SVGElement> {
   name: string;
   link?: string;
-  disabled?: boolean;
   only_icon?: boolean;
 }
 
 const SocialIcon: FC <custom_props> = ({
-  name, link, disabled = false, only_icon, ...props
+  name, link, only_icon, ...props
 }) => {
 
   const svg_class = `
@@ -34,15 +33,13 @@ const SocialIcon: FC <custom_props> = ({
       return (<Globe className={svg_class}/>)
     } else if (name === "x") {
       return (<svg className={svg_class} role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>X</title><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>)
-    } else if (name === "cardanoscan") {
-      return (<img src="/images/cardanoscan.png" className={svg_class}/>)
     }
   }
 
   return only_icon ?
     render_icon()
   :
-   !disabled && link ?
+    link ?
     <Link href={link} target="_blank">
       <Button variant='outline' size='sm'>
         {render_icon()}

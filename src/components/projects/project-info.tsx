@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { curated_token } from "@/verified/interfaces";
 import { pool_pm_fingerprint } from "@/utils/api/external/pool-pm";
-import { format_long_string, format_unix } from "@/utils/format";
+import { format_long_string, format_to_readable_number, format_unix } from "@/utils/format";
 import { Button } from "../ui/button";
 import { useWallet } from "@meshsdk/react";
 import { copy_to_clipboard } from "@/utils/common";
@@ -28,10 +28,16 @@ const ProjectsInformation: FC <custom_props> = ({
 }) => {
   const { address, connected } = useWallet();
 
+  /**
+   * @todo add sneks burn wallet.
+   * @note look through the burn wallet for the policies
+   * */
+
   const base_stats = [
     { title: "Asset Name", data: token_details.hex },
     { title: "Ticker", data: "$" + token_details.token_details.ticker },
     { title: "Supply", data: token_details.token_details.supply.toLocaleString() },
+    { title: "Supply", data: format_to_readable_number(token_details.token_details.supply) },
     { title: "Decimals", data: token_details.token_details.decimals },
     { title: "Transactions", data: transactions_count.toLocaleString() },
     { title: "Policy", data: token_details.token_details.policy },

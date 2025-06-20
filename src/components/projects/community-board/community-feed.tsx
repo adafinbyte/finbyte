@@ -2,7 +2,7 @@ import { FC } from "react";
 import { LoadingDots } from "../../loading-dots";
 import { community_post_data } from "@/utils/interfaces";
 import CommunityFeedPost from "./community-post";
-import CreateFeedPost from "@/components/feed/create-post";
+import CreateFeedPost from "@/components/create-post";
 import { curated_token } from "@/verified/interfaces";
 
 interface custom_props {
@@ -18,7 +18,7 @@ const ProjectsCommunityFeed: FC <custom_props> = ({
 
   return (
     <div className="space-y-4">
-      <CreateFeedPost post_type={'community'} post_id={undefined} on_create={get_posts} token_slug={token.slug_id} />
+      <CreateFeedPost post_author={undefined} bg_type="dark" post_type={'community'} post_id={undefined} on_create={get_posts} token_slug={token.slug_id} />
 
       <div className="divide-y dark:divide-slate-800 py-4">
         {refreshing_state && (

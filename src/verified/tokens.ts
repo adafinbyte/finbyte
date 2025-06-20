@@ -333,7 +333,7 @@ const curated_tokens: curated_token[] = [
     `,
     category: 'DePIN',
     token_details: {
-      ticker: 'CHAD',
+      ticker: 'NVL',
       policy: '5b26e685cc5c9ad630bde3e3cd48c694436671f3d25df53777ca60ef',
       fingerprint: 'asset1jle4pt4cg8264ypx4u45vt99haa6ty3t7naxer',
       supply: 21000000,

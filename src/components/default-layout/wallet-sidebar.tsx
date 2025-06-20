@@ -86,7 +86,7 @@ const WalletSidebar: FC = () => {
   ];
 
   useEffect(() => {
-    if (connected && address) {
+    if (connected) {
       get_connected_wallet_details();
     } else {
       set_wallet_details(null);
@@ -101,28 +101,28 @@ const WalletSidebar: FC = () => {
         </h1>
 
         <div className="flex flex-col items-start my-2 text-sm">
-          <div className="flex justify-between w-full gap-2 items-center">
-            <FormatAddress address={address} />
+          <div className="flex justify-between w-full gap-2 items-center overflow-x-hidden">
+            <FormatAddress address={address} large_size/>
             <Button size='icon' className="scale-[75%]" variant='ghost' onClick={() => copy_to_clipboard(address)}>
               <Copy/>
             </Button>
           </div>
 
-          <h1 className="text-xs mt-2">
+          <h1 className="text-xs mt-2 text-muted-foreground font-semibold">
             Network ID
           </h1>
 
-          <h1>
+          <h1 className="text-base">
             {wallet_details?.network_id === 0 ? 'Preprod' : wallet_details?.network_id === 1 ? 'Mainnet' : 'Testnet'}
           </h1>
 
-          <h1 className="text-xs mt-2">
+          <h1 className="text-xs mt-2 text-muted-foreground font-semibold">
             Wallet Balances
           </h1>
 
           {wallet_details?.network_id === 0 && (
             preprod_wallet_balances.map((item, index) => (
-              <h1 key={index}>
+              <h1 key={index} className="text-base text-left">
                 {item.title}{item.data}
               </h1>
             ))

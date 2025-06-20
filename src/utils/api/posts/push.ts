@@ -142,3 +142,34 @@ export const tipped_post = async (
     return { done: true }
   }
 };
+
+interface edit_post_return { error?: string; done?: boolean }
+export const edit_post = async (
+  post_id:      number,
+  address:      string,
+  updated_post: string,
+  timestamp:    number,
+  post_type:    post_type,
+): Promise<edit_post_return> => {
+  const db =
+    post_type === 'feed_post' ?
+    databases.forum_posts :
+    post_type === 'feed_comment' ?
+    databases.forum_comments : databases.community_posts;
+
+  const { error } = await supabase
+    .from(db)
+    .update({
+      updated_post: updated_post,
+      updated_timestamp: timestamp
+    })
+    .eq('id', post_id);
+
+  if (error) {
+    return { error: error.message }
+  } else {
+    await create_notification(
+      post_type === 'feed_post' ? 'post:edit' : 'comment:edit', post_id, address);
+    return { done: true }
+  }
+}

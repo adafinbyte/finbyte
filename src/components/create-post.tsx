@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
-import { Card, CardContent } from "../ui/card";
-import FinbyteMarkdown from "../finbyte-md";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
+import { Card, CardContent } from "./ui/card";
+import FinbyteMarkdown from "./finbyte-md";
+import { Textarea } from "./ui/textarea";
+import { Button } from "./ui/button";
 import { Eraser, Glasses, HelpCircle, PenLine } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { toast } from "sonner";
 import { useWallet } from "@meshsdk/react";
 import { post_type } from "@/utils/types";
@@ -20,10 +20,11 @@ interface custom_props {
   post_author: string | undefined;
   on_create: () => Promise<void>;
   token_slug: string | undefined;
+  bg_type: 'dark' | 'light' | 'transparent'
 }
 
 const CreateFeedPost: FC <custom_props> = ({
-  post_type, post_id, post_author, on_create, token_slug
+  post_type, post_id, post_author, on_create, token_slug, bg_type
 }) => {
   const { address, connected } = useWallet();
   const [chosen_topic, set_chosen_topic] = useState("General");
@@ -86,7 +87,12 @@ const CreateFeedPost: FC <custom_props> = ({
   };
 
   return (
-    <Card className={`${(post_type === 'feed_comment' || post_type === 'community') ? 'border-0' : ''}`}>
+    <Card className={`
+      ${(post_type === 'feed_comment' || post_type === 'community') ? 'border-0' : ''}
+      ${bg_type === 'dark' ? 'bg-background/40 backdrop-blur-lg' :
+      bg_type === 'light' ? 'bg-secondary/40 backdrop-blur-lg' :
+      'bg-transparent'}
+    `}>
       <CardContent className="p-4">
         <div className="flex gap-4">
           <div className="flex-1">
@@ -99,7 +105,7 @@ const CreateFeedPost: FC <custom_props> = ({
               :
               <Textarea
                 placeholder="What's happening?"
-                className="min-h-[80px] resize-none p-2 focus-visible:ring-0"
+                className="min-h-[80px] max-h-64 p-2 focus-visible:ring-0"
                 value={create_post_input}
                 onChange={(e) => set_create_post_input(e.target.value)}
               />
@@ -107,18 +113,18 @@ const CreateFeedPost: FC <custom_props> = ({
 
             <div className="mt-4 flex items-center justify-between">
               <div className="flex gap-2">
-                <Button title="Clear Post" onClick={() => set_create_post_input('')} variant="outline" size="sm" className="text-xs">
+                <Button title="Clear Post" onClick={() => set_create_post_input('')} variant="ghost" size="sm" className="text-xs">
                   <Eraser />
                 </Button>
 
-                <Button title="Preview Post" onClick={() => set_previewing_created_post(!previewing_created_post)} variant="outline" size="sm" className="text-xs">
+                <Button title="Preview Post" onClick={() => set_previewing_created_post(!previewing_created_post)} variant="ghost" size="sm" className="text-xs">
                   {previewing_created_post ? <PenLine /> : <Glasses />}
                 </Button>
 
                 {post_type === 'feed_post' && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button title="Topic Select" variant="outline" size="sm" className="text-xs">
+                      <Button title="Topic Select" variant="ghost" size="sm" className="text-xs">
                         #{chosen_topic}
                       </Button>
                     </DropdownMenuTrigger>

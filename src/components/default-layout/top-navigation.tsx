@@ -91,6 +91,14 @@ export default function TopNavigation() {
                   </Link>
 
                   <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <img src='/finbyte.png' className="h-5 w-5" />
+                    <span>Dashboard</span>
+                  </Link>
+
+                  <Link
                     href="/tFIN"
                     className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >

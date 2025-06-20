@@ -28,7 +28,7 @@ export interface comment_post_data {
   post_id:    number;
 
   author:     string;
-  post_timestamp: number;
+  comment_timestamp: number;
   post:      string;
 
   updated_timestamp: number | null;

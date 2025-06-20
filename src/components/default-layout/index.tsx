@@ -38,6 +38,7 @@ const DefaultLayout: FC <custom_props> = ({
     <div
       className="min-h-screen"
       style={theme === "light" ? light_bg : dark_bg}
+      suppressHydrationWarning
     >
       <TopNavigation />
 

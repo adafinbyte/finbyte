@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, ExternalLink } from "lucide-react"
+import { ArrowRight, Check, ExternalLink } from "lucide-react"
 import { FC, useEffect, useState } from "react"
 import { toast } from "sonner"
 import { BrowserWallet, Wallet } from "@meshsdk/core"
@@ -15,6 +15,7 @@ import { get_cardano_wallets, WalletInformation } from "@/utils/cardano/get-card
 import { post_type } from "@/utils/types"
 import FormatAddress from "../format-address"
 import { ScrollArea } from "../ui/scroll-area"
+import Link from "next/link"
 
 interface custom_props {
   open: boolean;
@@ -33,23 +34,27 @@ const PostLikersModal: FC<custom_props> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] dark:border-slate-800">
         <DialogHeader>
-          <DialogTitle>{post_type === 'feed_post' ? 'Post ' : 'Comment '}Likers for #{post_id}</DialogTitle>
+          <DialogTitle>{post_type === 'feed_post' ? 'Post ' : 'Comment '}Likers</DialogTitle>
           <DialogDescription>
-            View whos liked this post.
+            View and discover who has liked this post.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-y-2">
-          <h1 className="text-sm font-semibold">
-            Likers
+          <h1 className="text-xs text-muted-foreground font-semiboldm text-right">
+            Post Likers: {likers.length}
           </h1>
 
           <ScrollArea>
             <div className="max-h-96 p-4">
               {likers.map((liker, index) => (
-                <Button key={index} type="button" variant="outline" className="justify-start w-full">
-                  <FormatAddress address={liker} />
-                </Button>
+                <Link href={`/dashboard?address=${liker}`}>
+                  <Button key={index} type="button" variant="outline" className="justify-start w-full">
+                    <FormatAddress address={liker} />
+                    <div className="ml-auto"/>
+                    <ArrowRight/>
+                  </Button>
+                </Link>
               ))}
             </div>
           </ScrollArea>
