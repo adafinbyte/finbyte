@@ -1,4 +1,4 @@
-import FinPieChart from "@/components/fin-piechart"
+import AboutTFinToken from "@/components/about-tfin"
 import FormatAddress from "@/components/format-address"
 import SocialIcon from "@/components/social-icons"
 import { Button } from "@/components/ui/button"
@@ -315,7 +315,7 @@ export default function Home() {
           <hr className="mt-12 w-3/4 mx-auto dark:border-slate-800" />
 
           <div id="distribution" />
-          <FinPieChart />
+          <AboutTFinToken />
         </div>
       </DefaultLayout>
     </>

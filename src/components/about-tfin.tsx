@@ -40,7 +40,7 @@ const chartConfig = {
   },
 }
 
-export default function FinPieChart() {
+export default function AboutTFinToken() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (

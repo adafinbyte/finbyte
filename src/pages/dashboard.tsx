@@ -23,8 +23,10 @@ import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import FormatAddress from "@/components/format-address"
+import { useRouter } from "next/router"
 
 export default function Home() {
+  const router = useRouter();
   const [finbyte_stats, set_finbyte_stats] = useState<finbyte_general_stats | null>(null);
   const [found_user_details, set_found_user_details] = useState<platform_user_details | null>(null);
   const [search_user_input, set_search_user_input] = useState<string>('');
@@ -62,6 +64,14 @@ export default function Home() {
   useEffect(() => {
     get_stats();
   }, []);
+
+  useEffect(() => {
+    const address = router.query.address;
+    if (typeof address === 'string') {
+      set_search_user_input(address);
+      find_user(address);
+    }
+  }, [router.query.address]);
 
   interface stat_item { title: string; data: string | number; }
   const stat_items: stat_item[] = [

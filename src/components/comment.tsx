@@ -1,16 +1,17 @@
 import { comment_post_data, full_post_data } from "@/utils/interfaces";
 import { FC } from "react";
-import { generate_options, Option } from "./post";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import UserAvatar from "../user-avatar";
-import FormatAddress from "../format-address";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
+import { generate_options, Option } from "./feed/post";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import UserAvatar from "./user-avatar";
+import FormatAddress from "./format-address";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { useWallet } from "@meshsdk/react";
 import { moderation_addresses } from "@/utils/consts";
-import FinbyteMarkdown from "../finbyte-md";
+import FinbyteMarkdown from "./finbyte-md";
 import { format_unix } from "@/utils/format";
+import { Card } from "./ui/card";
 
 interface custom_props {
   index: number;
@@ -49,9 +50,9 @@ const FeedComment: FC <custom_props> = ({
   };
 
   return (
-    <div
+    <Card
       key={index}
-      className={`flex gap-3 py-4 px-2 dark:bg-slate-900 ${index === 0 && "rounded-t-xl"} ${total_comments - 1 === index && "rounded-b-xl"
+      className={`flex gap-3 p-4 bg-secondary/20 ${index === 0 && "rounded-t-xl"} ${total_comments - 1 === index && "rounded-b-xl"
         }`}
     >
       <Avatar className="size-6 mt-1">
@@ -106,7 +107,7 @@ const FeedComment: FC <custom_props> = ({
           <FinbyteMarkdown>{comment.post}</FinbyteMarkdown>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }
 

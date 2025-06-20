@@ -12,7 +12,6 @@ interface custom_props {
 const SettingsFinbyte: FC <custom_props> = ({
   user_details
 }) => {
-  const community_badge = user_details.community_badge ?? 'Not Set';
 
   return (
     <Card className="p-4">

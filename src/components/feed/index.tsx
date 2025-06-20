@@ -17,7 +17,7 @@ import { useWallet } from "@meshsdk/react"
 import { LoadingDots } from "../loading-dots"
 import FeedPost from "./post"
 import FinbyteMarkdown from "../finbyte-md"
-import CreateFeedPost from "./create-post"
+import CreateFeedPost from "../create-post"
 
 interface custom_props {
   all_posts: full_post_data[] | null;
@@ -37,7 +37,7 @@ const FinbyteFeed: FC <custom_props> = ({
 
   return (
     <div className="space-y-4">
-      <CreateFeedPost post_type='feed_post' post_id={undefined} post_author={undefined} on_create={get_posts} token_slug={undefined}/>
+      <CreateFeedPost bg_type="dark" post_type='feed_post' post_id={undefined} post_author={undefined} on_create={get_posts} token_slug={undefined}/>
 
       <Card className="overflow-hidden">
         <CardHeader className="p-4 pb-2">
@@ -62,27 +62,26 @@ const FinbyteFeed: FC <custom_props> = ({
               <LoadingDots />
             )}
 
-            {all_posts &&
-              [...all_posts]
-                .filter((post) => {
-                  if (!selected_topic) return true; // Show all if no topic is selected
-                  return post.post.topic?.toLowerCase() === selected_topic.toLowerCase();
-                })
-                .sort((a, b) => {
-                  if (current_tab === "top") {
-                    return (b.post.post_likers?.length || 0) - (a.post.post_likers?.length || 0);
-                  }
-                  return 0;
-                })
-                .map((post) => (
-                  <FeedPost
-                    key={post.post.id}
-                    feed_post={post}
-                    get_posts={get_posts}
-                    get_user_details={get_user_details}
-                    user_details={user_details}
-                  />
-                ))
+            {all_posts && [...all_posts]
+              .filter((post) => {
+                if (!selected_topic) return true; // Show all if no topic is selected
+                return post.post.topic?.toLowerCase() === selected_topic.toLowerCase();
+              })
+              .sort((a, b) => {
+                if (current_tab === "top") {
+                  return (b.post.post_likers?.length || 0) - (a.post.post_likers?.length || 0);
+                }
+                return 0;
+              })
+              .map((post) => (
+                <FeedPost
+                  key={post.post.id}
+                  feed_post={post}
+                  get_posts={get_posts}
+                  get_user_details={get_user_details}
+                  user_details={user_details}
+                />
+              ))
             }
           </div>
         </CardContent>

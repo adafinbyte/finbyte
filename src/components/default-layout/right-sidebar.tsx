@@ -10,9 +10,12 @@ import { Avatar } from "@radix-ui/react-avatar";
 import { AvatarFallback, AvatarImage } from "../ui/avatar";
 import curated_tokens from "@/verified/tokens";
 import { Shuffle } from "lucide-react";
-import { finbyte_general_stats } from "@/utils/interfaces";
+import { finbyte_general_stats, platform_user_details } from "@/utils/interfaces";
 import { fetch_finbyte_general_stats } from "@/utils/api/misc";
 import { toast } from "sonner";
+import { LoadingDots } from "../loading-dots";
+import FormatAddress from "../format-address";
+import { format_unix } from "@/utils/format";
 
 export const PlatformStats: FC = () => {
   const [finbyte_stats, set_finbyte_stats] = useState<finbyte_general_stats | null>(null);
@@ -108,7 +111,7 @@ export const PlatformQuickLinks: FC = ({
       <h1 className="font-semibold text-sm">Quick Links</h1>
       <ol className="list-disc list-inside space-y-1 text-sm">
         {quick_links.map((link, index) => (
-          <li>
+          <li key={index}>
             {link.title}
             <Link
               className="dark:text-blue-400 text-blue-500"
@@ -164,8 +167,8 @@ export const ProjectLinks: FC<project_discover_props> = ({
 )
 
 export const CuratedTokens: FC = () => {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [mounted, set_mounted] = useState(false);
+  useEffect(() => set_mounted(true), []);
 
   const [randomised_tokens, set_randomised_tokens] = useState(
     () => shuffle_array(curated_tokens).slice(0, 10)
@@ -196,6 +199,54 @@ export const CuratedTokens: FC = () => {
           </Link>
         ))}
       </div>
+    </Card>
+  )
+}
+
+interface about_author_props {
+  author: platform_user_details | undefined;
+}
+export const AboutAuthor: FC <about_author_props> = ({
+  author
+}) => {
+  const bades = author?.badges ?? [];
+  const community_badge = author?.community_badge ?? [];
+  const bookmarked_posts = author?.bookmarked_posts ?? [];
+
+  const author_details = [
+    { title: 'Kudos', data: author?.total_kudos.toLocaleString() },
+    { title: 'Total Posts', data: author?.total_posts.toLocaleString() },
+    { title: 'First Interaction', data: format_unix(author?.first_timestamp ?? 0).time_ago },
+  ];
+
+  return (
+    <Card className="bg-secondary/20 backdrop-blur-lg space-y-2 p-4">
+      <h1 className="font-semibold text-sm">Author Details</h1>
+      {author ?
+        <div>
+          <Link href={`/dashboard?address=${author.address}`}>
+            <FormatAddress address={author.address}/>
+          </Link>
+
+          {author.ada_handle && (
+            <FormatAddress address={author.ada_handle}/>
+          )}
+
+          {author_details.map((item, index) => (
+            <div key={index} className="flex items-center gap-2 text-sm">
+              <span className="text-muted-foreground font-semibold">
+                {item.title}
+              </span>
+              <span>
+                {item.data}
+              </span>
+            </div>
+          ))}
+
+        </div>
+        :
+        <LoadingDots/>
+      }
     </Card>
   )
 }

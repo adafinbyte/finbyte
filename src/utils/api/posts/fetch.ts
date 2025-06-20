@@ -49,9 +49,10 @@ export const fetch_all_feed_posts = async (
         post_id: row.comment_post_id,
         author: row.comment_author,
         post: row.comment_text,
-        /**@ts-ignore */
         comment_timestamp: row.comment_timestamp,
         updated_timestamp: row.comment_updated_timestamp,
+        updated_post: row.updated_post,
+        post_likers: [],
       });
     }
   }

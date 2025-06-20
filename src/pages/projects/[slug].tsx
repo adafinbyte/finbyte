@@ -40,6 +40,8 @@ export default function Home() {
     const token = curated_tokens.find(a => a.slug_id === slug_id);
     if (token) {
       set_found_token(token);
+    } else {
+      //router.push('/');
     }
   }, [router.asPath]);
   

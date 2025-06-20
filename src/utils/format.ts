@@ -1,5 +1,3 @@
-import { toast } from "sonner";
-
 export const format_long_string = (str: string): string => {
   return str.length > 14 ? str.substring(0, 14) + "..." : str;
 }
@@ -56,4 +54,19 @@ export function format_atomic(decimals: number, total: number): number | string 
   }
 
   return returning_value;
+}
+
+export const format_to_readable_number = (value: number): string => {
+  if (value >= 1_000_000_000_000) {
+    const formattedValue = (value / 1_000_000_000_000).toFixed(2);
+    return `${formattedValue}T`;
+  } else if (value >= 1_000_000_000) {
+    const formattedValue = (value / 1_000_000_000).toFixed(2);
+    return `${formattedValue}B`;
+  } else if (value >= 1_000_000) {
+    const formattedValue = (value / 1_000_000).toFixed(2);
+    return `${formattedValue}M`;
+  } else {
+    return value.toString();
+  }
 }
