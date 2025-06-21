@@ -4,14 +4,14 @@ import { PieChart, Pie, Cell } from "recharts"
 import { useState } from "react"
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Card } from "./ui/card";
+import { Card } from "../ui/card";
 
 const data = [
-  { name: "Platform Rewards", value: 10, fill: "hsl(var(--chart-2))" },
-  { name: "Staking Rewards", value: 10, fill: "hsl(var(--chart-3))" },
-  { name: "Team Funding", value: 5, fill: "hsl(var(--chart-4))" },
-  { name: "Presale & Liquidity", value: 15, fill: "hsl(var(--chart-5))" },
-  { name: "Vesting", value: 60, fill: "hsl(var(--chart-1))" },
+  { name: "Platform Rewards", value: 5, fill: "hsl(var(--chart-2))" },
+  { name: "Staking Rewards", value: 5, fill: "hsl(var(--chart-3))" },
+  { name: "Team Funding", value: 2.5, fill: "hsl(var(--chart-4))" },
+  { name: "Presale & Liquidity", value: 7.5, fill: "hsl(var(--chart-5))" },
+  { name: "Vesting", value: 30, fill: "hsl(var(--chart-1))" },
 ];
 
 const chartConfig = {
@@ -40,14 +40,27 @@ const chartConfig = {
   },
 }
 
-export default function AboutTFinToken() {
+export default function TokenDistribution() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   return (
     <div className="p-2 grid gap-y-4 mt-6">
       <h1 className="text-xl font-semibold">
-        Token Distribution
+        Token Distribution Ideas
       </h1>
+      <h1 className="text-sm text-muted-foreground font-semibold">
+        These values are not final and may change depending how
+        we decided based on future tokenomics.
+      </h1>
+
+      <Card className="p-4 bg-secondary/20 backdrop-blur-lg">
+        <h1 className="text-sm text-muted-foreground font-semibold">
+          Changes from initial ideas.
+        </h1>
+        <ul className="mt-2 list-disc list-inside space-y-1">
+          <li>Half the token supply to 500,000,000 - 500M</li>
+        </ul>
+      </Card>
 
       <div className="flex flex-wrap items-center gap-3 justify-center">
         {data.map((item, index) => (
@@ -114,13 +127,13 @@ export default function AboutTFinToken() {
 
                 <div className="w-3/4 text-center mx-auto p-4 bg-secondary rounded-xl my-4">
                   <div className="grid grid-cols-2 gap-8">
-                    <h1>600 Million $FIN</h1>
+                    <h1>300 Million $FIN</h1>
                     <h1>60% of Total Supply</h1>
                   </div>
                 </div>
 
                 <div>
-                  To align with our long-term vision, 60% of the total $FIN supply (600 million tokens)
+                  To align with our long-term vision, 60% of the total $FIN supply (300 million tokens)
                   will be locked and vested using trusted Cardano-native locking tools like cnft.tools.
                   These tokens will be gradually released over several years and allocated toward:
 
@@ -147,13 +160,13 @@ export default function AboutTFinToken() {
 
                 <div className="w-3/4 text-center mx-auto p-4 bg-secondary rounded-xl my-4">
                   <div className="grid grid-cols-2 gap-8">
-                    <h1>100 Million $FIN</h1>
+                    <h1>50 Million $FIN</h1>
                     <h1>10% of Total Supply</h1>
                   </div>
                 </div>
 
                 <div>
-                  100 million $FIN tokens are set aside to directly reward user interaction across the Finbyte platform.
+                  50 million $FIN tokens are set aside to directly reward user interaction across the Finbyte platform.
                   You'll be able to earn $FIN by:
 
                   <div className="my-4">
@@ -177,14 +190,14 @@ export default function AboutTFinToken() {
 
                 <div className="w-3/4 text-center mx-auto p-4 bg-secondary rounded-xl my-4">
                   <div className="grid grid-cols-2 gap-8">
-                    <h1>100 Million $FIN</h1>
+                    <h1>50 Million $FIN</h1>
                     <h1>10% of Total Supply</h1>
                   </div>
                 </div>
 
                 <div>
                   To further incentivize token holding and platform alignment, 10% of $FIN
-                  supply (100 million tokens) is allocated for staking rewards. Users will be able to:
+                  supply (50 million tokens) is allocated for staking rewards. Users will be able to:
 
                   <div className="my-4">
                     <ol className="list-disc list-inside space-y-1">
@@ -205,13 +218,13 @@ export default function AboutTFinToken() {
 
                 <div className="w-3/4 text-center mx-auto p-4 bg-secondary rounded-xl my-4">
                   <div className="grid grid-cols-2 gap-8">
-                    <h1>50 Million $FIN</h1>
+                    <h1>25 Million $FIN</h1>
                     <h1>5% of Total Supply</h1>
                   </div>
                 </div>
 
                 <div>
-                  We've reserved 50 million $FIN tokens (5% of the total supply) for the
+                  We've reserved 25 million $FIN tokens (5% of the total supply) for the
                   Finbyte team, core contributors, and future platform development.
                   These tokens will be vested with a structured release schedule to promote
                   long-term commitment, transparency, and responsible stewardship.
@@ -253,14 +266,14 @@ export default function AboutTFinToken() {
 
                 <div className="w-3/4 text-center mx-auto p-4 bg-secondary rounded-xl my-4">
                   <div className="grid grid-cols-2 gap-8">
-                    <h1>150 Million $FIN</h1>
+                    <h1>75 Million $FIN</h1>
                     <h1>15% of Total Supply</h1>
                   </div>
                 </div>
 
                 <div>
                   To bootstrap a liquid and fair market at launch, 15% of the supply
-                  (150 million $FIN) will be offered through a community presale.
+                  (75 million $FIN) will be offered through a community presale.
                   All funds raised will go directly into liquidity pools on supported
                   Cardano DEXs.
 

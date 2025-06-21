@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Home, Menu, Moon, PlugZap, Search, Sun, Unplug } from "lucide-react"
+import { Home, Menu, Moon, PlugZap, Search, Settings, Sun, Trophy, Unplug, User, Users } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -11,11 +11,12 @@ import { useWallet } from "@meshsdk/react"
 import WalletLoginModal from "../modals/wallet-login"
 import { FINBYTE_WALLET_NAME } from "@/utils/consts"
 import { useRouter } from "next/router"
+import WalletSidebar from "./wallet-sidebar"
 
 export default function TopNavigation() {
   const router = useRouter();
   const { isDark, toggleTheme } = useDarkMode();
-  const { connected, disconnect } = useWallet();
+  const { address, connected, disconnect } = useWallet();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [wallet_login_open, set_wallet_login_open] = useState(false);
@@ -70,52 +71,82 @@ export default function TopNavigation() {
                   </div>
                   <span>Finbyte</span>
                 </Link>
-                <nav className="flex flex-col gap-2 mt-2">
-                  <h1 className="font-bold uppercase text-xs tracking-wide text-muted-foreground mb-2">
+                <nav className="flex flex-col gap-1">
+                  <h1 className="font-bold uppercase text-[10px] tracking-wide text-muted-foreground mb-2">
                     Platform
                   </h1>
 
-                  <Link
-                    href="/"
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <Home className="h-5 w-5" />
-                    <span>Home</span>
-                  </Link>
-                  <Link
-                    href="/communities"
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <Search className="h-5 w-5" />
-                    <span>Communities</span>
-                  </Link>
-
-                  <Link
-                    href="/dashboard"
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <img src='/finbyte.png' className="h-5 w-5" />
-                    <span>Dashboard</span>
-                  </Link>
-
-                  <Link
-                    href="/tFIN"
-                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <img src='/finbyte.png' className="h-5 w-5" />
-                    <span>$tFIN</span>
-                  </Link>
-
-                  {connected ?
-                    <Button onClick={handle_disconnect_wallet} variant='secondary' className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
-                      Disconnect
+                  <Link href="/">
+                    <Button variant={router.pathname === '/' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+                      <Home className="h-5 w-5" />
+                      <span>Home</span>
                     </Button>
+                  </Link>
+
+                  <Link href="/communities">
+                    <Button variant={router.pathname === '/communities' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+                      <Users className="h-5 w-5" />
+                      <span>Communities</span>
+                    </Button>
+                  </Link>
+
+                  <Link href="/kudos">
+                    <Button variant={router.pathname === '/kudos' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+                      <Trophy className="h-5 w-5" />
+                      <span>Kudos</span>
+                    </Button>
+                  </Link>
+
+                  <Link href="/dashboard">
+                    <Button variant={router.pathname === '/dashboard' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+                      <img src='/finbyte.png' className="h-5 w-5" />
+                      <span>Dashboard</span>
+                    </Button>
+                  </Link>
+
+                  <Link href="/tFIN">
+                    <Button variant={router.pathname === '/tFIN' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+                      <img src='/finbyte.png' className="h-5 w-5" />
+                      <span>$tFIN</span>
+                    </Button>
+                  </Link>
+
+                  <hr className="w-4/5 mx-auto dark:border-slate-800 my-4" />
+
+                  <h1 className="font-bold uppercase text-[10px] tracking-wide text-muted-foreground my-2">
+                    Wallet
+                  </h1>
+
+                  {(connected && address) ?
+                    <>
+                      <Link href="/profile">
+                        <Button variant={router.pathname === '/profile' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+                          <User className="h-5 w-5" />
+                          <span>Profile</span>
+                        </Button>
+                      </Link>
+
+                      <Button onClick={handle_disconnect_wallet} variant="ghost" className="w-full justify-start gap-2 rounded-full">
+                        <Unplug className="h-5 w-5" />
+                        <span>Disconnect</span>
+                      </Button>
+
+                      <Link href="/settings">
+                        <Button variant={router.pathname === '/settings' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+                          <Settings className="h-5 w-5" />
+                          <span>Settings</span>
+                        </Button>
+                      </Link>
+                    </>
                     :
-                    <Button onClick={() => set_wallet_login_open(true)} variant='secondary' className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+                    <Button variant="ghost" className="w-full justify-start gap-2 rounded-full" onClick={() => set_wallet_login_open(true)}>
+                      <PlugZap className="h-5 w-5" />
                       Connect
                     </Button>
                   }
                 </nav>
+
+                <WalletSidebar />
               </div>
             </SheetContent>
           </Sheet>

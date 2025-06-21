@@ -359,6 +359,99 @@ const curated_tokens: curated_token[] = [
       ],
     },
   },
+  {
+    slug_id: 'dux',
+    name: 'TheChosenDux',
+    hex: '5468652043686f73656e20447578',
+    description: `
+      A Meme Coin Built on Trust. Created for The People by the People.
+    `,
+    category: 'Meme',
+    token_details: {
+      ticker: 'DUX',
+      policy: 'f42d942e6d7f9f3adeacd3468df58079867da7c12cfeff784dd68a2b',
+      fingerprint: 'asset1uhpfyaw2k9srru063gpllu0lkgqsg0zzazdxgg',
+      supply: 1000000000,
+      decimals: 0,
+    },
+    images: {
+      logo: "https://pbs.twimg.com/profile_images/1866740044742135808/89au9R_Y_400x400.jpg",
+      header: "https://pbs.twimg.com/profile_banners/1866739071508418564/1734122045/1500x500"
+    },
+    links: {
+      discord: "https://discord.gg/2yZ9d6CBru",
+      x: "https://x.com/thechosendux",
+      website: "https://www.thechosendux.io/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'DUX Luck Box',
+          image: 'https://loot.thechosendux.io/_next/image?url=%2Flogo.png&w=1080&q=75',
+          url: 'https://loot.thechosendux.io/',
+          description: 'Get 1 Baby DUX NFT & win up to $400 in tokens! Price: 8 ADA or 39,999 $DUX'
+        },
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/d8eb52caf3289a2880288b23141ce3d2a7025dcf76f26fd5659add06.aa4b7bd7c946eb9d9bb0286e3f6c2087f3ce4525cc538214e463b6bb2c97bb7e?rankBy=mcap&order=desc&assetType=Tokens&minLiq=10000&minHolders=100&mcapCustomFilters=true&page=3',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
+  },
+  {
+    slug_id: 'palm',
+    name: 'Palm Economy Token',
+    hex: '50414c4d0a',
+    description: `
+      The PALM Economy is a leading real-world asset (RWA) Commodities
+      Trade-DeFi project. The $PALM utility token is the lifeblood of
+      the Palmyra ecosystem, which utilizes RWA tokenization, decentralized
+      trade financing, on-chain traceability, and credentials. The project
+      addresses a multi-trillion-dollar gap in commodities market access
+      and trade financing all around the world. With a focus on emerging
+      markets, the team has already deployed solutions across Sri Lanka,
+      Nepal, Indonesia, Japan, Argentina, Paraguay, Greece, and East
+      Africa, leveraging tokenized RWAs to offer unparalleled transparency,
+      efficiency, and global market access.
+    `,
+    category: 'RWA',
+    token_details: {
+      ticker: 'PALM',
+      policy: 'b7c5cd554f3e83c8aa0900a0c9053284a5348244d23d0406c28eaf4d',
+      fingerprint: 'asset1rac2h0ch8jkfzhqk5rjfejkcaa6mrhp8ecaz34',
+      supply: 50000000000,
+      decimals: 6,
+    },
+    images: {
+      logo: "https://pbs.twimg.com/profile_images/1821185843102412800/P23JRaEw_400x400.jpg",
+      header: "https://pbs.twimg.com/profile_banners/1720116218122936320/1710239185/1500x500"
+    },
+    links: {
+      discord: "http://discord.gg/FQRA8wqRWa",
+      github: "https://github.com/zenGate-Global",
+      telegram: "https://t.me/+iPZFVAjiCUYzMGZh",
+      x: "https://x.com/palmeconomy",
+      website: "https://palmeconomy.io/",
+    },
+    finbyte: {
+      collection: [
+        {
+          title: 'Palm Staking Portal',
+          image: 'https://pbs.twimg.com/profile_images/1821185843102412800/P23JRaEw_400x400.jpg',
+          url: 'https://portal.palmeconomy.io/',
+          description: 'Get 1 Baby DUX NFT & win up to $400 in tokens! Price: 8 ADA or 39,999 $DUX'
+        },
+        {
+          title: 'View on TapTools',
+          image: thirdparty_logos.taptools,
+          url: 'https://www.taptools.io/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.affbf013002dc54470405e4029e8baca9864d8848a313fa03c06643a8db416b6?rankBy=mcap&order=desc&assetType=Tokens&minLiq=10000&minHolders=100&mcapCustomFilters=true&page=3/charts/token/f5808c2c990d86da54bfc97d89cee6efa20cd8461616359478d96b4c.affbf013002dc54470405e4029e8baca9864d8848a313fa03c06643a8db416b6',
+          description: 'Explore the top Cardano analytics platform: detailed insights on portfolios, trade history, DeFi, NFTs, and wallets.'
+        },
+      ],
+    },
+  },
 ];
 
 export default curated_tokens;
