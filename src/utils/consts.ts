@@ -8,6 +8,7 @@ export const FINBYTE_WALLET_NAME = 'finbyte_wallet';
 export const TFINBYTE_POLICTID  = "37524129746446a5a55da896fe5379508244ea85e4c140156badbdc6";
 export const TFINBYTE_ASSETNAME = "7446494e";
 export const TFINBYTE_UNIT = TFINBYTE_POLICTID + TFINBYTE_ASSETNAME;
+export const TFIN_MINT_ADDRESS = 'addr_test1vpvrn385djduu0g7a5d7ms4lzjl32askwqvwtvqx4vfrdzqxzkwz3';
 
 export const finbyte_topics = ["general", "requests", "chatterbox", "meme", "spam"];
 

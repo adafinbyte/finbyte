@@ -7,7 +7,6 @@ import FormatAddress from "../format-address";
 import { Button } from "../ui/button";
 import { copy_to_clipboard } from "@/utils/common";
 
-
 const WalletSidebar: FC = () => {
   const { address, connected, wallet } = useWallet();
 
@@ -86,14 +85,14 @@ const WalletSidebar: FC = () => {
   ];
 
   useEffect(() => {
-    if (connected) {
+    if (connected && address) {
       get_connected_wallet_details();
     } else {
       set_wallet_details(null);
     }
   }, [connected, address]);
 
-  return (address && connected) ? (
+  return connected ? (
     <div className="pt-6">
       <Card className="p-2 text-xs text-center">
         <h1>
@@ -102,7 +101,7 @@ const WalletSidebar: FC = () => {
 
         <div className="flex flex-col items-start my-2 text-sm">
           <div className="flex justify-between w-full gap-2 items-center overflow-x-hidden">
-            <FormatAddress address={address} large_size/>
+            <FormatAddress address={address??''} large_size/>
             <Button size='icon' className="scale-[75%]" variant='ghost' onClick={() => copy_to_clipboard(address)}>
               <Copy/>
             </Button>

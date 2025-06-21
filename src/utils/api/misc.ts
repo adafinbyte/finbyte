@@ -1,6 +1,6 @@
 import { get_timestamp } from "../common";
 import { databases } from "../consts";
-import { finbyte_general_stats } from "../interfaces";
+import { finbyte_general_stats, platform_user_details } from "../interfaces";
 import { notification } from "../types";
 import { supabase } from "./secrets";
 
@@ -13,6 +13,20 @@ export const fetch_finbyte_general_stats = async (): Promise<fetch_finbyte_gener
   }
   return { data: data[0] };
 };
+
+interface fetch_all_finbyte_users_return { error?: string; data?: platform_user_details[] }
+export const fetch_all_finbyte_users = async (): Promise<fetch_all_finbyte_users_return> => {
+  const { data, error } = await supabase
+    .from(databases.accounts)
+    .select("*");
+
+  if (error) {
+    console.error(error);
+    return { error: error.message };
+  }
+
+  return { data };
+}
 
 interface check_user_on_login_return { error?: string; data?: boolean }
 /** @note a true return means the user exists, a false is a user has been created */

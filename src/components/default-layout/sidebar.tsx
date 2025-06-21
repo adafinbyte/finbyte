@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Home, PlugZap, Settings, Unplug, User, Users } from "lucide-react"
+import { Home, PlugZap, Settings, Trophy, Unplug, User, Users } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { useWallet } from "@meshsdk/react"
@@ -38,6 +38,13 @@ export default function Sidebar() {
           <Button variant={router.pathname === '/communities' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
             <Users className="h-5 w-5" />
             <span>Communities</span>
+          </Button>
+        </Link>
+
+        <Link href="/kudos">
+          <Button variant={router.pathname === '/kudos' ? 'secondary' : "ghost"} className="w-full justify-start gap-2 rounded-full">
+            <Trophy className="h-5 w-5" />
+            <span>Kudos</span>
           </Button>
         </Link>
 
