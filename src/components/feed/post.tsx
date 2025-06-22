@@ -292,7 +292,7 @@ const FeedPost: FC<custom_props> = ({ feed_post, get_posts, get_user_details, us
               </div>
 
               <div className="break-words pr-4">
-                <FinbyteMarkdown>{feed_post.post.post}</FinbyteMarkdown>
+                <FinbyteMarkdown>{feed_post.post.post.length > 300 ? feed_post.post.post.substring(0, 300) + '...' : feed_post.post.post}</FinbyteMarkdown>
               </div>
             </div>
           </div>

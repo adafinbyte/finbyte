@@ -14,7 +14,7 @@ const curated_tokens: curated_token[] = [
         topics, explore tokens, or support projects directly, Finbyte puts it all at your
         fingertips.
     `,
-    category: 'Communications',
+    category: 'SocialFi',
     token_details: {
       ticker: 'tFIN',
       policy: '37524129746446a5a55da896fe5379508244ea85e4c140156badbdc6',

@@ -11,17 +11,31 @@ const ExploreProjects: FC = () => {
   const [page, set_page] = useState(0);
   const [hide_all, set_hide_all] = useState(false);
   const [search_query, set_search_query] = useState('');
+  const [selected_category, set_selected_category] = useState<string | null>(null);
 
-  const finbyte_token = curated_tokens.find(a => a.slug_id === 'finbyte')!!;
+  const category_counts: Record<string, number> = {};
+
+  curated_tokens.forEach(token => {
+    const category = token.category || "Uncategorized";
+    category_counts[category] = (category_counts[category] || 0) + 1;
+  });
+
+  const uniqueCategories = Object.keys(category_counts);
+
   const PAGE_SIZE = 10;
   const start = page * PAGE_SIZE;
 
-  const filtered_tokens = curated_tokens.filter(token =>
-    token.slug_id.toLowerCase().includes(search_query.toLowerCase()) ||
-    token.name.toLowerCase().includes(search_query.toLowerCase()) ||
-    token.token_details.ticker.toLowerCase().includes(search_query.toLowerCase()) ||
-    token.token_details.policy?.toLowerCase().includes(search_query.toLowerCase())
-  );
+  const filtered_tokens = curated_tokens.filter(token => {
+    const matches_search =
+      token.slug_id.toLowerCase().includes(search_query.toLowerCase()) ||
+      token.name.toLowerCase().includes(search_query.toLowerCase()) ||
+      token.token_details.ticker.toLowerCase().includes(search_query.toLowerCase()) ||
+      token.token_details.policy?.toLowerCase().includes(search_query.toLowerCase());
+
+    const matches_category = selected_category === null || token.category === selected_category;
+
+    return matches_search && matches_category;
+  });
 
   const total_pages = Math.ceil(filtered_tokens.length / PAGE_SIZE);
   const paginated_tokens = filtered_tokens.slice(start, start + PAGE_SIZE);
@@ -49,42 +63,26 @@ const ExploreProjects: FC = () => {
         </div>
         :
         <>
-          <div className="grid w-full gap-y-4">
-            <div className="hover:-translate-y-0.5 duration-300 bg-secondary/20 backdrop-blur-lg p-4 rounded-xl flex justify-between items-center gap-4 lg:gap-8">
-              <div className="flex flex-col gap-2 w-full">
-                <div className="flex gap-4 items-center">
-                  <div className="min-w-16 text-center text-xs border border-muted-foreground p-1 rounded-lg">
-                    <span className="text-green-400">$</span>{finbyte_token.token_details.ticker}
-                  </div>
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Button
+              variant={selected_category === null ? "secondary" : "outline"}
+              size="sm"
+              onClick={() => set_selected_category(null)}
+            >
+              All ({curated_tokens.length})
+            </Button>
 
-                  <h1 className="font-bold text-primary text-sm">
-                    {finbyte_token.name}
-                  </h1>
-
-                  <div className="text-center text-xs ml-auto border dark:border-red-400 dark:text-red-400 border-red-500 text-red-500 p-1 rounded-lg">
-                    Testnet Asset
-                  </div>
-                </div>
-
-                <ScrollArea>
-                  <div className="h-24 text-sm opacity-80 pr-4">
-                    {finbyte_token.description}
-                  </div>
-                  <ScrollBar orientation="horizontal"/>
-                </ScrollArea>
-
-                <div>
-                  <Button onClick={() => handle_discover_project(finbyte_token.slug_id)} size='sm' variant='link' >
-                    Discover ${finbyte_token.token_details.ticker}
-                  </Button>
-                </div>
-              </div>
-
-              <img src={finbyte_token.images.logo} className="size-14 rounded-lg" />
-            </div>
+            {uniqueCategories.map((category) => (
+              <Button
+                key={category}
+                variant={selected_category === category ? "secondary" : "outline"}
+                size="sm"
+                onClick={() => set_selected_category(category)}
+              >
+                {category} ({category_counts[category]})
+              </Button>
+            ))}
           </div>
-
-          <hr className="dark:border-slate-800 my-4"/>
 
           <Input
             placeholder="Search token name/slug/ticker/policy..."
@@ -103,7 +101,7 @@ const ExploreProjects: FC = () => {
           )}
 
           <div className="grid gap-4 w-full gap-y-4 items-start">
-            {paginated_tokens.map((token, index) => (token.slug_id !== 'finbyte') &&(
+            {paginated_tokens.map((token, index) => (
               <div key={start + index} className="hover:-translate-y-0.5 duration-300 bg-secondary/20 backdrop-blur-lg p-4 rounded-xl flex justify-between items-center gap-4 lg:gap-8">
                 <div className="flex flex-col gap-2 w-full">
                   <div className="flex gap-4 items-center">
@@ -117,7 +115,7 @@ const ExploreProjects: FC = () => {
                   </div>
 
                   <ScrollArea>
-                    <div className="max-h-24 text-sm opacity-80">
+                    <div className="max-h-24 text-sm opacity-80 pr-4">
                       {token.description}
                     </div>
                   </ScrollArea>

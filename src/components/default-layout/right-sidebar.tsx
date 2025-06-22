@@ -105,6 +105,7 @@ export const PlatformQuickLinks: FC = ({
     { title: 'Check out the ', url_text: 'Kudos Leaderboard', url: '/kudos', target: '' },
     { title: 'About the ', url_text: '$tFIN token', url: '/tFIN', target: '' },
     { title: 'View $tFIN on ', url_text: 'Proprod Cardanoscan', url: 'https://preprod.cardanoscan.io/token/37524129746446a5a55da896fe5379508244ea85e4c140156badbdc67446494e', target: '_blank' },
+    { title: 'Check out the ', url_text: 'Finbyte Markdown Tutorial', url: '/post/29', target: '' },
   ];
 
   return (
