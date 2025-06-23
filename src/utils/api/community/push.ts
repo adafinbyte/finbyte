@@ -1,5 +1,6 @@
 import { databases } from "@/utils/consts";
 import { supabase } from "../secrets";
+import { fetch_community_data } from "./fetch";
 
 interface like_unlike_community_return { error?: string; success?: boolean; action?: string;  }
 export const like_unlike_community = async (address: string, token_slug: string): Promise<like_unlike_community_return> => {
@@ -14,23 +15,9 @@ export const like_unlike_community = async (address: string, token_slug: string)
     return { error: fetchError.message };
   }
 
-  if (!existingRows) {
-    const { error: insertError } = await supabase
-      .from("Communities")
-      .insert([
-        {
-          token_slug,
-          highlighted: false,
-          community_likers: [address],
-        },
-      ]);
-
-    if (insertError) {
-      console.error("Insert error:", insertError.message);
-      return { error: insertError.message };
-    }
-
-    return { success: true, action: "inserted" };
+  const community = await fetch_community_data(token_slug);
+  if (community.error) {
+    return { error: community.error }
   }
 
   const currentLikers: string[] = existingRows.community_likers || [];
@@ -41,9 +28,9 @@ export const like_unlike_community = async (address: string, token_slug: string)
     : [...currentLikers, address];
 
   const { error: updateError } = await supabase
-    .from("Communities")
+    .from(databases.communities)
     .update({ community_likers: updatedLikers })
-    .eq("id", existingRows.id);
+    .eq("token_slug", token_slug);
 
   if (updateError) {
     console.error("Update error:", updateError.message);

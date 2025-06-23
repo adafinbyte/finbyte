@@ -5,7 +5,7 @@ import ProjectsInformation from "@/components/projects/project-info"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { fetch_user_data } from "@/utils/api/account/fetch"
-import { fetch_community_data } from "@/utils/api/community/fetch"
+import { add_community_visitor, fetch_community_data } from "@/utils/api/community/fetch"
 import { get_pool_pm_asset, pool_pm_fingerprint } from "@/utils/api/external/pool-pm"
 import { fetch_community_posts } from "@/utils/api/posts/fetch"
 import { community_post_data, platform_user_details, project_community_data } from "@/utils/interfaces"
@@ -16,7 +16,7 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import DefaultLayout from "@/components/default-layout"
-import { ProjectDiscover, ProjectLinks } from "@/components/default-layout/right-sidebar"
+import { PlatformQuickLinks, ProjectDiscover, ProjectLinks } from "@/components/default-layout/right-sidebar"
 import Head from "next/head"
 import { fetch_transaction_count_for_asset } from "@/utils/api/external/cardanoscan"
 
@@ -75,6 +75,11 @@ export default function Home() {
     }
     if (data.data) {
       set_community_data(data.data);
+      const visitor = await add_community_visitor(found_token.slug_id);
+      if (visitor?.error) {
+        toast.error(visitor.error);
+        return;
+      }
     }
   }
 
@@ -129,6 +134,7 @@ export default function Home() {
     <>
       <ProjectDiscover token={found_token}/>
       <ProjectLinks token={found_token}/>
+      <PlatformQuickLinks/>
     </>
   )
 

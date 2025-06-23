@@ -1,7 +1,7 @@
 import Head from "next/head"
 
 import ExploreProjects from "@/components/explore/projects"
-import { CuratedTokens, PlatformStats } from "@/components/default-layout/right-sidebar"
+import { CuratedTokens, PlatformQuickLinks, PlatformStats } from "@/components/default-layout/right-sidebar"
 import DefaultLayout from "@/components/default-layout"
 
 export default function Explore() {
@@ -9,6 +9,7 @@ export default function Explore() {
     <>
       <PlatformStats />
       <CuratedTokens />
+      <PlatformQuickLinks/>
     </>
   )
 

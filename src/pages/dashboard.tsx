@@ -24,6 +24,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import FormatAddress from "@/components/format-address"
 import { useRouter } from "next/router"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import UserAvatar from "@/components/user-avatar"
+import { X } from "lucide-react"
 
 export default function Home() {
   const router = useRouter();
@@ -126,28 +129,43 @@ export default function Home() {
               placeholder="Search Address..."
               className="resize-none p-2 focus-visible:ring-0"
               onChange={(e) => set_search_user_input(e.target.value)}
+              disabled={found_user_details ? true : false}
             />
-            <Button size='sm' variant='secondary' onClick={() => find_user(search_user_input)} disabled={!search_user_input}>
-              Search
-            </Button>
+            {found_user_details ?
+              <Button size='sm' variant='secondary' onClick={() => { set_found_user_details(null); set_search_user_input(''); }} disabled={!search_user_input}>
+                <X className="text-red-500 dark:text-red-400"/>
+              </Button>
+              :
+              <Button size='sm' variant='secondary' onClick={() => find_user(search_user_input)} disabled={!search_user_input}>
+                Search
+              </Button>
+            }
           </div>
 
           {found_user_details ?
             <>
-              <div className="flex justify-center mb-4">
-                <FormatAddress address={search_user_input} large_size />
-              </div>
-              <div className="flex flex-wrap gap-4 items-center justify-center">
-                {user_details_map.map((item, index) => (
-                  <Card key={index} className="px-4 py-2 bg-secondary/40 backdrop-blur-lg">
-                    <h1 className="text-xs font-semibold text-muted-foreground">
-                      {item.title}
-                    </h1>
-                    <p className="text-lg text-center">
-                      {item.data}
-                    </p>
-                  </Card>
-                ))}
+              <h1 className="text-lg font-semibold text-center mt-2">User Details</h1>
+              <div className="p-4 flex flex-col lg:flex-row gap-4 items-center justify-between">
+                <div className="flex flex-col gap-4 justify-center items-center">
+                  <FormatAddress address={search_user_input} large_size />
+                  <Avatar className="size-24 rounded-lg">
+                    <UserAvatar address={search_user_input} />
+                    <AvatarFallback>AD</AvatarFallback>
+                  </Avatar>
+                </div>
+
+                <div className="flex flex-wrap gap-4 items-center justify-center">
+                  {user_details_map.map((item, index) => (
+                    <Card key={index} className="px-4 py-2 bg-secondary/40 backdrop-blur-lg">
+                      <h1 className="text-xs font-semibold text-muted-foreground">
+                        {item.title}
+                      </h1>
+                      <p className="text-lg text-center">
+                        {item.data}
+                      </p>
+                    </Card>
+                  ))}
+                </div>
               </div>
             </>
             :
