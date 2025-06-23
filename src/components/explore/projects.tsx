@@ -1,9 +1,13 @@
 import curated_tokens from "@/verified/tokens";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/router";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Input } from "../ui/input";
+import { project_community_data } from "@/utils/interfaces";
+import { ensure_community_exists, fetch_community_data } from "@/utils/api/community/fetch";
+import { shuffle_array } from "@/utils/common";
+import { Shuffle } from "lucide-react";
 
 const ExploreProjects: FC = () => {
   const router = useRouter();
@@ -12,6 +16,13 @@ const ExploreProjects: FC = () => {
   const [hide_all, set_hide_all] = useState(false);
   const [search_query, set_search_query] = useState('');
   const [selected_category, set_selected_category] = useState<string | null>(null);
+  const [community_data_cache, set_community_data_cache] = useState<Record<string, project_community_data>>({});
+  const [loading_token_slug, set_loading_token_slug] = useState<string | null>(null);
+
+  const [mounted, set_mounted] = useState(false);
+  const [randomised_tokens, set_randomised_tokens] = useState(
+    () => shuffle_array(curated_tokens)
+  );
 
   const category_counts: Record<string, number> = {};
 
@@ -25,7 +36,11 @@ const ExploreProjects: FC = () => {
   const PAGE_SIZE = 10;
   const start = page * PAGE_SIZE;
 
-  const filtered_tokens = curated_tokens.filter(token => {
+  const randomise = () => {
+    set_randomised_tokens(shuffle_array(curated_tokens));
+  };
+
+  const filtered_tokens = randomised_tokens.filter(token => {
     const matches_search =
       token.slug_id.toLowerCase().includes(search_query.toLowerCase()) ||
       token.name.toLowerCase().includes(search_query.toLowerCase()) ||
@@ -44,13 +59,38 @@ const ExploreProjects: FC = () => {
     router.push('/projects/' + slug);
   }
 
+  const load_community_data = async (token_slug: string) => {
+    if (community_data_cache[token_slug]) return;
+
+    set_loading_token_slug(token_slug);
+
+    const result = await ensure_community_exists(token_slug);
+
+    if (result.data) {
+      set_community_data_cache(prev => ({
+        ...prev,
+        [token_slug]: result.data!,
+      }));
+    }
+
+    set_loading_token_slug(null);
+  };
+
+  useEffect(() => {
+    randomised_tokens.forEach(token => {
+      if (!community_data_cache[token.slug_id]) {
+        load_community_data(token.slug_id);
+      }
+    });
+  }, [randomised_tokens]);
+
+  useEffect(() => set_mounted(true), []);
+  if (!mounted) return null;
+
   return (
     <div>
       <div className="flex w-full justify-between items-center mb-2">
         <h2 className="text-lg font-semibold">Explore Tokens</h2>
-        <Button onClick={() => set_hide_all(!hide_all)} size="sm" className="scale-[80%]" variant='secondary'>
-          {hide_all ? 'Show Tokens' : 'Hide Tokens'}
-        </Button>
       </div>
 
       {/** @todo search input here */}
@@ -84,15 +124,20 @@ const ExploreProjects: FC = () => {
             ))}
           </div>
 
-          <Input
-            placeholder="Search token name/slug/ticker/policy..."
-            value={search_query}
-            onChange={(e) => {
-              set_search_query(e.target.value);
-              set_page(0);
-            }}
-            className="mb-4 w-full"
-          />
+          <div className="flex items-center gap-2 mb-4">
+            <Button variant='ghost' size='icon' onClick={randomise}>
+              <Shuffle />
+            </Button>
+            <Input
+              placeholder="Search token name/slug/ticker/policy..."
+              value={search_query}
+              onChange={(e) => {
+                set_search_query(e.target.value);
+                set_page(0);
+              }}
+              className="w-full"
+            />
+          </div>
 
           {filtered_tokens.length === 0 && (
             <div className="font-semibold text-muted-foreground text-center py-8">
@@ -119,6 +164,16 @@ const ExploreProjects: FC = () => {
                       {token.description}
                     </div>
                   </ScrollArea>
+
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {community_data_cache[token.slug_id] && (
+                      <>
+                        <span>{community_data_cache[token.slug_id].posts} community post{community_data_cache[token.slug_id].posts === 1 ? '' : 's'} • </span>
+                        <span>{community_data_cache[token.slug_id].community_likers?.length ?? 0} liker{community_data_cache[token.slug_id].community_likers?.length === 1 ? '' : 's'} • </span>
+                        <span>{community_data_cache[token.slug_id].visits ?? 0} visitors</span>
+                      </>
+                    )}
+                  </div>
 
                   <div>
                     <Button onClick={() => handle_discover_project(token.slug_id)} size='sm' variant='link' >

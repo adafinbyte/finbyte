@@ -104,6 +104,8 @@ export interface project_community_data {
   token_slug: string;
   community_likers: string[] | null;
   highlighted: boolean | null;
+  posts: number;
+  visits: number;
 }
 
 export interface tfin_requests_data {

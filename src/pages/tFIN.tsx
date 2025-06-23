@@ -8,7 +8,7 @@ import { tfin_requests_data } from "@/utils/interfaces"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import DefaultLayout from "@/components/default-layout"
-import { PlatformQuickLinks } from "@/components/default-layout/right-sidebar"
+import { PlatformQuickLinks, PlatformStats } from "@/components/default-layout/right-sidebar"
 import Head from "next/head"
 import TokenIntroduction from "@/components/tFIN/introduction"
 import RequestTFin from "@/components/tFIN/request"
@@ -128,6 +128,7 @@ export default function Home() {
   ]
   const right_sidebar_contents = (
     <>
+      <PlatformStats/>
       <PlatformQuickLinks />
     </>
   )

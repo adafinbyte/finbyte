@@ -16,6 +16,17 @@ export const fetch_user_data = async (author: string): Promise<fetch_user_data_r
   const timestamps: string[] = [];
   let total_kudos = 0;
 
+  if (author.startsWith('$')) {
+    const { data: ad } = await supabase
+    .from(databases.accounts)
+    .select("*")
+    .eq("ada_handle", author)
+    .single();
+    if (ad) {
+      author = ad.address;
+    }
+  }
+
   const { data, error } = await supabase.rpc('search_author', { author_query: author });
   if (error) { return { error: error.message } }
 

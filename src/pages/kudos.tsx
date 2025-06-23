@@ -3,7 +3,7 @@ import { platform_user_details } from "@/utils/interfaces"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import DefaultLayout from "@/components/default-layout"
-import { CuratedTokens, PlatformQuickLinks } from "@/components/default-layout/right-sidebar"
+import { CuratedTokens, PlatformQuickLinks, PlatformStats } from "@/components/default-layout/right-sidebar"
 import Head from "next/head"
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { fetch_all_finbyte_users } from "@/utils/api/misc"
@@ -47,6 +47,7 @@ export default function Home() {
 
   const right_sidebar_contents = (
     <>
+      <PlatformStats />
       <PlatformQuickLinks />
       <CuratedTokens/>
     </>
@@ -133,7 +134,7 @@ export default function Home() {
                       {index + 1}
                     </td>
                     <td>
-                      <FormatAddress address={item.address} />
+                      <FormatAddress address={item.ada_handle ? item.ada_handle : item.address} />
                     </td>
                     <td>
                       {item.total_kudos}

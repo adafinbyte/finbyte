@@ -3,15 +3,14 @@ import { Card, CardContent } from "./ui/card";
 import FinbyteMarkdown from "./finbyte-md";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-import { Eraser, Glasses, HelpCircle, PenLine } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Eraser, Glasses, PenLine } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { toast } from "sonner";
 import { useWallet } from "@meshsdk/react";
 import { post_type } from "@/utils/types";
 import { create_post } from "@/utils/api/posts/push";
 import { create_community_post, create_feed_comment, create_feed_post } from "@/utils/interfaces";
 import { capitalize_first_letter, get_timestamp } from "@/utils/common";
-import { fetch_single_feed_post } from "@/utils/api/posts/fetch";
 import { finbyte_topics } from "@/utils/consts";
 
 interface custom_props {
